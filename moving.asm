@@ -58,6 +58,16 @@ Main: ; "Real" program starts here.
 	loadi &H001
 	out LEDS
 		
+        
+        LOAD 90
+        CALL TurnLeft
+        LOAD 50
+        Call WaitAC
+        LOAD 180
+        CALL TurnLeft
+        ;LOAD 50
+        ;Call WaitAC
+        Jump Die
 loop:	load FMid
 		out LVELCMD
 		out RVELCMD
@@ -249,6 +259,11 @@ UARTNL:
 	RETURN
 	NL: DW &H0A1B
 
+STOP:
+	Loadi	0
+	OUT		LVELCMD
+	OUT		RVELCMD	
+
 ;Load a desired angle between 0 - 180
 ;Call Turn Left
 TurnLeft:	;Assumes Theta goes up.
@@ -256,9 +271,8 @@ TurnLeft:	;Assumes Theta goes up.
 	IN		Theta
 	STORE   StAng
 TLLOOP:
-	LOADI	100
-	OUT		LVELCMD	
 	LOADI	-100
+	OUT		LVELCMD
 	OUT		RVELCMD
 	IN 		Theta
 	SUB 	StAng
@@ -275,14 +289,13 @@ LChkA:
 
 ;Load a desired angle between 0 - 180
 ;Call Turn Right
-TurnRight:	;Assumes Theta goes up.
+TurnRight:	;Assumes Theta goes down.
 	STORE	InAng
 	IN		Theta
 	STORE   StAng
 TRLOOP:
 	LOADI	100
-	OUT		LVELCMD	
-	LOADI	-100
+	OUT		LVELCMD
 	OUT		RVELCMD
 	IN 		Theta
 	SUB 	StAng
@@ -301,7 +314,8 @@ RChkA:
 ;* Variables
 ;***************************************************************
 Temp:     DW 0 ; "Temp" is not a great name, but can be useful
-
+InAng:	  DW 0
+StAng:	  DW 0
 ;***************************************************************
 ;* Constants
 ;* (though there is nothing stopping you from writing to these)
