@@ -219,6 +219,13 @@ applicable agreement for further details.
 		(text "POS_RSTN" (rect 138 427 195 439)(font "Arial" ))
 		(line (pt 216 432)(pt 200 432)(line_width 1))
 	)
+	(port
+		(pt 216 448)
+		(output)
+		(text "LOOK_EN" (rect 0 0 50 12)(font "Arial" ))
+		(text "LOOK_EN" (rect 145 443 195 455)(font "Arial" ))
+		(line (pt 216 448)(pt 200 448)(line_width 1))
+	)
 	(drawing
 		(rectangle (rect 16 16 200 464)(line_width 1))
 	)

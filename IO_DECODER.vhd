@@ -37,7 +37,8 @@ ENTITY IO_DECODER IS
     XPOS_EN       : OUT STD_LOGIC;
     YPOS_EN       : OUT STD_LOGIC;
     TPOS_EN       : OUT STD_LOGIC;
-    POS_RSTN      : OUT STD_LOGIC
+    POS_RSTN      : OUT STD_LOGIC;
+    LOOK_EN		  : OUT STD_LOGIC
   );
 
 END ENTITY;
@@ -80,6 +81,7 @@ begin
   YPOS_EN <= '1'      WHEN IO_INT = 16#1C1# ELSE '0';
   TPOS_EN <= '1'      WHEN IO_INT = 16#1C2# ELSE '0';
   POS_RSTN <= '0'     WHEN IO_INT = 16#1C3# ELSE '1';
+  LOOK_EN <= '1'      WHEN IO_INT = 16#1C4# ELSE '0';
 
       
 END a;
