@@ -1,6 +1,19 @@
 db/
 incremental_db/
 DE2Bot.qws
+DE2Bot.asm.rpt
+DE2Bot.done
+DE2Bot.fit.rpt
+DE2Bot.fit.summary
+DE2Bot.flow.rpt
+DE2Bot.map.rpt
+DE2Bot.map.summary
+DE2Bot.pin
+DE2Bot.pof
+DE2Bot.sof
+DE2Bot.tan.rpt
+DE2Bot.tan.summary
+
 
 #################
 ## Eclipse
