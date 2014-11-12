@@ -249,6 +249,54 @@ UARTNL:
 	RETURN
 	NL: DW &H0A1B
 
+;Load a desired angle between 0 - 180
+;Call Turn Left
+TurnLeft:	;Assumes Theta goes up.
+	STORE	InAng
+	IN		Theta
+	STORE   StAng
+TLLOOP:
+	LOADI	100
+	OUT		LVELCMD	
+	LOADI	-100
+	OUT		RVELCMD
+	IN 		Theta
+	SUB 	StAng
+	JPOS	RChkA
+;Correct Angle
+	STORE 	Temp
+	LOAD	StAng
+	SUB		Temp
+LChkA:
+	Sub		InAng
+	JNEG	TRLOOP
+	CALL	STOP
+	RETURN
+
+;Load a desired angle between 0 - 180
+;Call Turn Right
+TurnRight:	;Assumes Theta goes up.
+	STORE	InAng
+	IN		Theta
+	STORE   StAng
+TRLOOP:
+	LOADI	100
+	OUT		LVELCMD	
+	LOADI	-100
+	OUT		RVELCMD
+	IN 		Theta
+	SUB 	StAng
+	JPOS	RChkA
+;Correct Angle
+	STORE 	Temp
+	LOAD	StAng
+	SUB		Temp
+RChkA:
+	Sub		InAng
+	JNEG	TRLOOP
+	CALL	STOP
+	RETURN
+
 ;***************************************************************
 ;* Variables
 ;***************************************************************
