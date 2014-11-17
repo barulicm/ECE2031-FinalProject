@@ -54,112 +54,144 @@ WaitForUser:
 ;***************************************************************
 Main: ; "Real" program starts here.
 
+	load One
+	out LEDS
 	load Zero
 	addi &B011000000011 ;wall distances 3,0,0,3 +x cw = coord: 1,1 ang: 0
-	out LOCAL
-	in LOCAL
+	out LOCAL0
+	
+lo:	in LOCAL0
+	out LCD
+	jzero lo
+	
+	out LCD
 	store localOut
-	or angMask
-	out sseg1 ;should display 0 0
+	and angMask
+	out SSEG1 ;should display 0 0
 	load localOut
-	or coordMask
-	out sseg2 ;should display 1 1
+	and coordMask
+	shift -2
+	out SSEG2 ;should display 1 1
 	
 	call Wait1
 	call Wait1
 	call Wait1
 	call Wait1
 
+	load Two
+	out LEDS
 	load Zero
 	addi &B011011000000 ;wall distances 3,3,0,0 = coord: 1,1 ang: 90
-	out LOCAL
-	in LOCAL
+	out LOCAL0
+	in LOCAL0
+	out LCD
 	store localOut
-	or angMask
-	out sseg1 ;should display 0 1
+	and angMask
+	out SSEG1 ;should display 0 1
 	load localOut
-	or coordMask
-	out sseg2 ;should display 1 1
+	and coordMask
+	shift -2
+	out SSEG2 ;should display 1 1
 	
 	call Wait1
 	call Wait1
 	call Wait1
 	call Wait1
 		
+	load Three
+	out LEDS
 	load Zero
 	addi &B000011011000 ;wall distances 0,3,3,0 = coord: 1,1 ang: 180
-	out LOCAL
-	in LOCAL
+	out LOCAL0
+	in LOCAL0
+	out LCD
 	store localOut
-	or angMask
-	out sseg1 ;should display 0 2
+	and angMask
+	out SSEG1 ;should display 0 2
 	load localOut
-	or coordMask
-	out sseg2 ;should display 1 1
+	and coordMask
+	shift -2
+	out SSEG2 ;should display 1 1
 	
 	call Wait1
 	call Wait1
 	call Wait1
 	call Wait1
 	
+	load Four
+	out LEDS
 	load Zero
 	addi &B000000011011 ;wall distances 0,0,3,3 = coord: 1,1 ang: 270
-	out LOCAL
-	in LOCAL
+	out LOCAL0
+	in LOCAL0
+	out LCD
 	store localOut
-	or angMask
-	out sseg1 ;should display 0 3
+	and angMask
+	out SSEG1 ;should display 0 3
 	load localOut
-	or coordMask
-	out sseg2 ;should display 1 1
+	and coordMask
+	shift -2
+	out SSEG2 ;should display 1 1
 	
 	call Wait1
 	call Wait1
 	call Wait1
 	call Wait1
 	
+	load Five
+	out LEDS
 	load Zero
 	addi &B000000001011 ;wall distances 0,0,1,3 = coord: 4,2 ang: 90
-	out LOCAL
-	in LOCAL
+	out LOCAL0
+	in LOCAL0
+	out LCD
 	store localOut
-	or angMask
-	out sseg1 ;should display 0 1
+	and angMask
+	out SSEG1 ;should display 0 1
 	load localOut
-	or coordMask
-	out sseg2 ;should display 4 2
+	and coordMask
+	shift -2
+	out SSEG2 ;should display 4 2
 	
 	call Wait1
 	call Wait1
 	call Wait1
 	call Wait1
 	
+	load Six
+	out LEDS
 	load Zero
 	addi &B100001000000 ;wall distances 4,1,0,0 = coord: 5,3 ang: 180
-	out LOCAL
-	in LOCAL
+	out LOCAL0
+	in LOCAL0
+	out LCD
 	store localOut
-	or angMask
-	out sseg1 ;should display 0 2
+	and angMask
+	out SSEG1 ;should display 0 2
 	load localOut
-	or coordMask
-	out sseg2 ;should display 5 3
+	and coordMask
+	shift -2
+	out SSEG2 ;should display 5 3
 	
 	call Wait1
 	call Wait1
 	call Wait1
 	call Wait1
 	
+	load Seven
+	out LEDS
 	load Zero
 	addi &B010001001011 ;wall distances 2,1,1,3 = coord: 2,3 ang: 270
-	out LOCAL
-	in LOCAL
+	out LOCAL0
+	in LOCAL0
+	out LCD
 	store localOut
-	or angMask
-	out sseg1 ;should display 0 3
+	and angMask
+	out SSEG1 ;should display 0 3
 	load localOut
-	or coordMask
-	out sseg2 ;should display 2 3
+	and coordMask
+	shift -2
+	out SSEG2 ;should display 2 3
 	
 	call Wait1
 	call Wait1
@@ -419,7 +451,7 @@ XPOS:     EQU &HC0  ; Current X-position (read only)
 YPOS:     EQU &HC1  ; Y-position
 THETA:    EQU &HC2  ; Current rotational position of robot (0-359)
 RESETPOS: EQU &HC3  ; write anything here to reset odometry to 0
-LOCAL:	  EQU &HC4	; Write wall distances get back coord and angle
+LOCAL0:	  EQU &HC4	; Write wall distances get back coord and angle
 
 localOut: DW 0
 angMask:    DW &B0000000000000011

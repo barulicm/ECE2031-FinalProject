@@ -10,273 +10,303 @@ CONTENT
   BEGIN
     [000..3FF] : 0000;  -- Default to NOP
 
-           000 : 04E5;  -- 	LOAD   Zero
+           000 : 0503;  -- 	LOAD   Zero
            001 : 4C83;  -- 	OUT    LVELCMD     ; Stop motors
            002 : 4C8B;  -- 	OUT    RVELCMD
            003 : 4CB2;  -- 	OUT    SONAREN     ; Disable sonar (optional)
-           004 : 40B1;  -- 	CALL   SetupI2C    ; Configure the I2C to read the battery voltage
-           005 : 4093;  -- 	CALL   BattCheck   ; Get battery voltage (and end if too low).
+           004 : 40CF;  -- 	CALL   SetupI2C    ; Configure the I2C to read the battery voltage
+           005 : 40B1;  -- 	CALL   BattCheck   ; Get battery voltage (and end if too low).
            006 : 4C06;  -- 	OUT    LCD         ; Display batt voltage on LCD
            007 : 4803;  -- 	IN     XIO         ; XIO contains SAFETY signal
-           008 : 24F4;  -- 	AND    Mask4       ; SAFETY signal is bit 4
+           008 : 2512;  -- 	AND    Mask4       ; SAFETY signal is bit 4
            009 : 1C0F;  -- 	JPOS   WaitForUser ; If ready, jump to wait for PB3
            00A : 4802;  -- 	IN     TIMER       ; We'll use the timer value to
-           00B : 24F1;  -- 	AND    Mask1       ;  blink LED17 as a reminder to toggle SW17
+           00B : 250F;  -- 	AND    Mask1       ;  blink LED17 as a reminder to toggle SW17
            00C : 3008;  -- 	SHIFT  8           ; Shift over to LED17
            00D : 4C07;  -- 	OUT    XLEDS       ; LED17 blinks at 2.5Hz (10Hz/4)
            00E : 1407;  -- 	JUMP   WaitForSafety
            00F : 4802;  -- 	IN     TIMER       ; We'll blink the LEDs above PB3
-           010 : 24F1;  -- 	AND    Mask1
+           010 : 250F;  -- 	AND    Mask1
            011 : 3005;  -- 	SHIFT  5           ; Both LEDG6 and LEDG7
-           012 : 08E3;  -- 	STORE  Temp        ; (overkill, but looks nice)
+           012 : 0901;  -- 	STORE  Temp        ; (overkill, but looks nice)
            013 : 3001;  -- 	SHIFT  1
-           014 : 28E3;  -- 	OR     Temp
+           014 : 2901;  -- 	OR     Temp
            015 : 4C07;  -- 	OUT    XLEDS
            016 : 4803;  -- 	IN     XIO         ; XIO contains KEYs
-           017 : 24F2;  -- 	AND    Mask2       ; KEY3 mask (KEY0 is reset and can't be read)
+           017 : 2510;  -- 	AND    Mask2       ; KEY3 mask (KEY0 is reset and can't be read)
            018 : 1C0F;  -- 	JPOS   WaitForUser ; not ready (KEYs are active-low, hence JPOS)
-           019 : 04E5;  -- 	LOAD   Zero
+           019 : 0503;  -- 	LOAD   Zero
            01A : 4C07;  -- 	OUT    XLEDS       ; clear LEDs once ready to continue
-           01B : 04E5;  -- 	load Zero
-           01C : 3603;  -- 	addi &B011000000011 ;wall distances 3,0,0,3 +x cw = coord: 1,1 ang: 0
-           01D : 4CC4;  -- 	out LOCAL
-           01E : 48C4;  -- 	in LOCAL
-           01F : 090A;  -- 	store localOut
-           020 : 290B;  -- 	or angMask
-           021 : 4C04;  -- 	out sseg1 ;should display 0 0
-           022 : 050A;  -- 	load localOut
-           023 : 290C;  -- 	or coordMask
-           024 : 4C05;  -- 	out sseg2 ;should display 1 1
-           025 : 4085;  -- 	call Wait1
-           026 : 4085;  -- 	call Wait1
-           027 : 4085;  -- 	call Wait1
-           028 : 4085;  -- 	call Wait1
-           029 : 04E5;  -- 	load Zero
-           02A : 36C0;  -- 	addi &B011011000000 ;wall distances 3,3,0,0 = coord: 1,1 ang: 90
-           02B : 4CC4;  -- 	out LOCAL
-           02C : 48C4;  -- 	in LOCAL
-           02D : 090A;  -- 	store localOut
-           02E : 290B;  -- 	or angMask
-           02F : 4C04;  -- 	out sseg1 ;should display 0 1
-           030 : 050A;  -- 	load localOut
-           031 : 290C;  -- 	or coordMask
-           032 : 4C05;  -- 	out sseg2 ;should display 1 1
-           033 : 4085;  -- 	call Wait1
-           034 : 4085;  -- 	call Wait1
-           035 : 4085;  -- 	call Wait1
-           036 : 4085;  -- 	call Wait1
-           037 : 04E5;  -- 	load Zero
-           038 : 34D8;  -- 	addi &B000011011000 ;wall distances 0,3,3,0 = coord: 1,1 ang: 180
-           039 : 4CC4;  -- 	out LOCAL
-           03A : 48C4;  -- 	in LOCAL
-           03B : 090A;  -- 	store localOut
-           03C : 290B;  -- 	or angMask
-           03D : 4C04;  -- 	out sseg1 ;should display 0 2
-           03E : 050A;  -- 	load localOut
-           03F : 290C;  -- 	or coordMask
-           040 : 4C05;  -- 	out sseg2 ;should display 1 1
-           041 : 4085;  -- 	call Wait1
-           042 : 4085;  -- 	call Wait1
-           043 : 4085;  -- 	call Wait1
-           044 : 4085;  -- 	call Wait1
-           045 : 04E5;  -- 	load Zero
-           046 : 341B;  -- 	addi &B000000011011 ;wall distances 0,0,3,3 = coord: 1,1 ang: 270
-           047 : 4CC4;  -- 	out LOCAL
-           048 : 48C4;  -- 	in LOCAL
-           049 : 090A;  -- 	store localOut
-           04A : 290B;  -- 	or angMask
-           04B : 4C04;  -- 	out sseg1 ;should display 0 3
-           04C : 050A;  -- 	load localOut
-           04D : 290C;  -- 	or coordMask
-           04E : 4C05;  -- 	out sseg2 ;should display 1 1
-           04F : 4085;  -- 	call Wait1
-           050 : 4085;  -- 	call Wait1
-           051 : 4085;  -- 	call Wait1
-           052 : 4085;  -- 	call Wait1
-           053 : 04E5;  -- 	load Zero
-           054 : 340B;  -- 	addi &B000000001011 ;wall distances 0,0,1,3 = coord: 4,2 ang: 90
-           055 : 4CC4;  -- 	out LOCAL
-           056 : 48C4;  -- 	in LOCAL
-           057 : 090A;  -- 	store localOut
-           058 : 290B;  -- 	or angMask
-           059 : 4C04;  -- 	out sseg1 ;should display 0 1
-           05A : 050A;  -- 	load localOut
-           05B : 290C;  -- 	or coordMask
-           05C : 4C05;  -- 	out sseg2 ;should display 4 2
-           05D : 4085;  -- 	call Wait1
-           05E : 4085;  -- 	call Wait1
-           05F : 4085;  -- 	call Wait1
-           060 : 4085;  -- 	call Wait1
-           061 : 04E5;  -- 	load Zero
-           062 : 3440;  -- 	addi &B100001000000 ;wall distances 4,1,0,0 = coord: 5,3 ang: 180
-           063 : 4CC4;  -- 	out LOCAL
-           064 : 48C4;  -- 	in LOCAL
-           065 : 090A;  -- 	store localOut
-           066 : 290B;  -- 	or angMask
-           067 : 4C04;  -- 	out sseg1 ;should display 0 2
-           068 : 050A;  -- 	load localOut
-           069 : 290C;  -- 	or coordMask
-           06A : 4C05;  -- 	out sseg2 ;should display 5 3
-           06B : 4085;  -- 	call Wait1
-           06C : 4085;  -- 	call Wait1
-           06D : 4085;  -- 	call Wait1
-           06E : 4085;  -- 	call Wait1
-           06F : 04E5;  -- 	load Zero
-           070 : 344B;  -- 	addi &B010001001011 ;wall distances 2,1,1,3 = coord: 2,3 ang: 270
-           071 : 4CC4;  -- 	out LOCAL
-           072 : 48C4;  -- 	in LOCAL
-           073 : 090A;  -- 	store localOut
-           074 : 290B;  -- 	or angMask
-           075 : 4C04;  -- 	out sseg1 ;should display 0 3
-           076 : 050A;  -- 	load localOut
-           077 : 290C;  -- 	or coordMask
-           078 : 4C05;  -- 	out sseg2 ;should display 2 3
-           079 : 4085;  -- 	call Wait1
-           07A : 4085;  -- 	call Wait1
-           07B : 4085;  -- 	call Wait1
-           07C : 4085;  -- 	call Wait1
-           07D : 04E5;  -- 	LOAD   Zero         ; Stop everything.
-           07E : 4C83;  -- 	OUT    LVELCMD
-           07F : 4C8B;  -- 	OUT    RVELCMD
-           080 : 4CB2;  -- 	OUT    SONAREN
-           081 : 0484;  -- 	LOAD   DEAD         ; An indication that we are dead
-           082 : 4C05;  -- 	OUT    SSEG2
-           083 : 1483;  -- 	JUMP   Forever      ; Do this forever.
-           084 : DEAD;  -- DEAD: DW &HDEAD
-           085 : 4C02;  -- 	OUT    TIMER
-           086 : 4802;  -- 	IN     TIMER
-           087 : 4C07;  -- 	OUT    XLEDS       ; User-feedback that a pause is occurring.
-           088 : 37F6;  -- 	ADDI   -10         ; 1 second in 10Hz.
-           089 : 1886;  -- 	JNEG   Wloop
-           08A : 4400;  -- 	RETURN
-           08B : 0892;  -- 	STORE  WaitTime
-           08C : 4C02;  -- 	OUT    Timer
-           08D : 4802;  -- 	IN     Timer
-           08E : 4C07;  -- 	OUT    XLEDS       ; User-feedback that a pause is occurring.
-           08F : 1092;  -- 	SUB    WaitTime
-           090 : 188D;  -- 	JNEG   WACLoop
-           091 : 4400;  -- 	RETURN
-           092 : 0000;  -- 	WaitTime: DW 0     ; "local" variable.
-           093 : 40AB;  -- 	CALL   GetBattLvl
-           094 : 2093;  -- 	JZERO  BattCheck   ; A/D hasn't had time to initialize
-           095 : 1107;  -- 	SUB    MinBatt
-           096 : 1899;  -- 	JNEG   DeadBatt
-           097 : 0D07;  -- 	ADD    MinBatt     ; get original value back
-           098 : 4400;  -- 	RETURN
-           099 : 04E9;  -- 	LOAD   Four
-           09A : 4C0A;  -- 	OUT    BEEP        ; start beep sound
-           09B : 40AB;  -- 	CALL   GetBattLvl  ; get the battery level
-           09C : 4C04;  -- 	OUT    SSEG1       ; display it everywhere
-           09D : 4C05;  -- 	OUT    SSEG2
-           09E : 4C06;  -- 	OUT    LCD
-           09F : 04E5;  -- 	LOAD   Zero
-           0A0 : 37FF;  -- 	ADDI   -1          ; 0xFFFF
-           0A1 : 4C01;  -- 	OUT    LEDS        ; all LEDs on
-           0A2 : 4C07;  -- 	OUT    XLEDS
-           0A3 : 4085;  -- 	CALL   Wait1       ; 1 second
-           0A4 : 04E5;  -- 	Load   Zero
-           0A5 : 4C0A;  -- 	OUT    BEEP        ; stop beeping
-           0A6 : 04E5;  -- 	LOAD   Zero
-           0A7 : 4C01;  -- 	OUT    LEDS        ; LEDs off
-           0A8 : 4C07;  -- 	OUT    XLEDS
-           0A9 : 4085;  -- 	CALL   Wait1       ; 1 second
-           0AA : 1499;  -- 	JUMP   DeadBatt    ; repeat forever
-           0AB : 0509;  -- 	LOAD   I2CRCmd     ; 0x0190 (write 0B, read 1B, addr 0x90)
-           0AC : 4C90;  -- 	OUT    I2C_CMD     ; to I2C_CMD
-           0AD : 4C92;  -- 	OUT    I2C_RDY     ; start the communication
-           0AE : 40B9;  -- 	CALL   BlockI2C    ; wait for it to finish
-           0AF : 4891;  -- 	IN     I2C_DATA    ; get the returned data
-           0B0 : 4400;  -- 	RETURN
-           0B1 : 40B9;  -- 	CALL   BlockI2C    ; wait for idle
-           0B2 : 0508;  -- 	LOAD   I2CWCmd     ; 0x1190 (write 1B, read 1B, addr 0x90)
-           0B3 : 4C90;  -- 	OUT    I2C_CMD     ; to I2C_CMD register
-           0B4 : 04E5;  -- 	LOAD   Zero        ; 0x0000 (A/D port 0, no increment)
-           0B5 : 4C91;  -- 	OUT    I2C_DATA    ; to I2C_DATA register
-           0B6 : 4C92;  -- 	OUT    I2C_RDY     ; start the communication
-           0B7 : 40B9;  -- 	CALL   BlockI2C    ; wait for it to finish
-           0B8 : 4400;  -- 	RETURN
-           0B9 : 04E5;  -- 	LOAD   Zero
-           0BA : 08E3;  -- 	STORE  Temp        ; Used to check for timeout
-           0BB : 04E3;  -- 	LOAD   Temp
-           0BC : 3401;  -- 	ADDI   1           ; this will result in ~0.1s timeout
-           0BD : 08E3;  -- 	STORE  Temp
-           0BE : 20C2;  -- 	JZERO  I2CError    ; Timeout occurred; error
-           0BF : 4892;  -- 	IN     I2C_RDY     ; Read busy signal
-           0C0 : 1CBB;  -- 	JPOS   BI2CL       ; If not 0, try again
-           0C1 : 4400;  -- 	RETURN             ; Else return
-           0C2 : 04E5;  -- 	LOAD   Zero
-           0C3 : 352C;  -- 	ADDI   &H12C       ; "I2C"
-           0C4 : 4C04;  -- 	OUT    SSEG1
-           0C5 : 4C05;  -- 	OUT    SSEG2       ; display error message
-           0C6 : 14C2;  -- 	JUMP   I2CError
-           0C7 : 08DC;  -- 	STORE  UARTTemp
-           0C8 : 3018;  -- 	SHIFT  -8
-           0C9 : 37E5;  -- 	ADDI   -27   ; escape character
-           0CA : 20CE;  -- 	JZERO  UEsc1
-           0CB : 341B;  -- 	ADDI   27
-           0CC : 4C98;  -- 	OUT    UART_DAT
-           0CD : 14D1;  -- 	JUMP   USend2
-           0CE : 341B;  -- 	ADDI   27
-           0CF : 4C98;  -- 	OUT    UART_DAT
-           0D0 : 4C98;  -- 	OUT    UART_DAT
-           0D1 : 04DC;  -- 	LOAD   UARTTemp
-           0D2 : 24F8;  -- 	AND    LowByte
-           0D3 : 37E5;  -- 	ADDI   -27   ; escape character
-           0D4 : 20D8;  -- 	JZERO  UEsc2
-           0D5 : 341B;  -- 	ADDI   27
-           0D6 : 4C98;  -- 	OUT    UART_DAT
-           0D7 : 4400;  -- 	RETURN
-           0D8 : 341B;  -- 	ADDI   27
-           0D9 : 4C98;  -- 	OUT    UART_DAT
-           0DA : 4C98;  -- 	OUT    UART_DAT
-           0DB : 4400;  -- 	RETURN
-           0DC : 0000;  -- 	UARTTemp: DW 0
-           0DD : 04E2;  -- 	LOAD   NL
-           0DE : 4C98;  -- 	OUT    UART_DAT
-           0DF : 3018;  -- 	SHIFT  -8
-           0E0 : 4C98;  -- 	OUT    UART_DAT
-           0E1 : 4400;  -- 	RETURN
-           0E2 : 0A1B;  -- 	NL: DW &H0A1B
-           0E3 : 0000;  -- Temp:     DW 0 ; "Temp" is not a great name, but can be useful
-           0E4 : FFFF;  -- NegOne:   DW -1
-           0E5 : 0000;  -- Zero:     DW 0
-           0E6 : 0001;  -- One:      DW 1
-           0E7 : 0002;  -- Two:      DW 2
-           0E8 : 0003;  -- Three:    DW 3
-           0E9 : 0004;  -- Four:     DW 4
-           0EA : 0005;  -- Five:     DW 5
-           0EB : 0006;  -- Six:      DW 6
-           0EC : 0007;  -- Seven:    DW 7
-           0ED : 0008;  -- Eight:    DW 8
-           0EE : 0009;  -- Nine:     DW 9
-           0EF : 000A;  -- Ten:      DW 10
-           0F0 : 0001;  -- Mask0:    DW &B00000001
-           0F1 : 0002;  -- Mask1:    DW &B00000010
-           0F2 : 0004;  -- Mask2:    DW &B00000100
-           0F3 : 0008;  -- Mask3:    DW &B00001000
-           0F4 : 0010;  -- Mask4:    DW &B00010000
-           0F5 : 0020;  -- Mask5:    DW &B00100000
-           0F6 : 0040;  -- Mask6:    DW &B01000000
-           0F7 : 0080;  -- Mask7:    DW &B10000000
-           0F8 : 00FF;  -- LowByte:  DW &HFF      ; binary 00000000 1111111
-           0F9 : 000F;  -- LowNibl:  DW &HF       ; 0000 0000 0000 1111
-           0FA : 03C1;  -- OneMeter: DW 961       ; ~1m in 1.05mm units
-           0FB : 01E1;  -- HalfMeter: DW 481      ; ~0.5m in 1.05mm units
-           0FC : 024A;  -- TwoFeet:  DW 586       ; ~2ft in 1.05mm units
-           0FD : 005A;  -- Deg90:    DW 90        ; 90 degrees in odometry units
-           0FE : 00B4;  -- Deg180:   DW 180       ; 180
-           0FF : 010E;  -- Deg270:   DW 270       ; 270
-           100 : 0168;  -- Deg360:   DW 360       ; can never actually happen; for math only
-           101 : 0064;  -- FSlow:    DW 100       ; 100 is about the lowest velocity value that will move
-           102 : FF9C;  -- RSlow:    DW -100
-           103 : 015E;  -- FMid:     DW 350       ; 350 is a medium speed
-           104 : FEA2;  -- RMid:     DW -350
-           105 : 01F4;  -- FFast:    DW 500       ; 500 is almost max speed (511 is max)
-           106 : FE0C;  -- RFast:    DW -500
-           107 : 0082;  -- MinBatt:  DW 130       ; 13.0V - minimum safe battery voltage
-           108 : 1190;  -- I2CWCmd:  DW &H1190    ; write one i2c byte, read one byte, addr 0x90
-           109 : 0190;  -- I2CRCmd:  DW &H0190    ; write nothing, read one byte, addr 0x90
-           10A : 0000;  -- localOut: DW 0
-           10B : 0003;  -- angMask:    DW &B0000000000000011
-           10C : 03FC;  -- coordMask:  DW &B0000001111111100
+           01B : 0504;  -- 	load One
+           01C : 4C01;  -- 	out LEDS
+           01D : 0503;  -- 	load Zero
+           01E : 3603;  -- 	addi &B011000000011 ;wall distances 3,0,0,3 +x cw = coord: 1,1 ang: 0
+           01F : 4CC4;  -- 	out LOCAL0
+           020 : 48C4;  -- lo:	in LOCAL0
+           021 : 4C06;  -- 	out LCD
+           022 : 2020;  -- 	jzero lo
+           023 : 4C06;  -- 	out LCD
+           024 : 0928;  -- 	store localOut
+           025 : 2529;  -- 	and angMask
+           026 : 4C04;  -- 	out SSEG1 ;should display 0 0
+           027 : 0528;  -- 	load localOut
+           028 : 252A;  -- 	and coordMask
+           029 : 3012;  -- 	shift -2
+           02A : 4C05;  -- 	out SSEG2 ;should display 1 1
+           02B : 40A3;  -- 	call Wait1
+           02C : 40A3;  -- 	call Wait1
+           02D : 40A3;  -- 	call Wait1
+           02E : 40A3;  -- 	call Wait1
+           02F : 0505;  -- 	load Two
+           030 : 4C01;  -- 	out LEDS
+           031 : 0503;  -- 	load Zero
+           032 : 36C0;  -- 	addi &B011011000000 ;wall distances 3,3,0,0 = coord: 1,1 ang: 90
+           033 : 4CC4;  -- 	out LOCAL0
+           034 : 48C4;  -- 	in LOCAL0
+           035 : 4C06;  -- 	out LCD
+           036 : 0928;  -- 	store localOut
+           037 : 2529;  -- 	and angMask
+           038 : 4C04;  -- 	out SSEG1 ;should display 0 1
+           039 : 0528;  -- 	load localOut
+           03A : 252A;  -- 	and coordMask
+           03B : 3012;  -- 	shift -2
+           03C : 4C05;  -- 	out SSEG2 ;should display 1 1
+           03D : 40A3;  -- 	call Wait1
+           03E : 40A3;  -- 	call Wait1
+           03F : 40A3;  -- 	call Wait1
+           040 : 40A3;  -- 	call Wait1
+           041 : 0506;  -- 	load Three
+           042 : 4C01;  -- 	out LEDS
+           043 : 0503;  -- 	load Zero
+           044 : 34D8;  -- 	addi &B000011011000 ;wall distances 0,3,3,0 = coord: 1,1 ang: 180
+           045 : 4CC4;  -- 	out LOCAL0
+           046 : 48C4;  -- 	in LOCAL0
+           047 : 4C06;  -- 	out LCD
+           048 : 0928;  -- 	store localOut
+           049 : 2529;  -- 	and angMask
+           04A : 4C04;  -- 	out SSEG1 ;should display 0 2
+           04B : 0528;  -- 	load localOut
+           04C : 252A;  -- 	and coordMask
+           04D : 3012;  -- 	shift -2
+           04E : 4C05;  -- 	out SSEG2 ;should display 1 1
+           04F : 40A3;  -- 	call Wait1
+           050 : 40A3;  -- 	call Wait1
+           051 : 40A3;  -- 	call Wait1
+           052 : 40A3;  -- 	call Wait1
+           053 : 0507;  -- 	load Four
+           054 : 4C01;  -- 	out LEDS
+           055 : 0503;  -- 	load Zero
+           056 : 341B;  -- 	addi &B000000011011 ;wall distances 0,0,3,3 = coord: 1,1 ang: 270
+           057 : 4CC4;  -- 	out LOCAL0
+           058 : 48C4;  -- 	in LOCAL0
+           059 : 4C06;  -- 	out LCD
+           05A : 0928;  -- 	store localOut
+           05B : 2529;  -- 	and angMask
+           05C : 4C04;  -- 	out SSEG1 ;should display 0 3
+           05D : 0528;  -- 	load localOut
+           05E : 252A;  -- 	and coordMask
+           05F : 3012;  -- 	shift -2
+           060 : 4C05;  -- 	out SSEG2 ;should display 1 1
+           061 : 40A3;  -- 	call Wait1
+           062 : 40A3;  -- 	call Wait1
+           063 : 40A3;  -- 	call Wait1
+           064 : 40A3;  -- 	call Wait1
+           065 : 0508;  -- 	load Five
+           066 : 4C01;  -- 	out LEDS
+           067 : 0503;  -- 	load Zero
+           068 : 340B;  -- 	addi &B000000001011 ;wall distances 0,0,1,3 = coord: 4,2 ang: 90
+           069 : 4CC4;  -- 	out LOCAL0
+           06A : 48C4;  -- 	in LOCAL0
+           06B : 4C06;  -- 	out LCD
+           06C : 0928;  -- 	store localOut
+           06D : 2529;  -- 	and angMask
+           06E : 4C04;  -- 	out SSEG1 ;should display 0 1
+           06F : 0528;  -- 	load localOut
+           070 : 252A;  -- 	and coordMask
+           071 : 3012;  -- 	shift -2
+           072 : 4C05;  -- 	out SSEG2 ;should display 4 2
+           073 : 40A3;  -- 	call Wait1
+           074 : 40A3;  -- 	call Wait1
+           075 : 40A3;  -- 	call Wait1
+           076 : 40A3;  -- 	call Wait1
+           077 : 0509;  -- 	load Six
+           078 : 4C01;  -- 	out LEDS
+           079 : 0503;  -- 	load Zero
+           07A : 3440;  -- 	addi &B100001000000 ;wall distances 4,1,0,0 = coord: 5,3 ang: 180
+           07B : 4CC4;  -- 	out LOCAL0
+           07C : 48C4;  -- 	in LOCAL0
+           07D : 4C06;  -- 	out LCD
+           07E : 0928;  -- 	store localOut
+           07F : 2529;  -- 	and angMask
+           080 : 4C04;  -- 	out SSEG1 ;should display 0 2
+           081 : 0528;  -- 	load localOut
+           082 : 252A;  -- 	and coordMask
+           083 : 3012;  -- 	shift -2
+           084 : 4C05;  -- 	out SSEG2 ;should display 5 3
+           085 : 40A3;  -- 	call Wait1
+           086 : 40A3;  -- 	call Wait1
+           087 : 40A3;  -- 	call Wait1
+           088 : 40A3;  -- 	call Wait1
+           089 : 050A;  -- 	load Seven
+           08A : 4C01;  -- 	out LEDS
+           08B : 0503;  -- 	load Zero
+           08C : 344B;  -- 	addi &B010001001011 ;wall distances 2,1,1,3 = coord: 2,3 ang: 270
+           08D : 4CC4;  -- 	out LOCAL0
+           08E : 48C4;  -- 	in LOCAL0
+           08F : 4C06;  -- 	out LCD
+           090 : 0928;  -- 	store localOut
+           091 : 2529;  -- 	and angMask
+           092 : 4C04;  -- 	out SSEG1 ;should display 0 3
+           093 : 0528;  -- 	load localOut
+           094 : 252A;  -- 	and coordMask
+           095 : 3012;  -- 	shift -2
+           096 : 4C05;  -- 	out SSEG2 ;should display 2 3
+           097 : 40A3;  -- 	call Wait1
+           098 : 40A3;  -- 	call Wait1
+           099 : 40A3;  -- 	call Wait1
+           09A : 40A3;  -- 	call Wait1
+           09B : 0503;  -- 	LOAD   Zero         ; Stop everything.
+           09C : 4C83;  -- 	OUT    LVELCMD
+           09D : 4C8B;  -- 	OUT    RVELCMD
+           09E : 4CB2;  -- 	OUT    SONAREN
+           09F : 04A2;  -- 	LOAD   DEAD         ; An indication that we are dead
+           0A0 : 4C05;  -- 	OUT    SSEG2
+           0A1 : 14A1;  -- 	JUMP   Forever      ; Do this forever.
+           0A2 : DEAD;  -- DEAD: DW &HDEAD
+           0A3 : 4C02;  -- 	OUT    TIMER
+           0A4 : 4802;  -- 	IN     TIMER
+           0A5 : 4C07;  -- 	OUT    XLEDS       ; User-feedback that a pause is occurring.
+           0A6 : 37F6;  -- 	ADDI   -10         ; 1 second in 10Hz.
+           0A7 : 18A4;  -- 	JNEG   Wloop
+           0A8 : 4400;  -- 	RETURN
+           0A9 : 08B0;  -- 	STORE  WaitTime
+           0AA : 4C02;  -- 	OUT    Timer
+           0AB : 4802;  -- 	IN     Timer
+           0AC : 4C07;  -- 	OUT    XLEDS       ; User-feedback that a pause is occurring.
+           0AD : 10B0;  -- 	SUB    WaitTime
+           0AE : 18AB;  -- 	JNEG   WACLoop
+           0AF : 4400;  -- 	RETURN
+           0B0 : 0000;  -- 	WaitTime: DW 0     ; "local" variable.
+           0B1 : 40C9;  -- 	CALL   GetBattLvl
+           0B2 : 20B1;  -- 	JZERO  BattCheck   ; A/D hasn't had time to initialize
+           0B3 : 1125;  -- 	SUB    MinBatt
+           0B4 : 18B7;  -- 	JNEG   DeadBatt
+           0B5 : 0D25;  -- 	ADD    MinBatt     ; get original value back
+           0B6 : 4400;  -- 	RETURN
+           0B7 : 0507;  -- 	LOAD   Four
+           0B8 : 4C0A;  -- 	OUT    BEEP        ; start beep sound
+           0B9 : 40C9;  -- 	CALL   GetBattLvl  ; get the battery level
+           0BA : 4C04;  -- 	OUT    SSEG1       ; display it everywhere
+           0BB : 4C05;  -- 	OUT    SSEG2
+           0BC : 4C06;  -- 	OUT    LCD
+           0BD : 0503;  -- 	LOAD   Zero
+           0BE : 37FF;  -- 	ADDI   -1          ; 0xFFFF
+           0BF : 4C01;  -- 	OUT    LEDS        ; all LEDs on
+           0C0 : 4C07;  -- 	OUT    XLEDS
+           0C1 : 40A3;  -- 	CALL   Wait1       ; 1 second
+           0C2 : 0503;  -- 	Load   Zero
+           0C3 : 4C0A;  -- 	OUT    BEEP        ; stop beeping
+           0C4 : 0503;  -- 	LOAD   Zero
+           0C5 : 4C01;  -- 	OUT    LEDS        ; LEDs off
+           0C6 : 4C07;  -- 	OUT    XLEDS
+           0C7 : 40A3;  -- 	CALL   Wait1       ; 1 second
+           0C8 : 14B7;  -- 	JUMP   DeadBatt    ; repeat forever
+           0C9 : 0527;  -- 	LOAD   I2CRCmd     ; 0x0190 (write 0B, read 1B, addr 0x90)
+           0CA : 4C90;  -- 	OUT    I2C_CMD     ; to I2C_CMD
+           0CB : 4C92;  -- 	OUT    I2C_RDY     ; start the communication
+           0CC : 40D7;  -- 	CALL   BlockI2C    ; wait for it to finish
+           0CD : 4891;  -- 	IN     I2C_DATA    ; get the returned data
+           0CE : 4400;  -- 	RETURN
+           0CF : 40D7;  -- 	CALL   BlockI2C    ; wait for idle
+           0D0 : 0526;  -- 	LOAD   I2CWCmd     ; 0x1190 (write 1B, read 1B, addr 0x90)
+           0D1 : 4C90;  -- 	OUT    I2C_CMD     ; to I2C_CMD register
+           0D2 : 0503;  -- 	LOAD   Zero        ; 0x0000 (A/D port 0, no increment)
+           0D3 : 4C91;  -- 	OUT    I2C_DATA    ; to I2C_DATA register
+           0D4 : 4C92;  -- 	OUT    I2C_RDY     ; start the communication
+           0D5 : 40D7;  -- 	CALL   BlockI2C    ; wait for it to finish
+           0D6 : 4400;  -- 	RETURN
+           0D7 : 0503;  -- 	LOAD   Zero
+           0D8 : 0901;  -- 	STORE  Temp        ; Used to check for timeout
+           0D9 : 0501;  -- 	LOAD   Temp
+           0DA : 3401;  -- 	ADDI   1           ; this will result in ~0.1s timeout
+           0DB : 0901;  -- 	STORE  Temp
+           0DC : 20E0;  -- 	JZERO  I2CError    ; Timeout occurred; error
+           0DD : 4892;  -- 	IN     I2C_RDY     ; Read busy signal
+           0DE : 1CD9;  -- 	JPOS   BI2CL       ; If not 0, try again
+           0DF : 4400;  -- 	RETURN             ; Else return
+           0E0 : 0503;  -- 	LOAD   Zero
+           0E1 : 352C;  -- 	ADDI   &H12C       ; "I2C"
+           0E2 : 4C04;  -- 	OUT    SSEG1
+           0E3 : 4C05;  -- 	OUT    SSEG2       ; display error message
+           0E4 : 14E0;  -- 	JUMP   I2CError
+           0E5 : 08FA;  -- 	STORE  UARTTemp
+           0E6 : 3018;  -- 	SHIFT  -8
+           0E7 : 37E5;  -- 	ADDI   -27   ; escape character
+           0E8 : 20EC;  -- 	JZERO  UEsc1
+           0E9 : 341B;  -- 	ADDI   27
+           0EA : 4C98;  -- 	OUT    UART_DAT
+           0EB : 14EF;  -- 	JUMP   USend2
+           0EC : 341B;  -- 	ADDI   27
+           0ED : 4C98;  -- 	OUT    UART_DAT
+           0EE : 4C98;  -- 	OUT    UART_DAT
+           0EF : 04FA;  -- 	LOAD   UARTTemp
+           0F0 : 2516;  -- 	AND    LowByte
+           0F1 : 37E5;  -- 	ADDI   -27   ; escape character
+           0F2 : 20F6;  -- 	JZERO  UEsc2
+           0F3 : 341B;  -- 	ADDI   27
+           0F4 : 4C98;  -- 	OUT    UART_DAT
+           0F5 : 4400;  -- 	RETURN
+           0F6 : 341B;  -- 	ADDI   27
+           0F7 : 4C98;  -- 	OUT    UART_DAT
+           0F8 : 4C98;  -- 	OUT    UART_DAT
+           0F9 : 4400;  -- 	RETURN
+           0FA : 0000;  -- 	UARTTemp: DW 0
+           0FB : 0500;  -- 	LOAD   NL
+           0FC : 4C98;  -- 	OUT    UART_DAT
+           0FD : 3018;  -- 	SHIFT  -8
+           0FE : 4C98;  -- 	OUT    UART_DAT
+           0FF : 4400;  -- 	RETURN
+           100 : 0A1B;  -- 	NL: DW &H0A1B
+           101 : 0000;  -- Temp:     DW 0 ; "Temp" is not a great name, but can be useful
+           102 : FFFF;  -- NegOne:   DW -1
+           103 : 0000;  -- Zero:     DW 0
+           104 : 0001;  -- One:      DW 1
+           105 : 0002;  -- Two:      DW 2
+           106 : 0003;  -- Three:    DW 3
+           107 : 0004;  -- Four:     DW 4
+           108 : 0005;  -- Five:     DW 5
+           109 : 0006;  -- Six:      DW 6
+           10A : 0007;  -- Seven:    DW 7
+           10B : 0008;  -- Eight:    DW 8
+           10C : 0009;  -- Nine:     DW 9
+           10D : 000A;  -- Ten:      DW 10
+           10E : 0001;  -- Mask0:    DW &B00000001
+           10F : 0002;  -- Mask1:    DW &B00000010
+           110 : 0004;  -- Mask2:    DW &B00000100
+           111 : 0008;  -- Mask3:    DW &B00001000
+           112 : 0010;  -- Mask4:    DW &B00010000
+           113 : 0020;  -- Mask5:    DW &B00100000
+           114 : 0040;  -- Mask6:    DW &B01000000
+           115 : 0080;  -- Mask7:    DW &B10000000
+           116 : 00FF;  -- LowByte:  DW &HFF      ; binary 00000000 1111111
+           117 : 000F;  -- LowNibl:  DW &HF       ; 0000 0000 0000 1111
+           118 : 03C1;  -- OneMeter: DW 961       ; ~1m in 1.05mm units
+           119 : 01E1;  -- HalfMeter: DW 481      ; ~0.5m in 1.05mm units
+           11A : 024A;  -- TwoFeet:  DW 586       ; ~2ft in 1.05mm units
+           11B : 005A;  -- Deg90:    DW 90        ; 90 degrees in odometry units
+           11C : 00B4;  -- Deg180:   DW 180       ; 180
+           11D : 010E;  -- Deg270:   DW 270       ; 270
+           11E : 0168;  -- Deg360:   DW 360       ; can never actually happen; for math only
+           11F : 0064;  -- FSlow:    DW 100       ; 100 is about the lowest velocity value that will move
+           120 : FF9C;  -- RSlow:    DW -100
+           121 : 015E;  -- FMid:     DW 350       ; 350 is a medium speed
+           122 : FEA2;  -- RMid:     DW -350
+           123 : 01F4;  -- FFast:    DW 500       ; 500 is almost max speed (511 is max)
+           124 : FE0C;  -- RFast:    DW -500
+           125 : 0082;  -- MinBatt:  DW 130       ; 13.0V - minimum safe battery voltage
+           126 : 1190;  -- I2CWCmd:  DW &H1190    ; write one i2c byte, read one byte, addr 0x90
+           127 : 0190;  -- I2CRCmd:  DW &H0190    ; write nothing, read one byte, addr 0x90
+           128 : 0000;  -- localOut: DW 0
+           129 : 0003;  -- angMask:    DW &B0000000000000011
+           12A : 03FC;  -- coordMask:  DW &B0000001111111100
   END;

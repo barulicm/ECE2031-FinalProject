@@ -10,7 +10,7 @@ USE IEEE.NUMERIC_STD.ALL;
 ENTITY LOOKUP IS
 	PORT(
 		IO_DATA  : INOUT  STD_LOGIC_VECTOR(15 DOWNTO 0);
-		CS       : IN  STD_LOGIC;
+		CS,
 		IO_WRITE : IN  STD_LOGIC
 		);
 END LOOKUP;
@@ -80,6 +80,8 @@ ARCHITECTURE a OF LOOKUP IS
   
   signal cur: std_logic_vector(11 downto 0);
   signal ang: std_logic_vector(1 downto 0);
+  signal i: integer;
+  signal j: integer;
 
   BEGIN
 
@@ -95,14 +97,7 @@ ARCHITECTURE a OF LOOKUP IS
 
 	IO_OUT <= (CS AND NOT(IO_WRITE));
 
-	PROCESS(CS, IO_WRITE)
-      BEGIN
-        IF ((CS AND IO_WRITE) = '1') THEN
-          input <= IO_DATA(11 downto 0);
-        END IF;
-    END PROCESS;
-      
-      
+
     arr(0) <= c11;
     arr(1) <= c21;
     arr(2) <= c31;
@@ -148,23 +143,36 @@ ARCHITECTURE a OF LOOKUP IS
     arr2(16) <= C44a;
     arr2(17) <= C54a;
     arr2(18) <= C64a;
+
+
+	PROCESS(CS, IO_WRITE)
+      BEGIN
+        IF ((CS AND IO_WRITE) = '1') THEN
+          input <= IO_DATA(11 downto 0);
+          output <= x"0000";
+
+        L1: for i in 0 to 18 loop
+				ang <= "01"; --00 = 0 degrees, 01 = 90, 10 = 180, 11 = 270
+				cur <= std_logic_vector(arr(i));
+				for j in 0 to 3 loop
+					if (input and not(cur)) = "000000000000" then
+						output <= "000000" & arr2(i) & ang; --6 bits nothing, 8 bits x,y coord, 2 bits angle
+						exit L1;
+					end if;
+						
+					if ang = "11" then
+						ang <= "00";
+					end if;
+					ang <= ang + 1;
+						
+					cur <= cur(2 downto 0) & cur(11 downto 3); --right rotate by 3 bits
+				end loop;
+			end loop;
+		end if;
+    END PROCESS;
+      
+      
+
     
-    process(CS)
-	begin
-	if(CS = '0') then
- L1: for i in 0 to 18 loop
-		ang <= "01"; --00 = 0 degrees, 01 = 90, 10 = 180, 11 = 270
-		cur <= std_logic_vector(arr(i));
-		for j in 0 to 3 loop
-			if input = cur then
-				output <= "000000" & arr2(i) & ang; --6 bits nothing, 8 bits x,y coord, 2 bits angle
-				exit L1;
-			end if;
-			ang <= ang + 1;
-			cur <= std_logic_vector( rotate_right(unsigned(cur),3) );
-		end loop;
-	end loop;
-	end if;
-    end process;
 END a;
 
