@@ -61,22 +61,34 @@ Main: ; "Real" program starts here.
         
         LOADI 90
         CALL TurnLeft
+        LOADI 30
+        Call WaitAC
         LOAD TwoFeet
         Call Forward1
         LOADI 90
         CALL TurnLeft
+        LOADI 30
+        Call WaitAC
         LOAD TwoFeet
         Call Forward2
         LOADI 540
         CALL TurnLeft
+        LOADI 30
+        Call WaitAC
         LOAD TwoFeet
         Call Forward3
         LOADI 90
         CALL TurnRight
+        LOADI 30
+        Call WaitAC
         LOAD TwoFeet
         CALL Forward1
-        LOAD 630
+        LOADI 630
         CALL TurnRight
+        LOADI 30
+        Call WaitAC
+        LOADI 30
+        Call WaitAC
         
         ;LOAD 50
         ;Call WaitAC
@@ -284,43 +296,57 @@ TurnLeft:	;Theta goes Uup
 	STORE 	InAngTop
 LoopTL:		;Breaks turn into 160 degree segments
 	ADDI 	-160
-	JNEG	LastTR
+	JNEG	LastTL
 	STORE 	InAngTop
 	LOADI   160
 	Call    TR
 	LOAD	InAngTop
-	JUMP	LoopTR
+	JUMP	LoopTL
 LastTL:		;Last turn for angle is less than 160
 	ADDI	160
-	CALL	TR
+	CALL	TL
 	CALL    STOP
 	RETURN
 
 
 TL:
 	STORE	InAng
+	LOADI 0
+	OUT TIMER
 	IN		Theta
 	STORE   StAng
 	ADDI 	-180
 	JPOS	TL2
 TL1:
-	LOADI	100
+	LOADI	-200
 	OUT		LVELCMD
-	LOADI	-100
+	LOADI	200
 	OUT		RVELCMD
 	;Call Sonar
+	LOADI 10
+	OUT LCD
+	IN TIMER
+	ADDI -10
+	JNEG TL1
 	IN 		Theta
-	ADD		InAng
-	Sub	    StAng
-	JNEG	TLEnd
+	OUT SSEG1
+	SUB		InAng
+	SUB	    StAng
+	JPOS	TLEnd
 	JUMP	TL1
 TL2:
-	LOADI	100
+	LOADI	-200
 	OUT		LVELCMD
-	LOADI	-100
+	LOADI	200
 	OUT		RVELCMD
 	;Call Sonar
+	LOADI 11
+	OUT LCD
+	IN TIMER
+	ADDI -10
+	JNEG TL2
 	IN 		Theta
+	OUT SSEG1
 	ADDI	-180
 	JPOS	TL2N
 	ADDI	360
@@ -355,6 +381,8 @@ LastTR:
 
 TR:
 	STORE	InAng
+	LOADI 0
+	OUT TIMER
 	IN		Theta
 	STORE   StAng
 	ADDI 	-180
@@ -365,7 +393,13 @@ TR1:
 	LOADI	-100
 	OUT		RVELCMD
 	;Call Sonar
+	LOADI 11
+	OUT LCD
+	IN TIMER
+	ADDI -10
+	JNEG TR1
 	IN 		Theta
+	OUT SSEG1
 	ADD		InAng
 	SUB	    StAng
 	JNEG	TREnd
@@ -376,7 +410,14 @@ TR2:
 	LOADI	-100
 	OUT		RVELCMD
 	;Call Sonar
+	LOADI 11
+	OUT LCD
+	IN TIMER
+	ADDI -10
+	JNEG TR2
 	IN 		Theta
+	OUT SSEG1
+	
 	ADDI	-180
 	JNEG	TR2N
 	ADDI	-360
@@ -407,27 +448,38 @@ Forward3:
 	STORE	Speed
 	Jump	Forward
 Forward:
-	IN XPOS
-	STORE StX
-	IN YPOS
-	STORE StY
+
+	LOADI	0
+	OUT    RESETPOS
 F1:
-	IN YPOS
-	SUB StY
+	IN THETA
 	STORE DifY
+	ADDI -180
+	JNEG FY
+FR:
+	LOAD DifY
+	Sub 360
+	Store DifY
+FY:
 	LOAD Speed
-	ADD DifY
+	;ADD DifY
 	OUT LVELCMD
 	LOAD Speed
-	SUB DifY
+	;SUB DifY
 	OUT RVELCMD
+	;Call Sonar
+	LOADI 12
+	OUT LCD
 	In XPOS
+	OUT SSEG1
 	SUB StX
 	SUB InDistTop
+	OUT SSEG2
 	JPOS FEnd
 	JUMP F1
 	
 FEnd:
+	Call Stop
 	Return
 
 	
