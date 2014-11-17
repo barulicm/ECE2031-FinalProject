@@ -49,7 +49,8 @@ ARCHITECTURE a OF SCOMP IS
 		EX_OUT,
 		EX_OUT2,
 		EX_LOADI,
-		EX_RETI
+		EX_RETI,
+		EX_LOADA
 	);
 
 	TYPE STACK_TYPE IS ARRAY (0 TO 7) OF STD_LOGIC_VECTOR(9 DOWNTO 0);
@@ -89,7 +90,7 @@ BEGIN
 		wrcontrol_aclr_a => "NONE",
 		address_aclr_a   => "NONE",
 		outdata_aclr_a   => "NONE",
-		init_file        => "SimpleRobotProgram.mif",
+		init_file        => "planner.mif",
 		lpm_hint         => "ENABLE_RUNTIME_MOD=NO",
 		lpm_type         => "altsyncram"
 	)
@@ -131,6 +132,7 @@ BEGIN
 
 	WITH STATE SELECT MEM_ADDR <=
 		PC WHEN FETCH,
+		AC(9 DOWNTO 0) WHEN EX_LOADA,
 		IR(9 DOWNTO 0) WHEN OTHERS;
 
 	WITH STATE SELECT IO_CYCLE <=
@@ -240,6 +242,8 @@ BEGIN
 							STATE <= EX_RETI;
 						WHEN "010111" =>       -- LOADI
 							STATE <= EX_LOADI;
+						WHEN "011000" =>	   -- LOADA
+							STATE <= EX_LOADA;
 
 						WHEN OTHERS =>
 							STATE <= FETCH;      -- Invalid opcodes default to NOP
@@ -356,6 +360,10 @@ BEGIN
 					GIE   <= '1';      -- re-enable interrupts
 					PC    <= PC_SAVED; -- restore saved registers
 					AC    <= AC_SAVED;
+					STATE <= FETCH;
+					
+				WHEN EX_LOADA =>
+					AC    <= MDR;            -- Latch data from MDR (memory contents) to AC
 					STATE <= FETCH;
 
 				WHEN OTHERS =>

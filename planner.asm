@@ -1,0 +1,21 @@
+ORG		&H000
+
+LOAD	PATH_ADDR
+ADDI	3
+LOADA
+
+
+
+
+
+
+
+s_x:		DW	0
+S_Y:		DW	0
+E_X:		DW	0
+E_Y:		DW	0
+PATH_ADDR:	DW	&H100
+ORG			&H100
+PATH:		DW	0
+			DW	0
+			DW	1
