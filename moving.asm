@@ -59,11 +59,13 @@ Main: ; "Real" program starts here.
 	out LEDS
 		
         
-        LOAD 90
+        LOADI 90
+        OUT  SSEG2
         CALL TurnLeft
-        LOAD 50
+        LOADI 50
         Call WaitAC
-        LOAD 180
+        LOADI 180
+        OUT SSEG2
         CALL TurnLeft
         ;LOAD 50
         ;Call WaitAC
@@ -262,7 +264,8 @@ UARTNL:
 STOP:
 	Loadi	0
 	OUT		LVELCMD
-	OUT		RVELCMD	
+	OUT		RVELCMD
+	RETURN
 
 ;Load a desired angle between 0 - 180
 ;Call Turn Left
@@ -273,18 +276,24 @@ TurnLeft:	;Assumes Theta goes up.
 TLLOOP:
 	LOADI	-100
 	OUT		LVELCMD
+	LOADI	100
 	OUT		RVELCMD
+	LOAD	StAng
+	OUT 	SSEG1
+	LOAD	InAng
+	OUT 	SSEG2
 	IN 		Theta
+	OUT		LCD 
 	SUB 	StAng
-	JPOS	RChkA
+	JPOS	LChkA
 ;Correct Angle
 	STORE 	Temp
 	LOAD	StAng
 	SUB		Temp
 LChkA:
 	Sub		InAng
-	JNEG	TRLOOP
-	CALL	STOP
+	JNEG	TLLOOP
+	CALL STOP
 	RETURN
 
 ;Load a desired angle between 0 - 180
