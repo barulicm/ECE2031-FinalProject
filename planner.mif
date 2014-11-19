@@ -10,23 +10,32 @@ CONTENT
   BEGIN
     [000..3FF] : 0000;  -- Default to NOP
 
-           000 : 0410;  -- 	LOAD	PATH_ADDR
-           001 : 3403;  -- 	ADDI 	3
-           002 : 4C06;  -- 	OUT		LCD
-           003 : 6800;  -- 	SETTMP
-           004 : 6000;  -- 	LOADA
-           005 : 4C04;  -- 	OUT 	SSEG1
-           006 : 3403;  -- 	ADDI	3
-           007 : 6400;  -- 	STOREA
-           008 : 6C00;  -- 	READTMP
-           009 : 6000;  -- 	LOADA
-           00A : 4C05;  -- 	OUT 	SSEG2
-           00B : 140B;  -- L:	JUMP	L
-           00C : 0000;  -- s_x:		DW	0
-           00D : 0000;  -- S_Y:		DW	0
-           00E : 0000;  -- E_X:		DW	0
-           00F : 0000;  -- E_Y:		DW	0
-           010 : 0100;  -- PATH_ADDR:	DW	&H100
+           000 : 0415;  -- PlanPath:	LOAD	S_Y
+           001 : 37FF;  -- 			ADDI	-1
+           002 : 1C07;  -- 			JPOS	pp1
+           003 : 0417;  -- 			LOAD	E_Y
+           004 : 37FF;  -- 			ADDI	-1
+           005 : 1C0B;  -- 			JPOS	pp_cross
+           006 : 140E;  -- 			JUMP	pp_no_cross
+           007 : 0417;  -- 	pp1:	LOAD	E_Y
+           008 : 37FF;  -- 			ADDI	-1
+           009 : 1C0E;  -- 			JPOS	pp_no_cross
+           00A : 140B;  -- 			JUMP	pp_cross
+           00B : 5C01;  --   pp_cross: LOADI	&H1
+           00C : 0818;  -- 			STORE	cross_v
+           00D : 1411;  -- 			JUMP END
+           00E : 5C00;  -- pp_no_cross: LOADI &H0
+           00F : 0818;  -- 			 STORE	cross_v
+           010 : 1411;  -- 			 JUMP END
+           011 : 0418;  -- END:	LOAD	cross_v
+           012 : 4C06;  -- 		OUT		LCD
+           013 : 1413;  -- L:			JUMP L
+           014 : 0000;  -- S_X:		DW	0
+           015 : 0003;  -- S_Y:		DW	3
+           016 : 0000;  -- E_X:		DW	0
+           017 : 0000;  -- E_Y:		DW	0
+           018 : 0000;  -- cross_v:	DW	0
+           019 : 0100;  -- PATH_ADDR:	DW	&H100
            100 : 0000;  -- PATH:		DW	0
            101 : 0000;  -- 			DW	0
            102 : 0001;  -- 			DW	1

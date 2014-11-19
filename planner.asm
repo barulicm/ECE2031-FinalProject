@@ -41,28 +41,43 @@ YPOS:     EQU &HC1  ; Y-position
 THETA:    EQU &HC2  ; Current rotational position of robot (0-359)
 RESETPOS: EQU &HC3  ; write anything here to reset odometry to 0
 
-	LOAD	PATH_ADDR
-	ADDI 	3
-	OUT		LCD
-	SETTMP
-	LOADA
-	OUT 	SSEG1
-	ADDI	3
-	STOREA
-	READTMP
-	LOADA
-	OUT 	SSEG2
-L:	JUMP	L
+PlanPath:	LOAD	S_Y
+			ADDI	-1
+			JPOS	pp1
+			LOAD	E_Y
+			ADDI	-1
+			JPOS	pp_cross
+			JUMP	pp_no_cross
+	pp1:	LOAD	E_Y
+			ADDI	-1
+			JPOS	pp_no_cross
+			JUMP	pp_cross
+  pp_cross: LOADI	&H1
+			STORE	cross_v
+			JUMP END
+			LOAD	S_X
+			ADDI	-1
+			JPOS	pp_c_mvx
+			; move to E_Y
+			; move to E_X
+  pp_c_mvx: ; move to x = 1
+			; move to E_Y
+			; move to E_X
+pp_no_cross: LOADI &H0
+			 STORE	cross_v
+			 JUMP END
+			 
+END:	LOAD	cross_v
+		OUT		LCD
+			
+L:			JUMP L
 
-
-
-
-
-
-s_x:		DW	0
+S_X:		DW	0
 S_Y:		DW	0
+S_T:		DW	0
 E_X:		DW	0
 E_Y:		DW	0
+cross_v:	DW	0
 PATH_ADDR:	DW	&H100
 ORG			&H100
 PATH:		DW	0
