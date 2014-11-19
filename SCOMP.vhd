@@ -50,7 +50,11 @@ ARCHITECTURE a OF SCOMP IS
 		EX_OUT2,
 		EX_LOADI,
 		EX_RETI,
-		EX_LOADA
+		EX_LOADA,
+		EX_STOREA,
+		EX_STOREA2,
+		EX_SETTMP,
+		EX_READTMP
 	);
 
 	TYPE STACK_TYPE IS ARRAY (0 TO 7) OF STD_LOGIC_VECTOR(9 DOWNTO 0);
@@ -74,6 +78,7 @@ ARCHITECTURE a OF SCOMP IS
 	SIGNAL INT_REQ_SYNC : STD_LOGIC_VECTOR( 3 DOWNTO 0); -- registered version of INT_REQ
 	SIGNAL INT_ACK      : STD_LOGIC_VECTOR( 3 DOWNTO 0);
 	SIGNAL IN_HOLD      : STD_LOGIC;
+	SIGNAL TMP			: STD_LOGIC_VECTOR(15 DOWNTO 0);
 
 
 BEGIN
@@ -133,6 +138,8 @@ BEGIN
 	WITH STATE SELECT MEM_ADDR <=
 		PC WHEN FETCH,
 		AC(9 DOWNTO 0) WHEN EX_LOADA,
+		TMP(9 DOWNTO 0) WHEN EX_STOREA,
+		TMP(9 DOWNTO 0) WHEN EX_STOREA2,
 		IR(9 DOWNTO 0) WHEN OTHERS;
 
 	WITH STATE SELECT IO_CYCLE <=
@@ -158,6 +165,7 @@ BEGIN
 					STATE     <= FETCH;
 					IN_HOLD   <= '0';
 					INT_REQ_SYNC <= "0000";
+					TMP		  <= x"0000";	   -- Clear the TMP register
 
 				WHEN FETCH =>
 					MW    <= '0';       -- Clear memory write flag
@@ -244,6 +252,12 @@ BEGIN
 							STATE <= EX_LOADI;
 						WHEN "011000" =>	   -- LOADA
 							STATE <= EX_LOADA;
+						WHEN "011001" =>	   -- STOREA
+							STATE <= EX_STOREA;
+						WHEN "011010" =>	   -- SETTMP
+							STATE <= EX_SETTMP;
+						WHEN "011011" =>	   -- READTMP
+							STATE <= EX_READTMP;
 
 						WHEN OTHERS =>
 							STATE <= FETCH;      -- Invalid opcodes default to NOP
@@ -364,6 +378,22 @@ BEGIN
 					
 				WHEN EX_LOADA =>
 					AC    <= MDR;            -- Latch data from MDR (memory contents) to AC
+					STATE <= FETCH;
+					
+				WHEN EX_STOREA =>
+					MW <= '1';
+					STATE <= EX_STOREA2;
+					
+				WHEN EX_STOREA2 =>
+					MW <= '0';
+					STATE <= FETCH;
+					
+				WHEN EX_SETTMP =>
+					TMP <= AC;
+					STATE <= FETCH;
+					
+				WHEN EX_READTMP =>
+					AC <= TMP;
 					STATE <= FETCH;
 
 				WHEN OTHERS =>
