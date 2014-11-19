@@ -10,13 +10,25 @@ CONTENT
   BEGIN
     [000..3FF] : 0000;  -- Default to NOP
 
-           000 : 0407;  -- LOAD	PATH_ADDR
-           001 : 3403;  -- ADDI	3
-           002 : 0018;  -- LOADA
-           003 : 0000;  -- s_x:		DW	0
-           004 : 0000;  -- S_Y:		DW	0
-           005 : 0000;  -- E_X:		DW	0
-           006 : 0000;  -- E_Y:		DW	0
-           007 : 0100;  -- PATH_ADDR:	DW	&H100
+           000 : 0410;  -- 	LOAD	PATH_ADDR
+           001 : 3403;  -- 	ADDI 	3
+           002 : 4C06;  -- 	OUT		LCD
+           003 : 6800;  -- 	SETTMP
+           004 : 6000;  -- 	LOADA
+           005 : 4C04;  -- 	OUT 	SSEG1
+           006 : 3403;  -- 	ADDI	3
+           007 : 6400;  -- 	STOREA
+           008 : 6C00;  -- 	READTMP
+           009 : 6000;  -- 	LOADA
+           00A : 4C05;  -- 	OUT 	SSEG2
+           00B : 140B;  -- L:	JUMP	L
+           00C : 0000;  -- s_x:		DW	0
+           00D : 0000;  -- S_Y:		DW	0
+           00E : 0000;  -- E_X:		DW	0
+           00F : 0000;  -- E_Y:		DW	0
+           010 : 0100;  -- PATH_ADDR:	DW	&H100
            100 : 0000;  -- PATH:		DW	0
+           101 : 0000;  -- 			DW	0
+           102 : 0001;  -- 			DW	1
+           103 : 0002;  -- 			DW	2
   END;
