@@ -1,0 +1,157 @@
+-- Altera Memory Initialization File (MIF)
+
+DEPTH = 1024;
+WIDTH = 16;
+
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+
+CONTENT
+  BEGIN
+    [000..3FF] : 0000;  -- Default to NOP
+
+           000 : 045C;  -- 	load Zero
+           001 : 3603;  -- 	addi &B011000000011 ;wall distances 3,0,0,3 +x cw = coord: 1,1 ang: 0
+           002 : 400E;  -- 	call FindCoords
+           003 : 0464;  -- 	load hasFoundCoord
+           004 : 37FF;  -- 	addi -1
+           005 : 180B;  -- 	jneg coordNotFound
+           006 : 0465;  -- 	load coordFound
+           007 : 4C05;  -- 	out SSEG2
+           008 : 0466;  -- 	load angleFound
+           009 : 4C04;  -- 	out SSEG1
+           00A : 140D;  -- 	jump Stop
+           00B : 045D;  -- 	load DEAD
+           00C : 4C06;  -- 	out LCD
+           00D : 140D;  -- 	jump Stop
+           00E : 085E;  -- 	store wallDists
+           00F : 045F;  -- 	load numCoordsCount
+           010 : 045F;  -- 	load numCoordsCount
+           011 : 3401;  -- 	addi 1
+           012 : 085F;  -- 	store numCoordsCount
+           013 : 1060;  -- 	sub totalNumCoords
+           014 : 202E;  -- 	jzero loop1End
+           015 : 0468;  -- 	load wallDistArrayAddr
+           016 : 0C5F;  -- 	add numCoordsCount
+           017 : 6000;  -- 	loada
+           018 : 0867;  -- 	store curWallDist
+           019 : 0461;  -- 	load numShifts
+           01A : 3401;  -- 	addi 1
+           01B : 0861;  -- 	store numShifts
+           01C : 1062;  -- 	sub totalNumShifts
+           01D : 202A;  -- 	jzero loop2End
+           01E : 0467;  -- 	load curWallDist
+           01F : 105E;  -- 	sub wallDists
+           020 : 2036;  -- 	jzero foundWall
+           021 : 0467;  -- 	load curWallDist
+           022 : 4047;  -- 	call RightRotate3
+           023 : 0867;  -- 	store curWallDist
+           024 : 0463;  -- 	load angle
+           025 : 3401;  -- 	addi 1
+           026 : 0863;  -- 	store angle
+           027 : 3403;  -- 	addi 3
+           028 : 1C33;  -- 	jpos resetAngle
+           029 : 1419;  -- 	jump loop2
+           02A : 045C;  -- 	load Zero
+           02B : 0861;  -- 	store numShifts
+           02C : 0863;  -- 	store angle
+           02D : 1410;  -- 	jump loop1
+           02E : 045C;  -- 	load Zero
+           02F : 085F;  -- 	store numCoordsCount
+           030 : 5C00;  -- 	loadi 0
+           031 : 0864;  -- 	store hasFoundCoord
+           032 : 4400;  -- 	return
+           033 : 045C;  -- 	load Zero
+           034 : 0863;  -- 	store angle
+           035 : 1419;  -- 	jump loop2
+           036 : 0613;  -- 	load coordArrayAddr
+           037 : 0C5F;  -- 	add numCoordsCount
+           038 : 6000;  -- 	loada
+           039 : 0865;  -- 	store coordFound
+           03A : 0463;  -- 	load angle
+           03B : 0852;  -- 	store MultiplyB
+           03C : 5C5A;  -- 	loadi 90
+           03D : 0851;  -- 	store MultiplyA
+           03E : 4053;  -- 	call Multiply
+           03F : 0866;  -- 	store angleFound
+           040 : 5C01;  -- 	loadi 1
+           041 : 0864;  -- 	store hasFoundCoord
+           042 : 4400;  -- 	return
+           043 : 0007;  -- rotateMask: dw &B0000000000000111
+           044 : 0000;  -- origVal: dw 0
+           045 : 0000;  -- last3Bits: dw 0
+           046 : 0000;  -- shiftVal: dw 0
+           047 : 0844;  -- 	store origVal
+           048 : 2443;  -- 	and rotateMask
+           049 : 0845;  -- 	store last3Bits
+           04A : 0444;  -- 	load origVal
+           04B : 3013;  -- 	shift -3
+           04C : 0846;  -- 	store shiftVal
+           04D : 0445;  -- 	load last3Bits
+           04E : 3009;  -- 	shift 9
+           04F : 2846;  -- 	or shiftVal
+           050 : 4400;  -- 	return
+           051 : 0000;  -- MultiplyA: dw 0
+           052 : 0000;  -- MultiplyB: dw 0
+           053 : 0452;  -- 	load multiplyB
+           054 : 37FF;  -- 	addi -1
+           055 : 185A;  -- 	jneg multiplyEnd
+           056 : 0451;  -- 	load multiplyA
+           057 : 0C52;  -- 	add multiplyB
+           058 : 0851;  -- 	store multiplyA
+           059 : 1453;  -- 	jump multiplyHelper
+           05A : 0451;  -- 	load MultiplyA
+           05B : 4400;  -- 	return
+           05C : 0000;  -- Zero: dw 0
+           05D : DEAD;  -- DEAD: dw &HDEAD
+           05E : 0000;  -- wallDists: dw 0
+           05F : 0000;  -- numCoordsCount: dw 0
+           060 : 0013;  -- totalNumCoords: dw 19
+           061 : 0000;  -- numShifts: dw 0
+           062 : 0004;  -- totalNumShifts: dw 4
+           063 : 0001;  -- angle: dw &B01
+           064 : 0000;  -- hasFoundCoord: dw 0
+           065 : 0000;  -- coordFound: dw 0
+           066 : 0000;  -- angleFound: dw 0
+           067 : 0000;  -- curWallDist: dw 0
+           068 : 0200;  -- wallDistArrayAddr: dw &H200
+           200 : 06C0;  -- c11: dw &B011011000000 ; --3300
+           201 : 0681;  -- c21: dw &B011010000001 ; --3201
+           202 : 0242;  -- c31: dw &B001001000010 ; --1102
+           203 : 0203;  -- c41: dw &B001000000011 ; --1003
+           204 : 04C8;  -- c12: dw &B010011001000 ; --2310
+           205 : 0489;  -- c22: dw &B010010001001 ; --2211
+           206 : 004A;  -- c32: dw &B000001001010 ; --0112
+           207 : 000B;  -- c42: dw &B000000001011 ; --0013
+           208 : 0310;  -- c13: dw &B001100010000 ; --1420
+           209 : 02D1;  -- c23: dw &B001011010001 ; --1321
+           20A : 0282;  -- c33: dw &B001010000010 ; --1202
+           20B : 0243;  -- c43: dw &B001001000011 ; --1103
+           20C : 0204;  -- c53: dw &B001000000100 ; --1004
+           20D : 0158;  -- c14: dw &B000101011000 ; --0530
+           20E : 0119;  -- c24: dw &B000100011001 ; --0431
+           20F : 00CA;  -- c34: dw &B000011001010 ; --0312
+           210 : 008B;  -- c44: dw &B000010001011 ; --0213
+           211 : 004C;  -- c54: dw &B000001001100 ; --0114
+           212 : 0005;  -- c64: dw &B000000000101 ; --0005
+           213 : 0220;  -- coordArrayAddr: dw &H220
+           220 : 0011;  -- C11a: dw &B00010001
+           221 : 0021;  -- C21a: dw &B00100001
+           222 : 0031;  -- C31a: dw &B00110001
+           223 : 0041;  -- C41a: dw &B01000001
+           224 : 0012;  -- C12a: dw &B00010010
+           225 : 0022;  -- C22a: dw &B00100010
+           226 : 0032;  -- C32a: dw &B00110010
+           227 : 0042;  -- C42a: dw &B01000010
+           228 : 0013;  -- C13a: dw &B00010011
+           229 : 0023;  -- C23a: dw &B00100011
+           22A : 0033;  -- C33a: dw &B00110011
+           22B : 0043;  -- C43a: dw &B01000011
+           22C : 0053;  -- C53a: dw &B01010011
+           22D : 0014;  -- C14a: dw &B00010100
+           22E : 0024;  -- C24a: dw &B00100100
+           22F : 0034;  -- C34a: dw &B00110100
+           230 : 0044;  -- C44a: dw &B01000100
+           231 : 0054;  -- C54a: dw &B01010100
+           232 : 0064;  -- C64a: dw &B01100100
+  END;
