@@ -1,0 +1,94 @@
+-- Altera Memory Initialization File (MIF)
+
+DEPTH = 1024;
+WIDTH = 16;
+
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+
+CONTENT
+  BEGIN
+    [000..3FF] : 0000;  -- Default to NOP
+
+           000 : 044A;  -- 	load Zero
+           001 : 342D;  -- 	addi &B00101101 ; enable sonars 0,2,3,5
+           002 : 4CB2;  -- 	out SONAREN
+           003 : 04A8;  -- 	load DIST0
+           004 : 104C;  -- 	sub NoReading
+           005 : 2010;  -- 	jzero NoPing
+           006 : 04AA;  -- 	load DIST2
+           007 : 104C;  -- 	sub NoReading
+           008 : 2010;  -- 	jzero NoPing
+           009 : 04AB;  -- 	load DIST3
+           00A : 104C;  -- 	sub NoReading
+           00B : 2010;  -- 	jzero NoPing
+           00C : 04AD;  -- 	load DIST5
+           00D : 104C;  -- 	sub NoReading
+           00E : 2010;  -- 	jzero NoPing
+           00F : 1415;  -- 	jump PerpToWall 
+           010 : 044D;  -- 	load FSlow
+           011 : 4C83;  -- 	out LVELCMD
+           012 : 044E;  -- 	load RSlow
+           013 : 4C8B;  -- 	out RVELCMD
+           014 : 1403;  -- 	jump GetPerp
+           015 : 044A;  -- 	load Zero
+           016 : 4C83;  -- 	out LVELCMD
+           017 : 4C8B;  -- 	out RVELCMD
+           018 : 04A8;  -- 	load DIST0
+           019 : 403A;  -- 	call GetDistToWall
+           01A : 300C;  -- 	shift 12
+           01B : 2849;  -- 	or WallDistances
+           01C : 0849;  -- 	store WallDistances
+           01D : 4C06;  -- 	out LCD
+           01E : 04AA;  -- 	load DIST2
+           01F : 403A;  -- 	call GetDistToWall
+           020 : 3008;  -- 	shift 8
+           021 : 2849;  -- 	or WallDistances
+           022 : 0849;  -- 	store WallDistances
+           023 : 4C06;  -- 	out LCD
+           024 : 04AD;  -- 	load DIST5
+           025 : 403A;  -- 	call GetDistToWall
+           026 : 3004;  -- 	shift 4
+           027 : 2849;  -- 	or WallDistances
+           028 : 0849;  -- 	store WallDistances
+           029 : 4C06;  -- 	out LCD
+           02A : 4CC3;  -- 	out    RESETPOS
+           02B : 044E;  -- 	load RSlow
+           02C : 4C8B;  -- 	out RVELCMD
+           02D : 044D;  -- 	load FSlow
+           02E : 4C83;  -- 	out LVELCMD
+           02F : 48C2;  -- 	in THETA
+           030 : 1050;  -- 	sub Deg270
+           031 : 1C2B;  -- 	jpos turning
+           032 : 04AD;  -- 	load DIST5
+           033 : 403A;  -- 	call GetDistToWall
+           034 : 2849;  -- 	or WallDistances
+           035 : 0849;  -- 	store WallDistances
+           036 : 4C06;  -- 	out LCD
+           037 : 1437;  -- 	jump End
+           038 : 0000;  -- Count: dw 0
+           039 : 0000;  -- Value: dw 0
+           03A : 0839;  -- 	store Value
+           03B : 044A;  -- 	load Zero
+           03C : 0838;  -- 	store Count
+           03D : 0439;  -- 	load Value
+           03E : 104B;  -- 	sub TwoFeet
+           03F : 0839;  -- 	store Value
+           040 : 0438;  -- 	load Count
+           041 : 3401;  -- 	addi 1
+           042 : 0838;  -- 	store Count
+           043 : 0439;  -- 	load Value
+           044 : 1C3D;  -- 	jpos GetDistToWallHelper
+           045 : 203D;  -- 	jzero GetDistToWallHelper
+           046 : 0438;  -- 	load Count
+           047 : 37FF;  -- 	addi -1
+           048 : 4400;  -- 	return
+           049 : 0000;  -- WallDistances: dw 0
+           04A : 0000;  -- Zero:     DW 0
+           04B : 024A;  -- TwoFeet:  DW 586       ; ~2ft in 1.05mm units
+           04C : 7FFF;  -- NoReading: dw &H7FFF
+           04D : 0064;  -- FSlow:    DW 100       ; 100 is about the lowest velocity value that will move
+           04E : FF9C;  -- RSlow:    DW -100
+           04F : 005A;  -- Deg90:    DW 90        ; 90 degrees in odometry units
+           050 : 010E;  -- Deg270:   DW 270       ; 270
+  END;
