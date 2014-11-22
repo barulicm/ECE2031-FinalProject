@@ -1,8 +1,11 @@
 org &H000
-
+num: dw &H0603 ;1,1 angle 0
+num1: dw &H06C0 ;1,1 angle 1
+num2: dw &H00D8 ;1,1 angle 2
+num3: dw &H001B ;1,1 angle 3
+num4: dw &H0840 ;5,3 ang: 2
 Main:
-	load Zero
-	addi &B011000000011 ;wall distances 3,0,0,3 +x cw = coord: 1,1 ang: 0
+	load num4
 	call FindCoords
 	
 	load hasFoundCoord
@@ -16,8 +19,8 @@ Main:
 	jump Stop
 
 coordNotFound:
-	load DEAD
-	out LCD
+	load One
+	out LEDS
 
 Stop:
 	jump Stop
@@ -33,6 +36,7 @@ loop1:
 	load numCoordsCount
 	addi 1
 	store numCoordsCount
+	out SSEG1
 	sub totalNumCoords
 	jzero loop1End
 	
@@ -40,6 +44,11 @@ loop1:
 	add numCoordsCount
 	loada
 	store curWallDist
+	out LCD
+	load Zero
+	addi 2
+	out LEDS
+	
 	
 loop2:
 	load numShifts
@@ -52,13 +61,17 @@ loop2:
 	sub wallDists
 	jzero foundWall
 	
+	load Zero
+	addi 16
+	out LEDS
+
 	load curWallDist
 	call RightRotate3
 	store curWallDist
 	load angle
 	addi 1
 	store angle
-	addi 3
+	addi -3
 	jpos resetAngle
 	jump loop2
 	
@@ -81,19 +94,33 @@ resetAngle:
 	jump loop2
 	
 foundWall:
+	load Zero
+	addi 4
+	out LEDS
 	load coordArrayAddr
 	add numCoordsCount
 	loada
+	out LCD
 	store coordFound
 	
 	load angle
-	store MultiplyB
-	loadi 90
-	store MultiplyA
-	call Multiply
+	;store MultiplyB
+	;out LCD
+	;load Zero
+	;addi 90
+	;store MultiplyA
+	;call Multiply
+	;load MultiplyB
+	;out LCD
+	;call Wait1
+	;call Wait1
 	store angleFound
-	loadi 1
+	load Zero
+	addi 1
 	store hasFoundCoord
+	load Zero
+	addi 8
+	out LEDS
 	return
 ;FindCoords End==============================
 	
@@ -121,31 +148,50 @@ RightRotate3:
 ; try to put smaller value into B when calling
 MultiplyA: dw 0
 MultiplyB: dw 0
+multTemp: dw 0
 Multiply:
+	load MultiplyB
+	out SSEG1
+	load MultiplyA
+	out SSEG2
+	call Wait1
+	call Wait1
+	call Wait1
+	load MultiplyB
+	store multTemp
 multiplyHelper:
-	load multiplyB
-multLoop:
+	load multTemp
 	addi -1
+	store multTemp
 	jneg multiplyEnd
-	load multiplyA
-	add multiplyB
-	store multiplyA
+	load MultiplyA
+	add MultiplyA
+	store MultiplyA
 	jump multiplyHelper
 multiplyEnd:
 	load MultiplyA
 	return
 ; Multiply End===============================
 	
-	
+Wait1:
+	OUT    TIMER
+Wloop:
+	IN     TIMER
+	ADDI   -10         ; 1 second in 10Hz.
+	JNEG   Wloop
+	RETURN	
+
+
 Zero: dw 0
+One:      DW 1
 DEAD: dw &HDEAD
 	
 wallDists: dw 0
-numCoordsCount: dw 0
-totalNumCoords: dw 19
+numCoordsCount: dw -1
+totalNumCoords: dw 18
 numShifts: dw 0
-totalNumShifts: dw 4
-angle: dw &B01
+totalNumShifts: dw 5
+angle: dw &B00
 
 hasFoundCoord: dw 0
 coordFound: dw 0
@@ -154,25 +200,25 @@ angleFound: dw 0
 curWallDist: dw 0
 wallDistArrayAddr: dw &H200
 org &H200
-c11: dw &B011011000000 ; --3300
-c21: dw &B011010000001 ; --3201
-c31: dw &B001001000010 ; --1102
-c41: dw &B001000000011 ; --1003
-c12: dw &B010011001000 ; --2310
-c22: dw &B010010001001 ; --2211
-c32: dw &B000001001010 ; --0112
-c42: dw &B000000001011 ; --0013
-c13: dw &B001100010000 ; --1420
-c23: dw &B001011010001 ; --1321
-c33: dw &B001010000010 ; --1202
-c43: dw &B001001000011 ; --1103
-c53: dw &B001000000100 ; --1004
-c14: dw &B000101011000 ; --0530
-c24: dw &B000100011001 ; --0431
-c34: dw &B000011001010 ; --0312
-c44: dw &B000010001011 ; --0213
-c54: dw &B000001001100 ; --0114
-c64: dw &B000000000101 ; --0005
+c11: dw &H0603 ; --3300
+c21: dw &H0681 ; --3201
+c31: dw &h0242 ; --1102
+c41: dw &h0203 ; --1003
+c12: dw &h04C8 ; --2310
+c22: dw &h0489 ; --2211
+c32: dw &h004A ; --0112
+c42: dw &h000B ; --0013
+c13: dw &h0310 ; --1420
+c23: dw &h02D1 ; --1321
+c33: dw &h0282 ; --1202
+c43: dw &h0243 ; --1103
+c53: dw &h0204 ; --1004
+c14: dw &h0158 ; --0530
+c24: dw &h0119 ; --0431
+c34: dw &h00CA ; --0312
+c44: dw &h008B ; --0213
+c54: dw &h004C ; --0114
+c64: dw &h0005 ; --0005
 
 coordArrayAddr: dw &H220
 org &H220
@@ -199,3 +245,6 @@ C64a: dw &B01100100
 SSEG1:    EQU &H04  ; seven-segment display (4-digits only)
 SSEG2:    EQU &H05  ; seven-segment display (4-digits only)
 LCD:      EQU &H06  ; primitive 4-digit LCD display
+LEDS:     EQU &H01  ; red LEDs
+TIMER:    EQU &H02  ; timer, usually running at 10 Hz
+

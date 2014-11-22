@@ -10,85 +10,220 @@ CONTENT
   BEGIN
     [000..3FF] : 0000;  -- Default to NOP
 
-           000 : 044A;  -- 	load Zero
-           001 : 342D;  -- 	addi &B00101101 ; enable sonars 0,2,3,5
-           002 : 4CB2;  -- 	out SONAREN
-           003 : 04A8;  -- 	load DIST0
-           004 : 104C;  -- 	sub NoReading
-           005 : 2010;  -- 	jzero NoPing
-           006 : 04AA;  -- 	load DIST2
-           007 : 104C;  -- 	sub NoReading
-           008 : 2010;  -- 	jzero NoPing
-           009 : 04AB;  -- 	load DIST3
-           00A : 104C;  -- 	sub NoReading
-           00B : 2010;  -- 	jzero NoPing
-           00C : 04AD;  -- 	load DIST5
-           00D : 104C;  -- 	sub NoReading
-           00E : 2010;  -- 	jzero NoPing
-           00F : 1415;  -- 	jump PerpToWall 
-           010 : 044D;  -- 	load FSlow
-           011 : 4C83;  -- 	out LVELCMD
-           012 : 044E;  -- 	load RSlow
-           013 : 4C8B;  -- 	out RVELCMD
-           014 : 1403;  -- 	jump GetPerp
-           015 : 044A;  -- 	load Zero
-           016 : 4C83;  -- 	out LVELCMD
-           017 : 4C8B;  -- 	out RVELCMD
-           018 : 04A8;  -- 	load DIST0
-           019 : 403A;  -- 	call GetDistToWall
-           01A : 300C;  -- 	shift 12
-           01B : 2849;  -- 	or WallDistances
-           01C : 0849;  -- 	store WallDistances
-           01D : 4C06;  -- 	out LCD
-           01E : 04AA;  -- 	load DIST2
-           01F : 403A;  -- 	call GetDistToWall
-           020 : 3008;  -- 	shift 8
-           021 : 2849;  -- 	or WallDistances
-           022 : 0849;  -- 	store WallDistances
-           023 : 4C06;  -- 	out LCD
-           024 : 04AD;  -- 	load DIST5
-           025 : 403A;  -- 	call GetDistToWall
-           026 : 3004;  -- 	shift 4
-           027 : 2849;  -- 	or WallDistances
-           028 : 0849;  -- 	store WallDistances
-           029 : 4C06;  -- 	out LCD
-           02A : 4CC3;  -- 	out    RESETPOS
-           02B : 044E;  -- 	load RSlow
-           02C : 4C8B;  -- 	out RVELCMD
-           02D : 044D;  -- 	load FSlow
+           000 : 04B2;  -- 	LOAD   Zero
+           001 : 4C83;  -- 	OUT    LVELCMD     ; Stop motors
+           002 : 4C8B;  -- 	OUT    RVELCMD
+           003 : 4CB2;  -- 	OUT    SONAREN     ; Disable sonar (optional)
+           004 : 4099;  -- 	CALL   SetupI2C    ; Configure the I2C to read the battery voltage
+           005 : 407B;  -- 	CALL   BattCheck   ; Get battery voltage (and end if too low).
+           006 : 4C06;  -- 	OUT    LCD         ; Display batt voltage on LCD
+           007 : 4803;  -- 	IN     XIO         ; XIO contains SAFETY signal
+           008 : 24C1;  -- 	AND    Mask4       ; SAFETY signal is bit 4
+           009 : 1C0F;  -- 	JPOS   WaitForUser ; If ready, jump to wait for PB3
+           00A : 4802;  -- 	IN     TIMER       ; We'll use the timer value to
+           00B : 24BE;  -- 	AND    Mask1       ;  blink LED17 as a reminder to toggle SW17
+           00C : 3008;  -- 	SHIFT  8           ; Shift over to LED17
+           00D : 4C07;  -- 	OUT    XLEDS       ; LED17 blinks at 2.5Hz (10Hz/4)
+           00E : 1407;  -- 	JUMP   WaitForSafety
+           00F : 4802;  -- 	IN     TIMER       ; We'll blink the LEDs above PB3
+           010 : 24BE;  -- 	AND    Mask1
+           011 : 3005;  -- 	SHIFT  5           ; Both LEDG6 and LEDG7
+           012 : 08B0;  -- 	STORE  Temp        ; (overkill, but looks nice)
+           013 : 3001;  -- 	SHIFT  1
+           014 : 28B0;  -- 	OR     Temp
+           015 : 4C07;  -- 	OUT    XLEDS
+           016 : 4803;  -- 	IN     XIO         ; XIO contains KEYs
+           017 : 24BF;  -- 	AND    Mask2       ; KEY3 mask (KEY0 is reset and can't be read)
+           018 : 1C0F;  -- 	JPOS   WaitForUser ; not ready (KEYs are active-low, hence JPOS)
+           019 : 04B2;  -- 	LOAD   Zero
+           01A : 4C07;  -- 	OUT    XLEDS       ; clear LEDs once ready to continue
+           01B : 04B2;  -- 	load Zero
+           01C : 342D;  -- 	addi &B00101101 ; enable sonars 0,2,3,5
+           01D : 4CB2;  -- 	out SONAREN
+           01E : 48A8;  -- 	in DIST0
+           01F : 10AF;  -- 	sub NoReading
+           020 : 1C2D;  -- 	jpos NoPing
+           021 : 48AA;  -- 	in DIST2
+           022 : 4C04;  -- 	out SSEG1
+           023 : 10AF;  -- 	sub NoReading
+           024 : 1C2D;  -- 	jpos NoPing
+           025 : 48AB;  -- 	in DIST3
+           026 : 4C05;  -- 	out SSEG2
+           027 : 10AF;  -- 	sub NoReading
+           028 : 1C2D;  -- 	jpos NoPing
+           029 : 48AD;  -- 	in DIST5
+           02A : 10AF;  -- 	sub NoReading
+           02B : 1C2D;  -- 	jpos NoPing
+           02C : 1432;  -- 	jump PerpToWall 
+           02D : 04CF;  -- 	load FSlow
            02E : 4C83;  -- 	out LVELCMD
-           02F : 48C2;  -- 	in THETA
-           030 : 1050;  -- 	sub Deg270
-           031 : 1C2B;  -- 	jpos turning
-           032 : 04AD;  -- 	load DIST5
-           033 : 403A;  -- 	call GetDistToWall
-           034 : 2849;  -- 	or WallDistances
-           035 : 0849;  -- 	store WallDistances
-           036 : 4C06;  -- 	out LCD
-           037 : 1437;  -- 	jump End
-           038 : 0000;  -- Count: dw 0
-           039 : 0000;  -- Value: dw 0
-           03A : 0839;  -- 	store Value
-           03B : 044A;  -- 	load Zero
-           03C : 0838;  -- 	store Count
-           03D : 0439;  -- 	load Value
-           03E : 104B;  -- 	sub TwoFeet
-           03F : 0839;  -- 	store Value
-           040 : 0438;  -- 	load Count
-           041 : 3401;  -- 	addi 1
-           042 : 0838;  -- 	store Count
-           043 : 0439;  -- 	load Value
-           044 : 1C3D;  -- 	jpos GetDistToWallHelper
-           045 : 203D;  -- 	jzero GetDistToWallHelper
-           046 : 0438;  -- 	load Count
-           047 : 37FF;  -- 	addi -1
-           048 : 4400;  -- 	return
-           049 : 0000;  -- WallDistances: dw 0
-           04A : 0000;  -- Zero:     DW 0
-           04B : 024A;  -- TwoFeet:  DW 586       ; ~2ft in 1.05mm units
-           04C : 7FFF;  -- NoReading: dw &H7FFF
-           04D : 0064;  -- FSlow:    DW 100       ; 100 is about the lowest velocity value that will move
-           04E : FF9C;  -- RSlow:    DW -100
-           04F : 005A;  -- Deg90:    DW 90        ; 90 degrees in odometry units
-           050 : 010E;  -- Deg270:   DW 270       ; 270
+           02F : 04D0;  -- 	load RSlow
+           030 : 4C8B;  -- 	out RVELCMD
+           031 : 141E;  -- 	jump GetPerp
+           032 : 04B2;  -- 	load Zero
+           033 : 4C83;  -- 	out LVELCMD
+           034 : 4C8B;  -- 	out RVELCMD
+           035 : 48A8;  -- 	in DIST0
+           036 : 405E;  -- 	call GetDistToWall
+           037 : 300C;  -- 	shift 12
+           038 : 28AE;  -- 	or WallDistances
+           039 : 08AE;  -- 	store WallDistances
+           03A : 4C06;  -- 	out LCD
+           03B : 48AA;  -- 	in DIST2
+           03C : 405E;  -- 	call GetDistToWall
+           03D : 3008;  -- 	shift 8
+           03E : 28AE;  -- 	or WallDistances
+           03F : 08AE;  -- 	store WallDistances
+           040 : 4C06;  -- 	out LCD
+           041 : 48AD;  -- 	in DIST5
+           042 : 405E;  -- 	call GetDistToWall
+           043 : 3004;  -- 	shift 4
+           044 : 28AE;  -- 	or WallDistances
+           045 : 08AE;  -- 	store WallDistances
+           046 : 4C06;  -- 	out LCD
+           047 : 4CC3;  -- 	out    RESETPOS
+           048 : 04D0;  -- 	load RSlow
+           049 : 4C8B;  -- 	out RVELCMD
+           04A : 04CF;  -- 	load FSlow
+           04B : 4C83;  -- 	out LVELCMD
+           04C : 48C2;  -- 	in THETA
+           04D : 10CD;  -- 	sub Deg270
+           04E : 1C48;  -- 	jpos turning
+           04F : 48AD;  -- 	in DIST5
+           050 : 405E;  -- 	call GetDistToWall
+           051 : 28AE;  -- 	or WallDistances
+           052 : 08AE;  -- 	store WallDistances
+           053 : 4C06;  -- 	out LCD
+           054 : 04B2;  -- 	LOAD   Zero         ; Stop everything.
+           055 : 4C83;  -- 	OUT    LVELCMD
+           056 : 4C8B;  -- 	OUT    RVELCMD
+           057 : 4CB2;  -- 	OUT    SONAREN
+           058 : 045B;  -- 	LOAD   DEAD         ; An indication that we are dead
+           059 : 4C01;  -- 	OUT    LEDS
+           05A : 145A;  -- 	JUMP   Forever      ; Do this forever.
+           05B : DEAD;  -- DEAD: DW &HDEAD
+           05C : 0000;  -- Count: dw 0
+           05D : 0000;  -- Value: dw 0
+           05E : 085D;  -- 	store Value
+           05F : 04B2;  -- 	load Zero
+           060 : 085C;  -- 	store Count
+           061 : 045D;  -- 	load Value
+           062 : 10C9;  -- 	sub TwoFeet
+           063 : 085D;  -- 	store Value
+           064 : 045C;  -- 	load Count
+           065 : 3401;  -- 	addi 1
+           066 : 085C;  -- 	store Count
+           067 : 045D;  -- 	load Value
+           068 : 1C61;  -- 	jpos GetDistToWallHelper
+           069 : 2061;  -- 	jzero GetDistToWallHelper
+           06A : 045C;  -- 	load Count
+           06B : 37FF;  -- 	addi -1
+           06C : 4400;  -- 	return
+           06D : 4C02;  -- 	OUT    TIMER
+           06E : 4802;  -- 	IN     TIMER
+           06F : 4C07;  -- 	OUT    XLEDS       ; User-feedback that a pause is occurring.
+           070 : 37F6;  -- 	ADDI   -10         ; 1 second in 10Hz.
+           071 : 186E;  -- 	JNEG   Wloop
+           072 : 4400;  -- 	RETURN
+           073 : 087A;  -- 	STORE  WaitTime
+           074 : 4C02;  -- 	OUT    Timer
+           075 : 4802;  -- 	IN     Timer
+           076 : 4C07;  -- 	OUT    XLEDS       ; User-feedback that a pause is occurring.
+           077 : 107A;  -- 	SUB    WaitTime
+           078 : 1875;  -- 	JNEG   WACLoop
+           079 : 4400;  -- 	RETURN
+           07A : 0000;  -- 	WaitTime: DW 0     ; "local" variable.
+           07B : 4093;  -- 	CALL   GetBattLvl
+           07C : 207B;  -- 	JZERO  BattCheck   ; A/D hasn't had time to initialize
+           07D : 10D5;  -- 	SUB    MinBatt
+           07E : 1881;  -- 	JNEG   DeadBatt
+           07F : 0CD5;  -- 	ADD    MinBatt     ; get original value back
+           080 : 4400;  -- 	RETURN
+           081 : 04B6;  -- 	LOAD   Four
+           082 : 4C0A;  -- 	OUT    BEEP        ; start beep sound
+           083 : 4093;  -- 	CALL   GetBattLvl  ; get the battery level
+           084 : 4C04;  -- 	OUT    SSEG1       ; display it everywhere
+           085 : 4C05;  -- 	OUT    SSEG2
+           086 : 4C06;  -- 	OUT    LCD
+           087 : 04B2;  -- 	LOAD   Zero
+           088 : 37FF;  -- 	ADDI   -1          ; 0xFFFF
+           089 : 4C01;  -- 	OUT    LEDS        ; all LEDs on
+           08A : 4C07;  -- 	OUT    XLEDS
+           08B : 406D;  -- 	CALL   Wait1       ; 1 second
+           08C : 04B2;  -- 	Load   Zero
+           08D : 4C0A;  -- 	OUT    BEEP        ; stop beeping
+           08E : 04B2;  -- 	LOAD   Zero
+           08F : 4C01;  -- 	OUT    LEDS        ; LEDs off
+           090 : 4C07;  -- 	OUT    XLEDS
+           091 : 406D;  -- 	CALL   Wait1       ; 1 second
+           092 : 1481;  -- 	JUMP   DeadBatt    ; repeat forever
+           093 : 04D7;  -- 	LOAD   I2CRCmd     ; 0x0190 (write 0B, read 1B, addr 0x90)
+           094 : 4C90;  -- 	OUT    I2C_CMD     ; to I2C_CMD
+           095 : 4C92;  -- 	OUT    I2C_RDY     ; start the communication
+           096 : 40A0;  -- 	CALL   BlockI2C    ; wait for it to finish
+           097 : 4891;  -- 	IN     I2C_DATA    ; get the returned data
+           098 : 4400;  -- 	RETURN
+           099 : 40A0;  -- 	CALL   BlockI2C    ; wait for idle
+           09A : 04D6;  -- 	LOAD   I2CWCmd     ; 0x1190 (write 1B, read 1B, addr 0x90)
+           09B : 4C90;  -- 	OUT    I2C_CMD     ; to I2C_CMD register
+           09C : 04B2;  -- 	LOAD   Zero        ; 0x0000 (A/D port 0, no increment)
+           09D : 4C91;  -- 	OUT    I2C_DATA    ; to I2C_DATA register
+           09E : 4C92;  -- 	OUT    I2C_RDY     ; start the communication
+           09F : 40A0;  -- 	CALL   BlockI2C    ; wait for it to finish
+           0A0 : 04B2;  -- 	LOAD   Zero
+           0A1 : 08B0;  -- 	STORE  Temp        ; Used to check for timeout
+           0A2 : 04B0;  -- 	LOAD   Temp
+           0A3 : 3401;  -- 	ADDI   1           ; this will result in ~0.1s timeout
+           0A4 : 08B0;  -- 	STORE  Temp
+           0A5 : 20A9;  -- 	JZERO  I2CError    ; Timeout occurred; error
+           0A6 : 4892;  -- 	IN     I2C_RDY     ; Read busy signal
+           0A7 : 1CA2;  -- 	JPOS   BI2CL       ; If not 0, try again
+           0A8 : 4400;  -- 	RETURN             ; Else return
+           0A9 : 04B2;  -- 	LOAD   Zero
+           0AA : 352C;  -- 	ADDI   &H12C       ; "I2C"
+           0AB : 4C04;  -- 	OUT    SSEG1
+           0AC : 4C05;  -- 	OUT    SSEG2       ; display error message
+           0AD : 14A9;  -- 	JUMP   I2CError
+           0AE : 0000;  -- WallDistances: dw 0
+           0AF : 06DE;  -- NoReading: dw 1758
+           0B0 : 0000;  -- Temp:     DW 0 ; "Temp" is not a great name, but can be useful
+           0B1 : FFFF;  -- NegOne:   DW -1
+           0B2 : 0000;  -- Zero:     DW 0
+           0B3 : 0001;  -- One:      DW 1
+           0B4 : 0002;  -- Two:      DW 2
+           0B5 : 0003;  -- Three:    DW 3
+           0B6 : 0004;  -- Four:     DW 4
+           0B7 : 0005;  -- Five:     DW 5
+           0B8 : 0006;  -- Six:      DW 6
+           0B9 : 0007;  -- Seven:    DW 7
+           0BA : 0008;  -- Eight:    DW 8
+           0BB : 0009;  -- Nine:     DW 9
+           0BC : 000A;  -- Ten:      DW 10
+           0BD : 0001;  -- Mask0:    DW &B00000001
+           0BE : 0002;  -- Mask1:    DW &B00000010
+           0BF : 0004;  -- Mask2:    DW &B00000100
+           0C0 : 0008;  -- Mask3:    DW &B00001000
+           0C1 : 0010;  -- Mask4:    DW &B00010000
+           0C2 : 0020;  -- Mask5:    DW &B00100000
+           0C3 : 0040;  -- Mask6:    DW &B01000000
+           0C4 : 0080;  -- Mask7:    DW &B10000000
+           0C5 : 00FF;  -- LowByte:  DW &HFF      ; binary 00000000 1111111
+           0C6 : 000F;  -- LowNibl:  DW &HF       ; 0000 0000 0000 1111
+           0C7 : 03C1;  -- OneMeter: DW 961       ; ~1m in 1.05mm units
+           0C8 : 01E1;  -- HalfMeter: DW 481      ; ~0.5m in 1.05mm units
+           0C9 : 024A;  -- TwoFeet:  DW 586       ; ~2ft in 1.05mm units
+           0CA : 06DE;  -- SixFeet: DW 1758
+           0CB : 005A;  -- Deg90:    DW 90        ; 90 degrees in odometry units
+           0CC : 00B4;  -- Deg180:   DW 180       ; 180
+           0CD : 010E;  -- Deg270:   DW 270       ; 270
+           0CE : 0168;  -- Deg360:   DW 360       ; can never actually happen; for math only
+           0CF : 0064;  -- FSlow:    DW 100       ; 100 is about the lowest velocity value that will move
+           0D0 : FF9C;  -- RSlow:    DW -100
+           0D1 : 015E;  -- FMid:     DW 350       ; 350 is a medium speed
+           0D2 : FEA2;  -- RMid:     DW -350
+           0D3 : 01F4;  -- FFast:    DW 500       ; 500 is almost max speed (511 is max)
+           0D4 : FE0C;  -- RFast:    DW -500
+           0D5 : 0082;  -- MinBatt:  DW 130       ; 13.0V - minimum safe battery voltage
+           0D6 : 1190;  -- I2CWCmd:  DW &H1190    ; write one i2c byte, read one byte, addr 0x90
+           0D7 : 0190;  -- I2CRCmd:  DW &H0190    ; write nothing, read one byte, addr 0x90
   END;
