@@ -1,5 +1,10 @@
 org &H000
 
+minDist: dw &H7fff
+minDistAngle: dw 0
+curDist: dw 0
+wallDistances: dw 0
+
 Init:
 	; Always a good idea to make sure the robot
 	; stops in the event of a reset.
@@ -40,63 +45,57 @@ WaitForUser:
 
 Main:
 	load Zero
-	addi &B00101101 ; enable sonars 0,2,3,5
+	addi &B00000001 ; enable sonar 0
 	out SONAREN
 
-GetPerp:	
-	in DIST0
-	sub NoReading
-	jpos NoPing
-	
-	in DIST2
-	out SSEG1
-	sub NoReading
-	jpos NoPing
-	
-	in DIST3
-	out SSEG2
-	sub NoReading
-	jpos NoPing
-	
-	in DIST5
-	sub NoReading
-	jpos NoPing
-	jump PerpToWall 
-
-NoPing:
-	load FSlow
-	out LVELCMD
+SpinAndPing:
 	load RSlow
+	out LVELCMD
+	load FSlow
 	out RVELCMD
-	jump GetPerp
-
-PerpToWall:
+	
+	in THETA
+	addi -100	;angle to turn
+	jzero EndTurn
+	jpos EndTurn
+	
+	
+	in DIST0
+	store curDist
+	sub minDist
+	jpos SpinAndPing
+	jzero SpinAndPing
+	
+	load curDist
+	store minDist
+	in THETA
+	store minDistAngle
+	jump SpinAndPing
+	
+EndTurn:
 	load Zero
 	out LVELCMD
 	out RVELCMD
 	
+	call TurnToAngle
+	
+	load Zero
+	addi &B00100001 ; enable sonar 0
+	out SONAREN
+	
 	in DIST0
 	call GetDistToWall
-	shift 12
-	or WallDistances
-	store WallDistances
-	out LCD
-	
-	in DIST2
-	call GetDistToWall
-	shift 8
-	or WallDistances
-	store WallDistances
-	out LCD
+	or wallDistances
+	store wallDistances
 	
 	in DIST5
 	call GetDistToWall
-	shift 4
-	or WallDistances
-	store WallDistances
-	out LCD
+	shift 8
+	or wallDistances
+	store wallDistances
 	
-	out    RESETPOS
+	
+	out RESETPOS
 turning:	
 	load RSlow
 	out RVELCMD
@@ -106,11 +105,39 @@ turning:
 	sub Deg270
 	jpos turning
 ;turned 90degs
+	load   Zero
+	out    LVELCMD
+	out    RVELCMD
 
+	
+	in DIST0
+	call GetDistToWall
+	shift 12
+	or wallDistances
+	store wallDistances
+	
 	in DIST5
 	call GetDistToWall
-	or WallDistances
-	store WallDistances
+	shift 4
+	or wallDistances
+	store wallDistances
+	
+	
+	out RESETPOS
+turning2:	
+	load FSlow
+	out RVELCMD
+	load RSlow
+	out LVELCMD
+	in THETA
+	sub Deg90
+	jneg turning2
+;turned 90degs
+	load   Zero
+	out    LVELCMD
+	out    RVELCMD
+	
+	load wallDistances
 	out LCD
 	
 Die:
@@ -129,6 +156,26 @@ DEAD: DW &HDEAD
 
 
 ;Subroutines
+
+angleToTurnTo: dw 0
+TurnToAngle:
+	store angleToTurnTo
+tta:
+	in THETA
+	sub angleToTurnTo
+	jzero TurnComplete
+	load FSlow
+	out LVELCMD
+	load RSlow
+	out RVELCMD
+	jump tta
+	
+TurnComplete:
+	load Zero
+	out LVELCMD
+	out RVELCMD
+	return
+	
 
 Count: dw 0
 Value: dw 0
@@ -244,9 +291,7 @@ I2CError:
 	OUT    SSEG2       ; display error message
 	JUMP   I2CError
 	
-WallDistances: dw 0
-   ; ~2ft in 1.05mm units
-NoReading: dw 1758
+
 
 Temp:     DW 0 ; "Temp" is not a great name, but can be useful
 
@@ -337,4 +382,3 @@ XPOS:     EQU &HC0  ; Current X-position (read only)
 YPOS:     EQU &HC1  ; Y-position
 THETA:    EQU &HC2  ; Current rotational position of robot (0-359)
 RESETPOS: EQU &HC3  ; write anything here to reset odometry to 0
-LOCAL0:	  EQU &HC4	; Write wall distances get back coord and angle
