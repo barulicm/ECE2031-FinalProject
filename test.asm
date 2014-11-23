@@ -1,10 +1,5 @@
 org &H000
 
-minDist: dw &H7fff
-minDistAngle: dw 0
-curDist: dw 0
-wallDistances: dw 0
-
 Init:
 	; Always a good idea to make sure the robot
 	; stops in the event of a reset.
@@ -43,80 +38,17 @@ WaitForUser:
 	LOAD   Zero
 	OUT    XLEDS       ; clear LEDs once ready to continue
 
+	
 Main:
-	load Zero
-	addi &B00000001 ; enable sonar 0
-	out SONAREN
-	out RESETPOS
-
-SpinAndPing:
-	load RSlow
-	out LVELCMD
-	load FSlow
-	out RVELCMD
-	
-	in THETA
-	out LCD
-	addi -350	;angle to turn
-	jzero EndTurn
-	jpos EndTurn
-	
-	
-	in DIST0
-	store curDist
-	sub minDist
-	jpos SpinAndPing
-	jzero SpinAndPing
-	
-	load curDist
-	store minDist
-	in THETA
-	store minDistAngle
-	jump SpinAndPing
-	
-EndTurn:
-	load Zero
-	out LVELCMD
-	out RVELCMD
-	
-	load minDistAngle
-	call TurnToAngle
-	
+;Get perpendicular to a wall and measure all 4 wall distances by cells
 	load Zero
 	addi &B00100001 ; enable sonar 0
 	out SONAREN
-	
-	in DIST0
-	call GetDistToWall
-	or wallDistances
-	store wallDistances
-	
-	in DIST5
-	call GetDistToWall
-	shift 8
-	or wallDistances
-	store wallDistances
-	
-	
-	out RESETPOS
-turning:	
-	load RSlow
-	out RVELCMD
-	load FSlow
-	out LVELCMD
-	in THETA
-	sub Deg270
-	jpos turning
-;turned 90degs
-	load   Zero
-	out    LVELCMD
-	out    RVELCMD
 
-	
+l:	
 	in DIST0
 	call GetDistToWall
 	shift 12
-	or wallDistances
 	store wallDistances
 	
 	in DIST5
@@ -124,42 +56,143 @@ turning:
 	shift 4
 	or wallDistances
 	store wallDistances
-	
-	
+
 	out RESETPOS
-turning2:	
-	load FSlow
-	out RVELCMD
-	load RSlow
-	out LVELCMD
-	in THETA
-	sub Deg90
-	jneg turning2
-;turned 90degs
-	load   Zero
-	out    LVELCMD
-	out    RVELCMD
+	load Zero
+	addi 270
+	call TurnToAngle
 	
-	load wallDistances
+	call Wait1
+	
+	in DIST0
+	call GetDistToWall
+	shift 8
+	or wallDistances
+	store wallDistances
+	
+	in DIST5
+	call GetDistToWall
+	or wallDistances
+	store wallDistances
 	out LCD
 	
-Die:
-; Sometimes it's useful to permanently stop execution.
-; This will also catch the execution if it accidentally
-; falls through from above.
-	LOAD   Zero         ; Stop everything.
-	OUT    LVELCMD
-	OUT    RVELCMD
-	OUT    SONAREN
-	LOAD   DEAD         ; An indication that we are dead
-	OUT    LEDS
-Forever:
-	JUMP   Forever      ; Do this forever.
-DEAD: DW &HDEAD
+	call Wait1
+	call Wait1
+	call Wait1
+	call Wait1
+	jump l
 
 
-;Subroutines
+	
+	
+	
+;--Subroutines--
+;FindCoords Start=========================================
+FindCoords:
+	store wallDists
+	load numCoordsCount
+	
+loop1: 
+	load numCoordsCount
+	addi 1
+	store numCoordsCount
+	out SSEG1
+	sub totalNumCoords
+	jzero loop1End
+	
+	load wallDistArrayAddr
+	add numCoordsCount
+	loada
+	store curWallDist
+	out LCD
+	load Zero
+	addi 2
+	out LEDS
 
+	
+loop2:
+	load numShifts
+	addi 1
+	store numShifts
+	sub totalNumShifts
+	jzero loop2End
+	
+	load curWallDist
+	sub wallDists
+	jzero foundWall
+	
+	load Zero
+	addi 16
+	out LEDS
+
+	load curWallDist
+	call RightRotate3
+	store curWallDist
+	load angle
+	addi 1
+	store angle
+	addi -3
+	jpos resetAngle
+	jump loop2
+	
+loop2End:
+	load Zero
+	store numShifts
+	store angle
+	jump loop1
+	
+loop1End:
+	load Zero
+	store numCoordsCount
+	loadi 0
+	store hasFoundCoord
+	return
+	
+resetAngle:
+	load Zero
+	store angle
+	jump loop2
+	
+foundWall:
+	load Zero
+	addi 4
+	out LEDS
+	load coordArrayAddr
+	add numCoordsCount
+	loada
+	out LCD
+	store coordFound
+	
+	load angle
+	store angleFound
+	load Zero
+	addi 1
+	store hasFoundCoord
+	load Zero
+	addi 8
+	out LEDS
+	return
+;FindCoords End==============================
+
+;Right Rotate by 3 Start=====================
+rotateMask: dw &B0000000000000111
+origVal: dw 0
+last3Bits: dw 0
+shiftVal: dw 0
+RightRotate3:
+	store origVal
+	and rotateMask
+	store last3Bits
+	load origVal
+	shift -3
+	store shiftVal
+	load last3Bits
+	shift 9
+	or shiftVal
+	return
+;Right Rotate by 3 End=======================
+
+;Turn to a specific angle Start==============
 angleToTurnTo: dw 0
 TurnToAngle:
 	store angleToTurnTo
@@ -178,8 +211,9 @@ TurnComplete:
 	out LVELCMD
 	out RVELCMD
 	return
-	
+;Turn to a specific angle End================
 
+;Get dist to wall in cell units Start========
 Count: dw 0
 Value: dw 0
 GetDistToWall:
@@ -200,6 +234,7 @@ GetDistToWallHelper:
 	load Count
 	addi -1
 	return
+;Get dist to wall in cell units End==========
 
 Wait1:
 	OUT    TIMER
@@ -295,7 +330,7 @@ I2CError:
 	JUMP   I2CError
 	
 
-
+DEAD: dw &HDEAD
 Temp:     DW 0 ; "Temp" is not a great name, but can be useful
 
 NegOne:   DW -1
@@ -385,3 +420,64 @@ XPOS:     EQU &HC0  ; Current X-position (read only)
 YPOS:     EQU &HC1  ; Y-position
 THETA:    EQU &HC2  ; Current rotational position of robot (0-359)
 RESETPOS: EQU &HC3  ; write anything here to reset odometry to 0
+
+minDist: dw &H7fff
+minDistAngle: dw 0
+curDist: dw 0
+wallDistances: dw 0
+
+wallDists: dw 0
+numCoordsCount: dw -1
+totalNumCoords: dw 18
+numShifts: dw 0
+totalNumShifts: dw 5
+angle: dw &B00
+
+hasFoundCoord: dw 0
+coordFound: dw 0
+angleFound: dw 0
+
+curWallDist: dw 0
+wallDistArrayAddr: dw &H200
+org &H200
+c11: dw &H0603 ; --3300
+c21: dw &H0681 ; --3201
+c31: dw &h0242 ; --1102
+c41: dw &h0203 ; --1003
+c12: dw &h04C8 ; --2310
+c22: dw &h0489 ; --2211
+c32: dw &h004A ; --0112
+c42: dw &h000B ; --0013
+c13: dw &h0310 ; --1420
+c23: dw &h02D1 ; --1321
+c33: dw &h0282 ; --1202
+c43: dw &h0243 ; --1103
+c53: dw &h0204 ; --1004
+c14: dw &h0158 ; --0530
+c24: dw &h0119 ; --0431
+c34: dw &h00CA ; --0312
+c44: dw &h008B ; --0213
+c54: dw &h004C ; --0114
+c64: dw &h0005 ; --0005
+
+coordArrayAddr: dw &H220
+org &H220
+C11a: dw &B00010001
+C21a: dw &B00100001
+C31a: dw &B00110001
+C41a: dw &B01000001
+C12a: dw &B00010010
+C22a: dw &B00100010
+C32a: dw &B00110010
+C42a: dw &B01000010
+C13a: dw &B00010011
+C23a: dw &B00100011
+C33a: dw &B00110011
+C43a: dw &B01000011
+C53a: dw &B01010011
+C14a: dw &B00010100
+C24a: dw &B00100100
+C34a: dw &B00110100
+C44a: dw &B01000100
+C54a: dw &B01010100
+C64a: dw &B01100100
