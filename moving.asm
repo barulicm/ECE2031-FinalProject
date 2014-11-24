@@ -59,12 +59,37 @@ Main: ; "Real" program starts here.
 	out LEDS
 		
         
-        LOAD 90
+        LOADI 90
         CALL TurnLeft
-        LOAD 50
+        LOADI 30
         Call WaitAC
-        LOAD 180
+        LOAD TwoFeet
+        Call Forward1
+        LOADI 90
         CALL TurnLeft
+        LOADI 30
+        Call WaitAC
+        LOAD TwoFeet
+        Call Forward2
+        LOADI 540
+        CALL TurnLeft
+        LOADI 30
+        Call WaitAC
+        LOAD TwoFeet
+        Call Forward3
+        LOADI 90
+        CALL TurnRight
+        LOADI 30
+        Call WaitAC
+        LOAD TwoFeet
+        CALL Forward1
+        LOADI 630
+        CALL TurnRight
+        LOADI 30
+        Call WaitAC
+        LOADI 30
+        Call WaitAC
+        
         ;LOAD 50
         ;Call WaitAC
         Jump Die
@@ -262,60 +287,223 @@ UARTNL:
 STOP:
 	Loadi	0
 	OUT		LVELCMD
-	OUT		RVELCMD	
-
-;Load a desired angle between 0 - 180
-;Call Turn Left
-TurnLeft:	;Assumes Theta goes up.
-	STORE	InAng
-	IN		Theta
-	STORE   StAng
-TLLOOP:
-	LOADI	-100
-	OUT		LVELCMD
 	OUT		RVELCMD
-	IN 		Theta
-	SUB 	StAng
-	JPOS	RChkA
-;Correct Angle
-	STORE 	Temp
-	LOAD	StAng
-	SUB		Temp
-LChkA:
-	Sub		InAng
-	JNEG	TRLOOP
-	CALL	STOP
 	RETURN
 
-;Load a desired angle between 0 - 180
-;Call Turn Right
-TurnRight:	;Assumes Theta goes down.
+;Load a desired angle greater than 0;
+;Call Turn Left
+TurnLeft:	;Theta goes Uup
+	STORE 	InAngTop
+LoopTL:		;Breaks turn into 160 degree segments
+	ADDI 	-160
+	JNEG	LastTL
+	STORE 	InAngTop
+	LOADI   160
+	Call    TR
+	LOAD	InAngTop
+	JUMP	LoopTL
+LastTL:		;Last turn for angle is less than 160
+	ADDI	160
+	CALL	TL
+	CALL    STOP
+	RETURN
+
+
+TL:
 	STORE	InAng
+	LOADI 0
+	OUT TIMER
 	IN		Theta
 	STORE   StAng
-TRLOOP:
+	ADDI 	-180
+	JPOS	TL2
+TL1:
+	LOADI	-200
+	OUT		LVELCMD
+	LOADI	200
+	OUT		RVELCMD
+	;Call Sonar
+	LOADI 10
+	OUT LCD
+	IN TIMER
+	ADDI -10
+	JNEG TL1
+	IN 		Theta
+	OUT SSEG1
+	SUB		InAng
+	SUB	    StAng
+	JPOS	TLEnd
+	JUMP	TL1
+TL2:
+	LOADI	-200
+	OUT		LVELCMD
+	LOADI	200
+	OUT		RVELCMD
+	;Call Sonar
+	LOADI 11
+	OUT LCD
+	IN TIMER
+	ADDI -10
+	JNEG TL2
+	IN 		Theta
+	OUT SSEG1
+	ADDI	-180
+	JPOS	TL2N
+	ADDI	360
+TL2N:
+	ADDI	180
+	SUB		InAng
+	SUB	    StAng
+	JPOS	TLEnd
+	JUMP	TL2
+	
+TLEnd:
+	Return
+
+;Load a desired angle greater than 0
+;Call Turn Right
+TurnRight:	;Theta goes down.
+	STORE 	InAngTop
+LoopTR:
+	ADDI 	-160
+	JNEG	LastTR
+	STORE 	InAngTop
+	LOADI   160
+	Call    TR
+	LOAD	InAngTop
+	JUMP	LoopTR
+LastTR:	
+	ADDI	160
+	CALL	TR
+	CALL    STOP
+	RETURN
+
+
+TR:
+	STORE	InAng
+	LOADI 0
+	OUT TIMER
+	IN		Theta
+	STORE   StAng
+	ADDI 	-180
+	JNEG	TR2
+TR1:
 	LOADI	100
 	OUT		LVELCMD
+	LOADI	-100
 	OUT		RVELCMD
+	;Call Sonar
+	LOADI 11
+	OUT LCD
+	IN TIMER
+	ADDI -10
+	JNEG TR1
 	IN 		Theta
-	SUB 	StAng
-	JPOS	RChkA
-;Correct Angle
-	STORE 	Temp
-	LOAD	StAng
-	SUB		Temp
-RChkA:
-	Sub		InAng
-	JNEG	TRLOOP
-	CALL	STOP
-	RETURN
+	OUT SSEG1
+	ADD		InAng
+	SUB	    StAng
+	JNEG	TREnd
+	JUMP	TR1
+TR2:
+	LOADI	100
+	OUT		LVELCMD
+	LOADI	-100
+	OUT		RVELCMD
+	;Call Sonar
+	LOADI 11
+	OUT LCD
+	IN TIMER
+	ADDI -10
+	JNEG TR2
+	IN 		Theta
+	OUT SSEG1
+	
+	ADDI	-180
+	JNEG	TR2N
+	ADDI	-360
+TR2N:
+	ADDI	180
+	ADD		InAng
+	SUB	    StAng
+	JNEG	TREnd
+	JUMP	TR2
+	
+TREnd:
+	Return
+	
+	
+Forward1:
+	Store   InDistTop
+	LOADI	100
+	STORE	Speed
+	Jump	Forward
+Forward2:
+	Store   InDistTop
+	LOADI	250
+	STORE	Speed
+	Jump	Forward
+Forward3:
+	Store   InDistTop
+	LOADI	500
+	STORE	Speed
+	Jump	Forward
+Forward:
+
+	LOADI	0
+	OUT    RESETPOS
+F1:
+	IN THETA
+	STORE DifY
+	ADDI -180
+	JNEG FY
+FR:
+	LOAD DifY
+	Sub 360
+	Store DifY
+FY:
+	LOAD Speed
+	;ADD DifY
+	OUT LVELCMD
+	LOAD Speed
+	;SUB DifY
+	OUT RVELCMD
+	;Call Sonar
+	LOADI 12
+	OUT LCD
+	In XPOS
+	OUT SSEG1
+	SUB StX
+	SUB InDistTop
+	OUT SSEG2
+	JPOS FEnd
+	JUMP F1
+	
+FEnd:
+	Call Stop
+	Return
+
+	
+	
+	
+
+
+	
 
 ;***************************************************************
 ;* Variables
 ;***************************************************************
 Temp:     DW 0 ; "Temp" is not a great name, but can be useful
+
 InAng:	  DW 0
+InAngTop: DW 0
 StAng:	  DW 0
+
+InDistTop: DW 0
+InDist:	  DW 0
+StX:	  DW 0
+StY:	  DW 0
+DifY:	  DW 0
+Speed:	  DW 100
 ;***************************************************************
 ;* Constants
 ;* (though there is nothing stopping you from writing to these)
