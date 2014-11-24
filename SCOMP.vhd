@@ -54,7 +54,9 @@ ARCHITECTURE a OF SCOMP IS
 		EX_STOREA,
 		EX_STOREA2,
 		EX_SETTMP,
-		EX_READTMP
+		EX_READTMP,
+		EX_MUL,
+		EX_MULI
 	);
 
 	TYPE STACK_TYPE IS ARRAY (0 TO 7) OF STD_LOGIC_VECTOR(9 DOWNTO 0);
@@ -257,6 +259,10 @@ BEGIN
 							STATE <= EX_SETTMP;
 						WHEN "011011" =>	   -- READTMP
 							STATE <= EX_READTMP;
+						WHEN "011100" =>	   -- MUL
+							STATE <= EX_MUL;
+						WHEN "011101" =>	   -- MULI
+							STATE <= EX_MULI;
 
 						WHEN OTHERS =>
 							STATE <= FETCH;      -- Invalid opcodes default to NOP
@@ -393,6 +399,14 @@ BEGIN
 					
 				WHEN EX_READTMP =>
 					AC <= TMP;
+					STATE <= FETCH;
+					
+				WHEN EX_MUL =>
+					AC <= std_logic_vector(AC * MDR)(15 DOWNTO 0);
+					STATE <= FETCH;
+					
+				WHEN EX_MULI =>
+					AC <= std_logic_vector(AC * IR(9 DOWNTO 0))(15 DOWNTO 0);
 					STATE <= FETCH;
 
 				WHEN OTHERS =>
