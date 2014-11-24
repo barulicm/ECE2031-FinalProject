@@ -10,34 +10,108 @@ CONTENT
   BEGIN
     [000..3FF] : 0000;  -- Default to NOP
 
-           000 : 0415;  -- PlanPath:	LOAD	S_Y
-           001 : 37FF;  -- 			ADDI	-1
-           002 : 1C07;  -- 			JPOS	pp1
-           003 : 0417;  -- 			LOAD	E_Y
-           004 : 37FF;  -- 			ADDI	-1
-           005 : 1C0B;  -- 			JPOS	pp_cross
-           006 : 140E;  -- 			JUMP	pp_no_cross
-           007 : 0417;  -- 	pp1:	LOAD	E_Y
-           008 : 37FF;  -- 			ADDI	-1
-           009 : 1C0E;  -- 			JPOS	pp_no_cross
-           00A : 140B;  -- 			JUMP	pp_cross
-           00B : 5C01;  --   pp_cross: LOADI	&H1
-           00C : 0818;  -- 			STORE	cross_v
-           00D : 1411;  -- 			JUMP END
-           00E : 5C00;  -- pp_no_cross: LOADI &H0
-           00F : 0818;  -- 			 STORE	cross_v
-           010 : 1411;  -- 			 JUMP END
-           011 : 0418;  -- END:	LOAD	cross_v
-           012 : 4C06;  -- 		OUT		LCD
-           013 : 1413;  -- L:			JUMP L
-           014 : 0000;  -- S_X:		DW	0
-           015 : 0003;  -- S_Y:		DW	3
-           016 : 0000;  -- E_X:		DW	0
-           017 : 0000;  -- E_Y:		DW	0
-           018 : 0000;  -- cross_v:	DW	0
-           019 : 0100;  -- PATH_ADDR:	DW	&H100
-           100 : 0000;  -- PATH:		DW	0
-           101 : 0000;  -- 			DW	0
-           102 : 0001;  -- 			DW	1
-           103 : 0002;  -- 			DW	2
+           000 : 0001;  -- Mask0:    DW &B00000001
+           001 : 0002;  -- Mask1:    DW &B00000010
+           002 : 0004;  -- Mask2:    DW &B00000100
+           003 : 0008;  -- Mask3:    DW &B00001000
+           004 : 0010;  -- Mask4:    DW &B00010000
+           005 : 0020;  -- Mask5:    DW &B00100000
+           006 : 0040;  -- Mask6:    DW &B01000000
+           007 : 0080;  -- Mask7:    DW &B10000000
+           008 : 00FF;  -- LowByte:  DW &HFF      ; binary 00000000 1111111
+           009 : 000F;  -- LowNibl:  DW &HF       ; 0000 0000 0000 1111
+           00A : 03FF;  -- Low10Bits:		DW	&H03FF
+           00B : 0017;  -- Const_LOADI:	DW	&H17
+           00C : 0010;  -- Const_CALL:		DW	&H10
+           00D : 401D;  -- Main:		CALL	PlanPath
+           00E : 045E;  -- 			LOAD	PATH_ADDR
+           00F : 6800;  -- 			SETTMP
+           010 : 6C00;  -- 	loop:	READTMP
+           011 : 6000;  -- 			LOADA
+           012 : 4C06;  -- 			OUT		LCD
+           013 : 4803;  -- 	wait:	IN		XIO
+           014 : 2402;  -- 			AND		Mask2
+           015 : 4C01;  -- 			OUT		LEDS
+           016 : 1C13;  -- 			JPOS	wait
+           017 : 4803;  -- 	wait2:	IN		XIO
+           018 : 2402;  -- 			AND		Mask2
+           019 : 4C01;  -- 			OUT		LEDS
+           01A : 2017;  -- 			JZERO	wait2
+           01B : 404C;  -- 			CALL	INC_TMP
+           01C : 1410;  -- 			JUMP	loop
+           01D : 045E;  -- PlanPath:	LOAD	PATH_ADDR
+           01E : 6800;  -- 			SETTMP
+           01F : 045A;  -- 			LOAD	S_Y
+           020 : 37FF;  -- 			ADDI	-1
+           021 : 1C26;  -- 			JPOS	pp1
+           022 : 045D;  -- 			LOAD	E_Y
+           023 : 37FF;  -- 			ADDI	-1
+           024 : 1C2A;  -- 			JPOS	pp_cross
+           025 : 144B;  -- 			JUMP	pp_no_cross
+           026 : 045D;  -- 	pp1:	LOAD	E_Y
+           027 : 37FF;  -- 			ADDI	-1
+           028 : 1C4B;  -- 			JPOS	pp_no_cross
+           029 : 142A;  -- 			JUMP	pp_cross
+           02A : 0459;  --   pp_cross: LOAD	S_X
+           02B : 37FF;  -- 			ADDI	-1
+           02C : 1C4B;  -- 			JPOS	pp_c_mvx
+           02D : 045B;  -- 			LOAD	S_T 			; Turn ; move to E_Y
+           02E : 745A;  -- 			MULI	90
+           02F : 240A;  -- 			AND		Low10Bits
+           030 : 040B;  -- 			LOAD	Const_LOADI
+           031 : 3008;  -- 			SHIFT	8
+           032 : 4C05;  -- 		L2:	OUT		SSEG2
+           033 : 1432;  -- 			JUMP	L2
+           034 : 6400;  -- 			STOREA
+           035 : 404C;  -- 			CALL	INC_TMP
+           036 : 4050;  -- 			CALL 	pp_Add_TurnLeft
+           037 : 045A;  -- 			LOAD	S_Y				; move
+           038 : 105D;  -- 			SUB		E_Y
+           039 : 240A;  -- 			AND		Low10Bits
+           03A : 280B;  -- 			OR		Const_LOADI
+           03B : 6400;  -- 			STOREA
+           03C : 404C;  -- 			CALL	INC_TMP
+           03D : 4054;  -- 			CALL	pp_Add_Move	
+           03E : 5C5A;  -- 			LOADI	90	
+           03F : 280B;  -- 			OR		Const_LOADI			; Turn ; move to E_X  ( LOADI 90 )
+           040 : 6400;  -- 			STOREA
+           041 : 404C;  -- 			CALL	INC_TMP
+           042 : 4050;  -- 			CALL	pp_Add_TurnLeft
+           043 : 0459;  -- 			LOAD	S_X				; move
+           044 : 105C;  -- 			SUB		E_X
+           045 : 240A;  -- 			AND		Low10Bits
+           046 : 280B;  -- 			OR		Const_LOADI
+           047 : 6400;  -- 			STOREA
+           048 : 404C;  -- 			CALL	INC_TMP
+           049 : 4054;  -- 			CALL	pp_Add_Move
+           04A : 4400;  -- 			RETURN
+           04B : 144B;  -- pp_no_cross: JUMP	pp_no_cross
+           04C : 6C00;  -- INC_TMP:	READTMP
+           04D : 3401;  -- 			ADDI	1
+           04E : 6800;  -- 			SETTMP
+           04F : 4400;  -- 			RETURN
+           050 : 5C0C;  -- pp_Add_TurnLeft:	LOADI	Const_CALL ; Load the call instruction
+           051 : 6400;  -- 					STOREA
+           052 : 404C;  -- 					CALL	INC_TMP
+           053 : 4400;  -- 					RETURN
+           054 : 5C0C;  -- pp_Add_Move:		LOADI	Const_CALL ; Load the call instruction
+           055 : 6400;  -- 					STOREA
+           056 : 404C;  -- 					CALL	INC_TMP
+           057 : 4400;  -- 					RETURN
+           058 : 1458;  -- L:			JUMP	L
+           059 : 0000;  -- S_X:		DW	0
+           05A : 0000;  -- S_Y:		DW	0
+           05B : 0000;  -- S_T:		DW	0
+           05C : 0000;  -- E_X:		DW	0
+           05D : 0003;  -- E_Y:		DW	3
+           05E : 0100;  -- PATH_ADDR:	DW	&H100
+           100 : 0001;  -- PATH:		DW	1
+           101 : 0002;  -- 			DW	2
+           102 : 0003;  -- 			DW	3
+           103 : 0004;  -- 			DW	4
+           104 : 0005;  -- 			DW	5
+           105 : 0006;  -- 			DW	6
+           106 : 0007;  -- 			DW	7
+           107 : 0008;  -- 			DW	8
+           108 : 0009;  -- 			DW	9
   END;

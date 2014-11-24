@@ -40,8 +40,43 @@ XPOS:     EQU &HC0  ; Current X-position (read only)
 YPOS:     EQU &HC1  ; Y-position
 THETA:    EQU &HC2  ; Current rotational position of robot (0-359)
 RESETPOS: EQU &HC3  ; write anything here to reset odometry to 0
+; Some bit masks.
+; Masks of multiple bits can be constructed by ORing these
+; 1-bit masks together.
+Mask0:    DW &B00000001
+Mask1:    DW &B00000010
+Mask2:    DW &B00000100
+Mask3:    DW &B00001000
+Mask4:    DW &B00010000
+Mask5:    DW &B00100000
+Mask6:    DW &B01000000
+Mask7:    DW &B10000000
+LowByte:  DW &HFF      ; binary 00000000 1111111
+LowNibl:  DW &HF       ; 0000 0000 0000 1111
+Low10Bits:		DW	&H03FF
+Const_LOADI:	DW	&H17
+Const_CALL:		DW	&H10
 
-PlanPath:	LOAD	S_Y
+Main:		CALL	PlanPath
+			LOAD	PATH_ADDR
+			SETTMP
+	loop:	READTMP
+			LOADA
+			OUT		LCD
+	wait:	IN		XIO
+			AND		Mask2
+			OUT		LEDS
+			JPOS	wait
+	wait2:	IN		XIO
+			AND		Mask2
+			OUT		LEDS
+			JZERO	wait2
+			CALL	INC_TMP
+			JUMP	loop
+
+PlanPath:	LOAD	PATH_ADDR
+			SETTMP
+			LOAD	S_Y
 			ADDI	-1
 			JPOS	pp1
 			LOAD	E_Y
@@ -52,35 +87,83 @@ PlanPath:	LOAD	S_Y
 			ADDI	-1
 			JPOS	pp_no_cross
 			JUMP	pp_cross
-  pp_cross: LOADI	&H1
-			STORE	cross_v
-			JUMP END
-			LOAD	S_X
+  pp_cross: LOAD	S_X
 			ADDI	-1
 			JPOS	pp_c_mvx
-			; move to E_Y
-			; move to E_X
-  pp_c_mvx: ; move to x = 1
-			; move to E_Y
-			; move to E_X
-pp_no_cross: LOADI &H0
-			 STORE	cross_v
-			 JUMP END
-			 
-END:	LOAD	cross_v
-		OUT		LCD
-			
-L:			JUMP L
+			LOAD	S_T 			; Turn ; move to E_Y
+			MULI	90
+			AND		Low10Bits
+			LOAD	Const_LOADI
+			SHIFT	8
+		L2:	OUT		SSEG2
+			JUMP	L2
+			STOREA
+			CALL	INC_TMP
+			CALL 	pp_Add_TurnLeft
+			LOAD	S_Y				; move
+			SUB		E_Y
+			AND		Low10Bits
+			OR		Const_LOADI
+			STOREA
+			CALL	INC_TMP
+			CALL	pp_Add_Move	
+			LOADI	90	
+			OR		Const_LOADI			; Turn ; move to E_X  ( LOADI 90 )
+			STOREA
+			CALL	INC_TMP
+			CALL	pp_Add_TurnLeft
+			LOAD	S_X				; move
+			SUB		E_X
+			AND		Low10Bits
+			OR		Const_LOADI
+			STOREA
+			CALL	INC_TMP
+			CALL	pp_Add_Move
+			RETURN
+  pp_c_mvx: 				; Turn ; move to x = 1
+  							; move
+							; Turn ; move to E_Y
+							; move
+							; Turn ; move to E_X
+							; move
+pp_no_cross: JUMP	pp_no_cross
+
+; Increments the TMP register
+; Note: this will destroy the AC
+INC_TMP:	READTMP
+			ADDI	1
+			SETTMP
+			RETURN
+
+; Inserts a call to TurnLeft
+; Note: this will destroy the AC
+pp_Add_TurnLeft:	LOADI	Const_CALL ; Load the call instruction
+					STOREA
+					CALL	INC_TMP
+					RETURN
+
+; Inserts a call to Move
+; Note: this will destroy the AC
+pp_Add_Move:		LOADI	Const_CALL ; Load the call instruction
+					STOREA
+					CALL	INC_TMP
+					RETURN
+
+L:			JUMP	L
 
 S_X:		DW	0
 S_Y:		DW	0
 S_T:		DW	0
 E_X:		DW	0
-E_Y:		DW	0
-cross_v:	DW	0
+E_Y:		DW	3
 PATH_ADDR:	DW	&H100
 ORG			&H100
-PATH:		DW	0
-			DW	0
-			DW	1
+PATH:		DW	1
 			DW	2
+			DW	3
+			DW	4
+			DW	5
+			DW	6
+			DW	7
+			DW	8
+			DW	9
