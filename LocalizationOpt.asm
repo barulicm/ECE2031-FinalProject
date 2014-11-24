@@ -43,7 +43,7 @@ Main:
 ;Get perpendicular to a wall and measure all 4 wall distances by cells
 	load Zero
 	out RESETPOS
-	addi &B00000001 ; enable sonar 0
+	addi &B00100001 ; enable sonar 0
 	out SONAREN
 
 SpinAndPing:
@@ -53,22 +53,42 @@ SpinAndPing:
 	out RVELCMD
 	
 	in THETA
-	addi -350	;angle to turn
+	addi -190	;angle to turn
 	jzero EndTurn
 	jpos EndTurn
 	
-	
 	in DIST0
-	store curDist
+	store curDist0
+	in DIST5
+	store curDist5
+	sub curDist0
+	jpos dist0Smaller
+	jzero dist0Smaller
+	jneg dist5Smaller
+	
+	
+dist0Smaller:
+	load curDist0
 	sub minDist
 	jpos SpinAndPing
 	jzero SpinAndPing
-	
-	load curDist
+	load curDist0
 	store minDist
 	in THETA
 	store minDistAngle
 	jump SpinAndPing
+	
+dist5Smaller:
+	load curDist5
+	sub minDist
+	jpos SpinAndPing
+	jzero SpinAndPing
+	load curDist5
+	store minDist
+	in THETA
+	store minDistAngle
+	jump SpinAndPing
+	
 	
 EndTurn:
 	load Zero
@@ -78,16 +98,8 @@ EndTurn:
 	load minDistAngle
 	call TurnToAngle
 	
-	call Wait1
-	
 	load Zero
-	addi 32
-	out LEDS
-	call Wait1
-	call Wait1
-	
-	load Zero
-	addi &B00100001 ; enable sonar 0
+	addi &B00100001
 	out SONAREN
 	
 	call Wait1
@@ -98,7 +110,7 @@ EndTurn:
 	shift 9
 	store wallDistances
 	load t
-	shift 3
+	shift 12
 	store display
 	
 	in DIST5
@@ -108,7 +120,7 @@ EndTurn:
 	or wallDistances
 	store wallDistances
 	load t
-	shift 1
+	shift 4
 	or display
 	store display
 	
@@ -116,7 +128,7 @@ EndTurn:
 	out RESETPOS
 	load Zero
 	addi 270
-	call TurnToAngle
+	call TurnToAngle	;turn 90 degrees
 	
 	call Wait1
 
@@ -127,7 +139,7 @@ EndTurn:
 	or wallDistances
 	store wallDistances
 	load t
-	shift 2
+	shift 8
 	or display
 	store display
 	
@@ -140,67 +152,16 @@ EndTurn:
 	or display
 	store display
 	
-	call Wait1
-	
-	in DIST0
-	call GetDistToWall
-	store t
-	shift 9
-	store wallDistances
-	load t
-	shift 3
-	or display
-	store display
-	
-	in DIST5
-	call GetDistToWall
-	store t
-	shift 3
-	or wallDistances
-	store wallDistances
-	load t
-	shift 1
-	or display
-	store display
-	
-	
-	out RESETPOS
-	load Zero
-	addi 270
-	call TurnToAngle
-	
-	call Wait1
-
-	in DIST0
-	call GetDistToWall
-	store t
-	shift 6
-	or wallDistances
-	store wallDistances
-	load t
-	shift 2
-	or display
-	store display
-	
-	in DIST5
-	call GetDistToWall
-	store t
-	or wallDistances
-	store wallDistances
-	load t
-	or display
-	store display
+	load display
 	out LCD
 	
-	call Wait1
 
-	load Zero
-	call TurnToAngle
+;	load Zero
+;	call TurnToAngle
 	
-	
-	load wallDistances
 	
 ;Pass wall distances to FindCoords and output the cell and angle to sseg	
+	load wallDistances
 	call FindCoords
 	
 	
@@ -577,7 +538,8 @@ RESETPOS: EQU &HC3  ; write anything here to reset odometry to 0
 
 minDist: dw &H7fff
 minDistAngle: dw 0
-curDist: dw 0
+curDist0: dw 0
+curDist5: dw 0
 wallDistances: dw 0
 
 wallDists: dw 0
