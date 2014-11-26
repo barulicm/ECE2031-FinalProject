@@ -1,0 +1,8 @@
+// Forw(positive)
+// Does not work, seems to be a problem with Correction
+PreTh(t) = CurTh(t-1)
+CurTh = Theta
+DiffTh = CurTh - PreTh
+ChgTh(t) = ChgTh(t-1) + DiffTh
+Correction = 2 * ChgTh
+

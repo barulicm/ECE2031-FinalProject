@@ -20,251 +20,246 @@ CONTENT
            007 : 0080;  -- Mask7:    DW &B10000000
            008 : 00FF;  -- LowByte:  DW &HFF      ; binary 00000000 1111111
            009 : 000F;  -- LowNibl:  DW &HF       ; 0000 0000 0000 1111
-           00A : 400E;  -- Main:		CALL	PlanPath
-           00B : 5FFF;  -- 			LOADI	&HFFFF
-           00C : 4C05;  -- 			OUT		SSEG2
-           00D : 140D;  -- halt:		JUMP	halt
-           00E : 04FD;  -- PlanPath:	LOAD	S_Y
-           00F : 37FF;  -- 			ADDI	-1
-           010 : 1C15;  -- 			JPOS	pp1
-           011 : 0500;  -- 			LOAD	E_Y
-           012 : 37FF;  -- 			ADDI	-1
-           013 : 1C19;  -- 			JPOS	pp_cross
-           014 : 143C;  -- 			JUMP	pp_n_cross
-           015 : 0500;  -- 	pp1:	LOAD	E_Y
-           016 : 37FF;  -- 			ADDI	-1
-           017 : 1C3C;  -- 			JPOS	pp_n_cross
-           018 : 1419;  -- 			JUMP	pp_cross
-           019 : 04FC;  --   pp_cross: LOAD	S_X
-           01A : 37FF;  -- 			ADDI	-1
-           01B : 1C28;  -- 			JPOS	pp_c_mvx
-           01C : 04FE;  -- 			LOAD	S_T 			; Turn ; move to E_Y
-           01D : 745A;  -- 			MULI	90
-           01E : 404C;  -- 			CALL	TurnLeft
-           01F : 0500;  -- 			LOAD	E_Y				; move
-           020 : 10FD;  -- 			SUB		S_Y
-           021 : 40C2;  -- 			CALL	Forward1
-           022 : 5C5A;  -- 			LOADI	90				; Turn ; move to E_X  ( LOADI 90 )
-           023 : 404C;  -- 			Call	TurnLeft
-           024 : 04FF;  -- 			LOAD	E_X				; move
-           025 : 10FC;  -- 			SUB		S_X
-           026 : 40C2;  -- 			CALL	Forward1
-           027 : 4400;  -- 			RETURN
-           028 : 5CFF;  --   pp_c_mvx: LOADI	&HFF
-           029 : 4C04;  --   			OUT		SSEG1
-           02A : 04FE;  --   			LOAD	S_T				; Turn ; move to x = 1
-           02B : 37FF;  --   			ADDI	-1
-           02C : 745A;  --   			MULI	90
-           02D : 404C;  --   			CALL	TurnLeft
-           02E : 04FC;  --   			LOAD	S_X
-           02F : 37FF;  --   			ADDI	-1
-           030 : 40C2;  --   			CALL	Forward1		; move
-           031 : 5C5A;  -- 			LOADI	90				; Turn ; move to E_Y
-           032 : 404C;  -- 			CALL	TurnLeft
-           033 : 0500;  -- 			LOAD	E_Y				; move
-           034 : 10FD;  -- 			SUB		S_Y
-           035 : 40C2;  -- 			CALL	Forward1
-           036 : 5C5A;  -- 			LOADI	90
-           037 : 404C;  -- 			CALL	TurnLeft		; Turn ; move to E_X
-           038 : 04FF;  -- 			LOAD	E_X
-           039 : 10FC;  -- 			SUB		S_X
-           03A : 40C2;  -- 			CALL	Forward1		; move
-           03B : 4400;  -- 			RETURN
-           03C : 04FE;  -- pp_n_cross:	LOAD	S_T
-           03D : 745A;  -- 			MULI	90
-           03E : 404C;  -- 			CALL	TurnLeft
-           03F : 04FF;  -- 			LOAD	E_X
-           040 : 10FC;  -- 			SUB		S_X
-           041 : 40C2;  -- 			CALL	Forward1
-           042 : 5C5A;  -- 			LOADI	90
-           043 : 404C;  -- 			CALL	TurnLeft
-           044 : 0500;  -- 			LOAD	E_Y
-           045 : 10FD;  -- 			SUB		S_Y
-           046 : 40C2;  -- 			CALL	Forward1
-           047 : 4400;  -- 			RETURN
-           048 : 5C00;  -- 	Loadi	0
-           049 : 4C83;  -- 	OUT		LVELCMD
-           04A : 4C8B;  -- 	OUT		RVELCMD
-           04B : 4400;  -- 	RETURN
-           04C : 4C06;  -- 	OUT		LCD
-           04D : 5C0A;  -- 	LOADI	&HA
-           04E : 4C05;  -- 	OUT		SSEG2
-           04F : 40EB;  -- 	CALL	WaitForKey
-           050 : 4400;  -- 	RETURN
-           051 : 08F4;  -- 	STORE 	InAngTop
-           052 : 3760;  -- 	ADDI 	-160
-           053 : 1859;  -- 	JNEG	LastTL
-           054 : 08F4;  -- 	STORE 	InAngTop
-           055 : 5CA0;  -- 	LOADI   160
-           056 : 4098;  -- 	Call    TR
-           057 : 04F4;  -- 	LOAD	InAngTop
-           058 : 1452;  -- 	JUMP	LoopTL
-           059 : 34A0;  -- 	ADDI	160
-           05A : 405D;  -- 	CALL	TL
-           05B : 4048;  -- 	CALL    STOP
-           05C : 4400;  -- 	RETURN
-           05D : 08F3;  -- 	STORE	InAng
-           05E : 5C00;  -- 	LOADI 0
-           05F : 4C02;  -- 	OUT TIMER
-           060 : 48C2;  -- 	IN		Theta
-           061 : 08F5;  -- 	STORE   StAng
-           062 : 374C;  -- 	ADDI 	-180
-           063 : 1C73;  -- 	JPOS	TL2
-           064 : 5F38;  -- 	LOADI	-200
-           065 : 4C83;  -- 	OUT		LVELCMD
-           066 : 5CC8;  -- 	LOADI	200
-           067 : 4C8B;  -- 	OUT		RVELCMD
-           068 : 5C0A;  -- 	LOADI 10
-           069 : 4C06;  -- 	OUT LCD
-           06A : 4802;  -- 	IN TIMER
-           06B : 37F6;  -- 	ADDI -10
-           06C : 1864;  -- 	JNEG TL1
-           06D : 48C2;  -- 	IN 		Theta
-           06E : 4C04;  -- 	OUT SSEG1
-           06F : 10F3;  -- 	SUB		InAng
-           070 : 10F5;  -- 	SUB	    StAng
-           071 : 1C86;  -- 	JPOS	TLEnd
-           072 : 1464;  -- 	JUMP	TL1
-           073 : 5F38;  -- 	LOADI	-200
-           074 : 4C83;  -- 	OUT		LVELCMD
-           075 : 5CC8;  -- 	LOADI	200
-           076 : 4C8B;  -- 	OUT		RVELCMD
-           077 : 5C0B;  -- 	LOADI 11
-           078 : 4C06;  -- 	OUT LCD
-           079 : 4802;  -- 	IN TIMER
-           07A : 37F6;  -- 	ADDI -10
-           07B : 1873;  -- 	JNEG TL2
-           07C : 48C2;  -- 	IN 		Theta
-           07D : 4C04;  -- 	OUT SSEG1
-           07E : 374C;  -- 	ADDI	-180
-           07F : 1C81;  -- 	JPOS	TL2N
-           080 : 3568;  -- 	ADDI	360
-           081 : 34B4;  -- 	ADDI	180
-           082 : 10F3;  -- 	SUB		InAng
-           083 : 10F5;  -- 	SUB	    StAng
-           084 : 1C86;  -- 	JPOS	TLEnd
-           085 : 1473;  -- 	JUMP	TL2
-           086 : 4400;  -- 	Return
-           087 : 4C06;  -- 	OUT		LCD
-           088 : 5C0B;  -- 	LOADI	&HB
-           089 : 4C05;  -- 	OUT		SSEG2
-           08A : 40EB;  -- 	CALL	WaitForKey
-           08B : 4400;  -- 	RETURN
-           08C : 08F4;  -- 	STORE 	InAngTop
-           08D : 3760;  -- 	ADDI 	-160
-           08E : 1894;  -- 	JNEG	LastTR
-           08F : 08F4;  -- 	STORE 	InAngTop
-           090 : 5CA0;  -- 	LOADI   160
-           091 : 4098;  -- 	Call    TR
-           092 : 04F4;  -- 	LOAD	InAngTop
-           093 : 148D;  -- 	JUMP	LoopTR
-           094 : 34A0;  -- 	ADDI	160
-           095 : 4098;  -- 	CALL	TR
-           096 : 4048;  -- 	CALL    STOP
-           097 : 4400;  -- 	RETURN
-           098 : 08F3;  -- 	STORE	InAng
-           099 : 5C00;  -- 	LOADI 0
-           09A : 4C02;  -- 	OUT TIMER
-           09B : 48C2;  -- 	IN		Theta
-           09C : 08F5;  -- 	STORE   StAng
-           09D : 374C;  -- 	ADDI 	-180
-           09E : 18AE;  -- 	JNEG	TR2
-           09F : 5C64;  -- 	LOADI	100
-           0A0 : 4C83;  -- 	OUT		LVELCMD
-           0A1 : 5F9C;  -- 	LOADI	-100
-           0A2 : 4C8B;  -- 	OUT		RVELCMD
-           0A3 : 5C0B;  -- 	LOADI 11
-           0A4 : 4C06;  -- 	OUT LCD
-           0A5 : 4802;  -- 	IN TIMER
-           0A6 : 37F6;  -- 	ADDI -10
-           0A7 : 189F;  -- 	JNEG TR1
-           0A8 : 48C2;  -- 	IN 		Theta
-           0A9 : 4C04;  -- 	OUT SSEG1
-           0AA : 0CF3;  -- 	ADD		InAng
-           0AB : 10F5;  -- 	SUB	    StAng
-           0AC : 18C1;  -- 	JNEG	TREnd
-           0AD : 149F;  -- 	JUMP	TR1
-           0AE : 5C64;  -- 	LOADI	100
-           0AF : 4C83;  -- 	OUT		LVELCMD
-           0B0 : 5F9C;  -- 	LOADI	-100
-           0B1 : 4C8B;  -- 	OUT		RVELCMD
-           0B2 : 5C0B;  -- 	LOADI 11
-           0B3 : 4C06;  -- 	OUT LCD
-           0B4 : 4802;  -- 	IN TIMER
-           0B5 : 37F6;  -- 	ADDI -10
-           0B6 : 18AE;  -- 	JNEG TR2
-           0B7 : 48C2;  -- 	IN 		Theta
-           0B8 : 4C04;  -- 	OUT SSEG1
-           0B9 : 374C;  -- 	ADDI	-180
-           0BA : 18BC;  -- 	JNEG	TR2N
-           0BB : 3698;  -- 	ADDI	-360
-           0BC : 34B4;  -- 	ADDI	180
-           0BD : 0CF3;  -- 	ADD		InAng
-           0BE : 10F5;  -- 	SUB	    StAng
-           0BF : 18C1;  -- 	JNEG	TREnd
-           0C0 : 14AE;  -- 	JUMP	TR2
-           0C1 : 4400;  -- 	Return
-           0C2 : 4C06;  -- 	OUT		LCD
-           0C3 : 5C0C;  -- 	LOADI	&HC
-           0C4 : 4C05;  -- 	OUT		SSEG2
-           0C5 : 40EB;  -- 	CALL	WaitForKey
-           0C6 : 4400;  -- 	RETURN
-           0C7 : 08F6;  -- 	Store   InDistTop
-           0C8 : 5C64;  -- 	LOADI	100
-           0C9 : 08FB;  -- 	STORE	Speed
-           0CA : 14D3;  -- 	Jump	Forward
-           0CB : 08F6;  -- 	Store   InDistTop
-           0CC : 5CFA;  -- 	LOADI	250
-           0CD : 08FB;  -- 	STORE	Speed
-           0CE : 14D3;  -- 	Jump	Forward
-           0CF : 08F6;  -- 	Store   InDistTop
-           0D0 : 5DF4;  -- 	LOADI	500
-           0D1 : 08FB;  -- 	STORE	Speed
-           0D2 : 14D3;  -- 	Jump	Forward
-           0D3 : 5C00;  -- 	LOADI	0
-           0D4 : 4CC3;  -- 	OUT    RESETPOS
-           0D5 : 48C2;  -- 	IN THETA
-           0D6 : 08FA;  -- 	STORE DifY
-           0D7 : 374C;  -- 	ADDI -180
-           0D8 : 18DC;  -- 	JNEG FY
-           0D9 : 04FA;  -- 	LOAD DifY
-           0DA : 1168;  -- 	Sub 360
-           0DB : 08FA;  -- 	Store DifY
-           0DC : 04FB;  -- 	LOAD Speed
-           0DD : 4C83;  -- 	OUT LVELCMD
-           0DE : 04FB;  -- 	LOAD Speed
-           0DF : 4C8B;  -- 	OUT RVELCMD
-           0E0 : 5C0C;  -- 	LOADI 12
-           0E1 : 4C06;  -- 	OUT LCD
-           0E2 : 48C0;  -- 	In XPOS
-           0E3 : 4C04;  -- 	OUT SSEG1
-           0E4 : 10F8;  -- 	SUB StX
-           0E5 : 10F6;  -- 	SUB InDistTop
-           0E6 : 4C05;  -- 	OUT SSEG2
-           0E7 : 1CE9;  -- 	JPOS FEnd
-           0E8 : 14D5;  -- 	JUMP F1
-           0E9 : 4048;  -- 	Call Stop
-           0EA : 4400;  -- 	Return
-           0EB : 4803;  -- 	IN		XIO
-           0EC : 2402;  -- 	AND		Mask2
-           0ED : 1CEB;  -- 	JPOS	WaitForKey
-           0EE : 4803;  -- w2:	IN		XIO
-           0EF : 2402;  -- 	AND		Mask2
-           0F0 : 20EE;  -- 	JZERO	w2
-           0F1 : 4400;  -- 	RETURN
-           0F2 : 0000;  -- Temp:     DW 0 ; "Temp" is not a great name, but can be useful
-           0F3 : 0000;  -- InAng:	  DW 0
-           0F4 : 0000;  -- InAngTop: DW 0
-           0F5 : 0000;  -- StAng:	  DW 0
-           0F6 : 0000;  -- InDistTop: DW 0
-           0F7 : 0000;  -- InDist:	  DW 0
-           0F8 : 0000;  -- StX:	  DW 0
-           0F9 : 0000;  -- StY:	  DW 0
-           0FA : 0000;  -- DifY:	  DW 0
-           0FB : 0064;  -- Speed:	  DW 100
-           0FC : 0000;  -- S_X:		DW	0
-           0FD : 0000;  -- S_Y:		DW	0
-           0FE : 0000;  -- S_T:		DW	0
-           0FF : 0001;  -- E_X:		DW	1
-           100 : 0001;  -- E_Y:		DW	1
+           00A : 03C1;  -- OneMeter: DW 961       ; ~1m in 1.05mm units
+           00B : 01E1;  -- HalfMeter: DW 481      ; ~0.5m in 1.05mm units
+           00C : 024A;  -- TwoFeet:  DW 586       ; ~2ft in 1.05mm units
+           00D : 005A;  -- Deg90:    DW 90        ; 90 degrees in odometry units
+           00E : 00B4;  -- Deg180:   DW 180       ; 180
+           00F : 010E;  -- Deg270:   DW 270       ; 270
+           010 : 0168;  -- Deg360:   DW 360       ; can never actually happen; for math only
+           011 : 0064;  -- FSlow:    DW 100       ; 100 is about the lowest velocity value that will move
+           012 : FF9C;  -- RSlow:    DW -100
+           013 : 015E;  -- FMid:     DW 350       ; 350 is a medium speed
+           014 : FEA2;  -- RMid:     DW -350
+           015 : 01F4;  -- FFast:    DW 500       ; 500 is almost max speed (511 is max)
+           016 : FE0C;  -- RFast:    DW -500
+           017 : 40F0;  -- 			CALL	WaitForKey
+           018 : 040C;  -- 			LOAD	TwoFeet
+           019 : 40BB;  -- 			CALL	Forw
+           01A : 5FFF;  -- 			LOADI	&HFFFF
+           01B : 4C01;  -- 			OUT		LEDS
+           01C : 141C;  -- halt:		JUMP	halt
+           01D : 04F8;  -- PlanPath:	LOAD	S_Y
+           01E : 37FE;  -- 			ADDI	-2
+           01F : 1C24;  -- 			JPOS	pp1
+           020 : 04FB;  -- 			LOAD	E_Y
+           021 : 37FE;  -- 			ADDI	-2
+           022 : 1C28;  -- 			JPOS	pp_cross
+           023 : 144B;  -- 			JUMP	pp_n_cross
+           024 : 04FB;  -- 	pp1:	LOAD	E_Y
+           025 : 37FE;  -- 			ADDI	-2
+           026 : 1C4B;  -- 			JPOS	pp_n_cross
+           027 : 1428;  -- 			JUMP	pp_cross
+           028 : 04F7;  --   pp_cross: LOAD	S_X
+           029 : 37FE;  -- 			ADDI	-2
+           02A : 1C37;  -- 			JPOS	pp_c_mvx
+           02B : 04F9;  -- 			LOAD	S_T 			; Turn ; move to E_Y
+           02C : 745A;  -- 			MULI	90
+           02D : 408F;  -- 			CALL	Turn
+           02E : 04F8;  -- 			LOAD	S_Y				; move
+           02F : 10FB;  -- 			SUB		E_Y
+           030 : 40BB;  -- 			CALL	Forw
+           031 : 5C5A;  -- 			LOADI	90				; Turn ; move to E_X  ( LOADI 90 )
+           032 : 408F;  -- 			Call	Turn
+           033 : 04FA;  -- 			LOAD	E_X				; move
+           034 : 10F7;  -- 			SUB		S_X
+           035 : 40BB;  -- 			CALL	Forw
+           036 : 4400;  -- 			RETURN
+           037 : 5CFF;  --   pp_c_mvx: LOADI	&HFF
+           038 : 4C04;  --   			OUT		SSEG1
+           039 : 04F9;  --   			LOAD	S_T				; Turn ; move to x = 1
+           03A : 37FF;  --   			ADDI	-1
+           03B : 745A;  --   			MULI	90
+           03C : 408F;  --   			CALL	Turn
+           03D : 04F7;  --   			LOAD	S_X
+           03E : 37FE;  --   			ADDI	-2
+           03F : 40BB;  --   			CALL	Forw		; move
+           040 : 5C5A;  -- 			LOADI	90				; Turn ; move to E_Y
+           041 : 408F;  -- 			CALL	Turn
+           042 : 04F8;  -- 			LOAD	S_Y				; move
+           043 : 10FB;  -- 			SUB		E_Y
+           044 : 40BB;  -- 			CALL	Forw
+           045 : 5C5A;  -- 			LOADI	90
+           046 : 408F;  -- 			CALL	Turn			; Turn ; move to E_X
+           047 : 04FA;  -- 			LOAD	E_X
+           048 : 10F7;  -- 			SUB		S_X
+           049 : 40BB;  -- 			CALL	Forw		; move
+           04A : 4400;  -- 			RETURN
+           04B : 04F9;  -- pp_n_cross:	LOAD	S_T
+           04C : 745A;  -- 			MULI	90
+           04D : 408F;  -- 			CALL	Turn
+           04E : 04FA;  -- 			LOAD	E_X
+           04F : 10F7;  -- 			SUB		S_X
+           050 : 40BB;  -- 			CALL	Forw
+           051 : 5C5A;  -- 			LOADI	90
+           052 : 408F;  -- 			CALL	Turn
+           053 : 04F8;  -- 			LOAD	S_Y
+           054 : 10FB;  -- 			SUB		E_Y
+           055 : 40BB;  -- 			CALL	Forw
+           056 : 4400;  -- 			RETURN
+           057 : 5C00;  -- 	Loadi	0
+           058 : 4C83;  -- 	OUT		LVELCMD
+           059 : 4C8B;  -- 	OUT		RVELCMD
+           05A : 4CC3;  -- 	OUT 	RESETPOS
+           05B : 408A;  -- 	Call    ResetAngle
+           05C : 4400;  -- 	Return
+           05D : 04EA;  -- 	LOAD CurTh
+           05E : 08EB;  -- 	Store PreTh
+           05F : 48C2;  -- 	IN Theta
+           060 : 08EA;  -- 	Store CurTh
+           061 : 10EB;  -- 	Sub PreTh
+           062 : 08EC;  -- 	Store DifTh
+           063 : 379C;  -- 	ADDI -100
+           064 : 1C68;  -- 	JPOS C>100
+           065 : 34C8;  -- 	ADDI 200
+           066 : 186B;  -- 	JNeg C<-100
+           067 : 146E;  -- 	JUMP C~0
+           068 : 379C;  -- 	ADDI -100
+           069 : 08EC;  -- 	Store DifTh
+           06A : 146E;  -- 	Jump C~0
+           06B : 3464;  -- 	ADDI 100
+           06C : 08EC;  -- 	Store DifTh
+           06D : 146E;  -- 	Jump C~0
+           06E : 04ED;  -- 	Load ChgTh
+           06F : 0CEC;  -- 	Add DifTh
+           070 : 08ED;  -- 	Store ChgTh
+           071 : 0CED;  -- 	Add ChgTh
+           072 : 08EE;  -- 	Store Correction ;Used in forward. Plus or minus (2 * delta theta)
+           073 : 04E9;  -- 	Load InAngle
+           074 : 10ED;  -- 	Sub ChgTh
+           075 : 3670;  -- 	ADDI -400
+           076 : 1C7F;  -- 	JPOS C-500
+           077 : 04E9;  -- 	Load InAngle
+           078 : 10ED;  -- 	Sub ChgTh
+           079 : 3590;  -- 	ADDI 400
+           07A : 187F;  -- 	JNeg C-500
+           07B : 04E9;  -- 	Load InAngle
+           07C : 10ED;  -- 	Sub ChgTh
+           07D : 1881;  -- 	JNeg Cneg
+           07E : 1487;  -- 	Jump Cpos
+           07F : 5DF4;  -- 	LOADI 500
+           080 : 1488;  -- 	Jump Cang
+           081 : 04E9;  -- 	LOAD InAngle
+           082 : 10ED;  -- 	Sub ChgTh
+           083 : 1C87;  -- 	JPos Cpos
+           084 : 08DD;  -- 	Store Temp
+           085 : 5C00;  -- 	LoadI 0
+           086 : 10DD;  -- 	Sub Temp
+           087 : 3464;  -- 	ADDI 100
+           088 : 08EF;  -- 	Store TurnSpeed ;Always Positive, between 0 and 500;
+           089 : 4400;  -- 	return
+           08A : 5C00;  -- 	LoadI 0
+           08B : 08EA;  -- 	Store CurTh
+           08C : 5C00;  -- 	LoadI 0
+           08D : 08ED;  -- 	Store ChgTh
+           08E : 4400;  -- 	Return
+           08F : 08E9;  -- 	Store InAngle
+           090 : 18AE;  -- 	JNEG TurnRLoop
+           091 : 1C9A;  -- 	JPOS TurnLLoop
+           092 : 4057;  -- 	Call Stop
+           093 : 4400;  -- 	return
+           094 : 08E9;  -- 	Store InAngle
+           095 : 1C9A;  -- 	JPos TurnLLoop ;Turning left increase theta, so InAngle must be positive.
+           096 : 5C00;  -- 	LoadI 0		   ;If it is not positive, it is negated.
+           097 : 10E9;  -- 	Sub InAngle
+           098 : 08E9;  -- 	Store InAngle
+           099 : 4057;  -- 	Call Stop	   ;To reset variables
+           09A : 405D;  -- 	Call UpdateAngle
+           09B : 5C00;  -- 	Loadi 0
+           09C : 10EF;  -- 	Sub TurnSpeed
+           09D : 4C83;  -- 	Out LVELCMD
+           09E : 5C00;  -- 	Loadi 0
+           09F : 04EF;  -- 	Load TurnSpeed
+           0A0 : 4C8B;  -- 	Out RVELCMD
+           0A1 : 04ED;  -- 	Load ChgTh
+           0A2 : 4C04;  -- 	Out SSEG1
+           0A3 : 10E9;  -- 	Sub InAngle
+           0A4 : 4C05;  -- 	Out SSeg2
+           0A5 : 189A;  -- 	JNEG TurnLLoop
+           0A6 : 4057;  -- 	Call Stop 
+           0A7 : 4400;  -- 	return
+           0A8 : 08E9;  -- 	Store InAngle
+           0A9 : 18AE;  -- 	JNeg TurnRLoop ;Turning right decreases theta, so InAngle must be negative.
+           0AA : 5C00;  -- 	LoadI 0		   ;If it is not negative, it is negated.
+           0AB : 10E9;  -- 	Sub InAngle
+           0AC : 08E9;  -- 	Store InAngle
+           0AD : 4057;  -- 	Call Stop 	   ;To reset variables
+           0AE : 405D;  -- 	Call UpdateAngle
+           0AF : 04EF;  -- 	Load TurnSpeed
+           0B0 : 4C83;  -- 	Out LVELCMD
+           0B1 : 5C00;  -- 	Loadi 0
+           0B2 : 10EF;  -- 	Sub TurnSpeed
+           0B3 : 4C8B;  -- 	Out RVELCMD
+           0B4 : 04ED;  -- 	Load ChgTh
+           0B5 : 4C04;  -- 	Out SSeg1
+           0B6 : 10E9;  -- 	Sub InAngle
+           0B7 : 4C05;  -- 	Out SSeg2
+           0B8 : 1CAE;  -- 	JPOS TurnRLoop
+           0B9 : 4057;  -- 	Call Stop
+           0BA : 4400;  -- 	return
+           0BB : 08E3;  -- 	Store InDist
+           0BC : 4057;  -- 	Call Stop	   ;To reset variables
+           0BD : 4880;  -- 	In LPOS
+           0BE : 08E4;  -- 	Store StX
+           0BF : 04E3;  -- 	Load InDist
+           0C0 : 18D0;  -- 	JNEG Backward
+           0C1 : 405D;  -- 	Call UpdateAngle
+           0C2 : 5CC8;  -- 	LOADI 200   	;200 is the speed. Can be changed.
+           0C3 : 0CEE;  -- 	Add Correction
+           0C4 : 4C83;  -- 	Out LVELCMD
+           0C5 : 04EE;  -- 	LOAD Correction
+           0C6 : 4C05;  -- 	OUT	SSEG2
+           0C7 : 5CC8;  -- 	Loadi 200
+           0C8 : 10EE;  -- 	Sub Correction
+           0C9 : 4C8B;  -- 	Out RVELCMD
+           0CA : 4880;  -- 	In LPOS
+           0CB : 10E4;  -- 	Sub StX
+           0CC : 10E3;  -- 	Sub InDist
+           0CD : 18C1;  -- 	JNeg Onward
+           0CE : 4057;  -- 	Call Stop
+           0CF : 4400;  -- 	return
+           0D0 : 405D;  -- 	Call UpdateAngle
+           0D1 : 5F38;  -- 	LOADI -200   	;200 is the speed. Can be changed.
+           0D2 : 0CEE;  -- 	Add Correction
+           0D3 : 4C83;  -- 	Out LVELCMD
+           0D4 : 5F38;  -- 	Loadi -200
+           0D5 : 10EE;  -- 	Sub Correction
+           0D6 : 4C8B;  -- 	Out RVELCMD
+           0D7 : 4880;  -- 	In LPOS
+           0D8 : 10E4;  -- 	Sub StX
+           0D9 : 10E3;  -- 	Sub InDist
+           0DA : 18D0;  -- 	JNeg Backward
+           0DB : 4057;  -- 	Call Stop
+           0DC : 4400;  -- 	return
+           0DD : 0000;  -- Temp:     DW 0 ; "Temp" is not a great name, but can be useful
+           0DE : 0000;  -- Time:	  DW 0
+           0DF : 0000;  -- InAng:	  DW 0
+           0E0 : 0000;  -- InAngTop: DW 0
+           0E1 : 0000;  -- StAng:	  DW 0
+           0E2 : 0000;  -- InDistTop: DW 0
+           0E3 : 0000;  -- InDist:	  DW 0
+           0E4 : 0000;  -- StX:	  DW 0
+           0E5 : 0000;  -- StY:	  DW 0
+           0E6 : 0000;  -- DifY:	  DW 0
+           0E7 : 0064;  -- Speed:	  DW 100
+           0E8 : 0000;  -- StartAngle:	DW 0
+           0E9 : 0000;  -- InAngle:  DW 0
+           0EA : 0000;  -- CurTh:	  DW 0
+           0EB : 0000;  -- PreTh:	  DW 0
+           0EC : 0000;  -- DifTh:	  DW 0   ;Change Theta
+           0ED : 0000;  -- ChgTh:	  DW 0   ;Total Change
+           0EE : 0000;  -- Correction: DW 0 ;Amount to adjust by
+           0EF : 0000;  -- TurnSpeed: DW 0  ;The positive rate at which to turn.
+           0F0 : 4803;  -- WaitForKey:		IN		XIO
+           0F1 : 2402;  -- 				AND		Mask2
+           0F2 : 1CF0;  -- 				JPOS	WaitForKey
+           0F3 : 4803;  -- WaitForKey2:	IN		XIO
+           0F4 : 2402;  -- 				AND		Mask2
+           0F5 : 20F3;  -- 				JZERO	WaitForKey2
+           0F6 : 4400;  -- 				RETURN
+           0F7 : 0000;  -- S_X:		DW	0
+           0F8 : 0000;  -- S_Y:		DW	0
+           0F9 : 0000;  -- S_T:		DW	0
+           0FA : 0001;  -- E_X:		DW	1
+           0FB : 0001;  -- E_Y:		DW	1
   END;
