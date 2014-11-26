@@ -154,11 +154,7 @@ EndTurn:
 	
 	load display
 	out LCD
-	
 
-;	load Zero
-;	call TurnToAngle
-	
 	
 ;Pass wall distances to FindCoords and output the cell and angle to sseg	
 	load wallDistances
