@@ -1,0 +1,110 @@
+-- Altera Memory Initialization File (MIF)
+
+DEPTH = 1024;
+WIDTH = 16;
+
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+
+CONTENT
+  BEGIN
+    [000..3FF] : 0000;  -- Default to NOP
+
+           000 : 0000;  -- Switch15to0: dw 0
+           001 : 0000;  -- x1: dw 0
+           002 : 0000;  -- y1: dw 0
+           003 : 0000;  -- x2: dw 0
+           004 : 0000;  -- y2: dw 0
+           005 : 0000;  -- x3: dw 0
+           006 : 0000;  -- y3: dw 0
+           007 : 0000;  -- display1: dw 0
+           008 : 0000;  -- display2: dw 0
+           009 : 0456;  -- 	load Zero
+           00A : 0807;  -- 	store display1
+           00B : 0808;  -- 	store display2
+           00C : 4803;  -- 	in XIO
+           00D : 244F;  -- 	and Mask2 ; pb3
+           00E : 2017;  -- 	jzero SetCoord
+           00F : 1409;  -- 	jump Main
+           010 : 4803;  -- 	in XIO
+           011 : 244F;  -- 	and Mask2
+           012 : 2010;  -- 	jzero Main1
+           013 : 4803;  -- 	in XIO
+           014 : 244F;  -- 	and Mask2
+           015 : 2042;  -- 	jzero SetCoord1
+           016 : 1413;  -- 	jump m
+           017 : 4800;  -- 	in SWITCHES
+           018 : 0800;  -- 	store Switch15to0
+           019 : 0400;  -- 	load Switch15to0
+           01A : 301C;  -- 	shift -12
+           01B : 244C;  -- 	and Mask
+           01C : 0801;  -- 	store x1
+           01D : 0400;  -- 	load Switch15to0
+           01E : 3019;  -- 	shift -9
+           01F : 244C;  -- 	and Mask
+           020 : 0802;  -- 	store y1
+           021 : 0400;  -- 	load Switch15to0
+           022 : 3016;  -- 	shift -6
+           023 : 244C;  -- 	and Mask
+           024 : 0803;  -- 	store x2
+           025 : 0400;  -- 	load Switch15to0
+           026 : 3013;  -- 	shift -3
+           027 : 244C;  -- 	and Mask
+           028 : 0804;  -- 	store y2
+           029 : 0400;  -- 	load Switch15to0
+           02A : 244C;  -- 	and Mask
+           02B : 0805;  -- 	store x3
+           02C : 0401;  -- 	load x1
+           02D : 300C;  -- 	shift 12
+           02E : 2807;  -- 	or display1
+           02F : 0807;  -- 	store display1
+           030 : 0402;  -- 	load y1
+           031 : 3008;  -- 	shift 8
+           032 : 2807;  -- 	or display1
+           033 : 0807;  -- 	store display1
+           034 : 0403;  -- 	load x2
+           035 : 3004;  -- 	shift 4
+           036 : 2807;  -- 	or display1
+           037 : 0807;  -- 	store display1
+           038 : 0404;  -- 	load y2
+           039 : 2807;  -- 	or display1
+           03A : 0807;  -- 	store display1
+           03B : 4C04;  -- 	out SSEG1
+           03C : 0405;  -- 	load x3
+           03D : 300C;  -- 	shift 12
+           03E : 2808;  -- 	or display2
+           03F : 0808;  -- 	store display2
+           040 : 4C05;  -- 	out SSEG2
+           041 : 1410;  -- 	jump Main1
+           042 : 4800;  -- 	in SWITCHES
+           043 : 244C;  -- 	and Mask
+           044 : 0806;  -- 	store y3
+           045 : 3008;  -- 	shift 8
+           046 : 2808;  -- 	or display2
+           047 : 4C05;  -- 	out SSEG2
+           048 : 1449;  -- 	jump l
+           049 : 0457;  -- 	load One
+           04A : 4C01;  -- 	out LEDS
+           04B : 1449;  -- 	jump l
+           04C : 0007;  -- Mask: dw &H007
+           04D : 0001;  -- Mask0:    DW &B00000001
+           04E : 0002;  -- Mask1:    DW &B00000010
+           04F : 0004;  -- Mask2:    DW &B00000100
+           050 : 0008;  -- Mask3:    DW &B00001000
+           051 : 0010;  -- Mask4:    DW &B00010000
+           052 : 0020;  -- Mask5:    DW &B00100000
+           053 : 0040;  -- Mask6:    DW &B01000000
+           054 : 0080;  -- Mask7:    DW &B10000000
+           055 : FFFF;  -- NegOne:   DW -1
+           056 : 0000;  -- Zero:     DW 0
+           057 : 0001;  -- One:      DW 1
+           058 : 0002;  -- Two:      DW 2
+           059 : 0003;  -- Three:    DW 3
+           05A : 0004;  -- Four:     DW 4
+           05B : 0005;  -- Five:     DW 5
+           05C : 0006;  -- Six:      DW 6
+           05D : 0007;  -- Seven:    DW 7
+           05E : 0008;  -- Eight:    DW 8
+           05F : 0009;  -- Nine:     DW 9
+           060 : 000A;  -- Ten:      DW 10
+  END;

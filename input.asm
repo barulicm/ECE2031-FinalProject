@@ -1,180 +1,111 @@
 org &H000
 
-numInputs: dw 0
-tempCoord: dw 0
-displayCoord1: dw 0
-displayCoord2: dw 0
-curSwitch: dw 0
+Switch15to0: dw 0
+x1: dw 0
+y1: dw 0
+x2: dw 0
+y2: dw 0
+x3: dw 0
+y3: dw 0
+display1: dw 0
+display2: dw 0
+
 
 Main:
-	in SWITCHES
-	store curSwitch
-	sub Mask1
-	jzero OneC
-	load curSwitch
-	sub Mask2
-	jzero TwoC
-	load curSwitch
-	sub Mask3
-	jzero ThreeC
-	load curSwitch
-	sub Mask4
-	jzero FourC
-	load curSwitch
-	sub Mask5
-	jzero FiveC
-	load curSwitch
-	sub Mask6
-	jzero SixC
 	load Zero
-	out LCD
-	store tempCoord
-	jump ShowCoord
-
-OneC:
-	load One
-	out LCD
-	store tempCoord
-	jump ShowCoord
+	store display1
+	store display2
 	
-TwoC:
-	load Two
-	out LCD
-	store tempCoord
-	jump ShowCoord
 	
-ThreeC:
-	load Three
-	out LCD
-	store tempCoord
-	jump ShowCoord
-	
-FourC:
-	load Four
-	out LCD
-	store tempCoord
-	jump ShowCoord
-	
-FiveC:
-	load Five
-	out LCD
-	store tempCoord
-	jump ShowCoord
-	
-SixC:
-	load Six
-	out LCD
-	store tempCoord
-	jump ShowCoord
-
-ShowCoord:
 	in XIO
 	and Mask2 ; pb3
 	jzero SetCoord
 	jump Main
 	
-SetCoord:
-	load numInputs
-	jzero setX1
-	load numInputs
-	addi -1
-	jzero setY1
-	load numInputs
-	addi -2
-	jzero setX2
-	load numInputs
-	addi -3
-	jzero setY2
-	load numInputs
-	addi -4
-	jzero setX3
-	load numInputs
-	addi -4
-	jzero setY3
-	load numInputs
-	addi 1
-	store numInputs
-	addi -5
-	jzero EndInputs
-	jump Main
+Main1:
+	in XIO
+	and Mask2
+	jzero Main1
+m:
+	in XIO
+	and Mask2
+	jzero SetCoord1
+	jump m
 	
-DisplayCoords:	
+SetCoord:
+	in SWITCHES
+	store Switch15to0
+	
+	load Switch15to0
+	shift -12
+	and Mask
+	store x1
+	
+	load Switch15to0
+	shift -9
+	and Mask
+	store y1
+	
+	load Switch15to0
+	shift -6
+	and Mask
+	store x2
+	
+	load Switch15to0
+	shift -3
+	and Mask
+	store y2
+	
+	load Switch15to0
+	and Mask
+	store x3
+	
 	load x1
 	shift 12
-	or displayCoord1
-	store displayCoord1
+	or display1
+	store display1
 	
 	load y1
 	shift 8
-	or displayCoord1
-	store displayCoord1
+	or display1
+	store display1
 	
 	load x2
 	shift 4
-	or displayCoord1
-	store displayCoord1
+	or display1
+	store display1
 	
 	load y2
-	or displayCoord1
-	store displayCoord1
+	or display1
+	store display1
 	out SSEG1
 	
 	load x3
 	shift 12
-	or displayCoord2
-	store displayCoord2
-	
-	load y3
-	shift 8
-	or displayCoord2
-	store displayCoord2
+	or display2
+	store display2
 	out SSEG2
 	
-	load Zero
-	store tempCoord
-
-	jump Main
+	jump Main1
 	
-SetX1:
-	load tempCoord
-	store x1
-	jump DisplayCoords
-	
-SetY1:
-	load tempCoord
-	store y1
-	jump DisplayCoords
-	
-SetX2:
-	load tempCoord
-	store x2
-	jump DisplayCoords
-	
-SetY2:
-	load tempCoord
-	store y2
-	jump DisplayCoords
-	
-SetX3:
-	load tempCoord
-	store x3
-	jump DisplayCoords
-	
-SetY3:
-	load tempCoord
+SetCoord1:
+	in SWITCHES
+	and Mask
 	store y3
-	jump DisplayCoords
+	shift 8
+	or display2
+	out SSEG2
+	jump l
 	
-
-	
-EndInputs:
+l:
 	load One
 	out LEDS
-	jump EndInputs
-
-
-
-
+	jump l
+	
+	
+	
+	
+Mask: dw &H007
 Mask0:    DW &B00000001
 Mask1:    DW &B00000010
 Mask2:    DW &B00000100
@@ -234,12 +165,3 @@ XPOS:     EQU &HC0  ; Current X-position (read only)
 YPOS:     EQU &HC1  ; Y-position
 THETA:    EQU &HC2  ; Current rotational position of robot (0-359)
 RESETPOS: EQU &HC3  ; write anything here to reset odometry to 0
-
-XYCoordAddr: dw &H250
-org &H250
-x1: dw 0
-y1: dw 0
-x2: dw 0
-y2: dw 0
-x3: dw 0
-y3: dw 0

@@ -17,118 +17,152 @@ CONTENT
            004 : 0000;  -- curSwitch: dw 0
            005 : 4800;  -- 	in SWITCHES
            006 : 0804;  -- 	store curSwitch
-           007 : 105F;  -- 	sub Mask1
+           007 : 1081;  -- 	sub Mask1
            008 : 201C;  -- 	jzero OneC
            009 : 0404;  -- 	load curSwitch
-           00A : 1060;  -- 	sub Mask2
+           00A : 1082;  -- 	sub Mask2
            00B : 2020;  -- 	jzero TwoC
            00C : 0404;  -- 	load curSwitch
-           00D : 1061;  -- 	sub Mask3
+           00D : 1083;  -- 	sub Mask3
            00E : 2024;  -- 	jzero ThreeC
            00F : 0404;  -- 	load curSwitch
-           010 : 1062;  -- 	sub Mask4
+           010 : 1084;  -- 	sub Mask4
            011 : 2028;  -- 	jzero FourC
            012 : 0404;  -- 	load curSwitch
-           013 : 1063;  -- 	sub Mask5
+           013 : 1085;  -- 	sub Mask5
            014 : 202C;  -- 	jzero FiveC
            015 : 0404;  -- 	load curSwitch
-           016 : 1064;  -- 	sub Mask6
+           016 : 1086;  -- 	sub Mask6
            017 : 2030;  -- 	jzero SixC
-           018 : 0467;  -- 	load Zero
+           018 : 0489;  -- 	load Zero
            019 : 4C06;  -- 	out LCD
            01A : 0801;  -- 	store tempCoord
            01B : 1434;  -- 	jump ShowCoord
-           01C : 0468;  -- 	load One
+           01C : 048A;  -- 	load One
            01D : 4C06;  -- 	out LCD
            01E : 0801;  -- 	store tempCoord
            01F : 1434;  -- 	jump ShowCoord
-           020 : 0469;  -- 	load Two
+           020 : 048B;  -- 	load Two
            021 : 4C06;  -- 	out LCD
            022 : 0801;  -- 	store tempCoord
            023 : 1434;  -- 	jump ShowCoord
-           024 : 046A;  -- 	load Three
+           024 : 048C;  -- 	load Three
            025 : 4C06;  -- 	out LCD
            026 : 0801;  -- 	store tempCoord
            027 : 1434;  -- 	jump ShowCoord
-           028 : 046B;  -- 	load Four
+           028 : 048D;  -- 	load Four
            029 : 4C06;  -- 	out LCD
            02A : 0801;  -- 	store tempCoord
            02B : 1434;  -- 	jump ShowCoord
-           02C : 046C;  -- 	load Five
+           02C : 048E;  -- 	load Five
            02D : 4C06;  -- 	out LCD
            02E : 0801;  -- 	store tempCoord
            02F : 1434;  -- 	jump ShowCoord
-           030 : 046D;  -- 	load Six
+           030 : 048F;  -- 	load Six
            031 : 4C06;  -- 	out LCD
            032 : 0801;  -- 	store tempCoord
            033 : 1434;  -- 	jump ShowCoord
            034 : 4803;  -- 	in XIO
-           035 : 2460;  -- 	and Mask2 ; pb3
-           036 : 2038;  -- 	jzero EnterCoord
+           035 : 2482;  -- 	and Mask2 ; pb3
+           036 : 2038;  -- 	jzero SetCoord
            037 : 1405;  -- 	jump Main
-           038 : 0650;  -- 	load XYCoordAddr
-           039 : 0C00;  -- 	add numInputs
-           03A : 6800;  -- 	settmp
-           03B : 0401;  -- 	load tempCoord
-           03C : 6400;  -- 	storea
+           038 : 0400;  -- 	load numInputs
+           039 : 206B;  -- 	jzero setX1
+           03A : 0400;  -- 	load numInputs
+           03B : 37FF;  -- 	addi -1
+           03C : 206E;  -- 	jzero setY1
            03D : 0400;  -- 	load numInputs
-           03E : 3401;  -- 	addi 1
-           03F : 0800;  -- 	store numInputs
-           040 : 0651;  -- 	load x1
-           041 : 300C;  -- 	shift 12
-           042 : 2802;  -- 	or displayCoord1
-           043 : 0802;  -- 	store displayCoord1
-           044 : 0652;  -- 	load y1
-           045 : 3008;  -- 	shift 8
-           046 : 2802;  -- 	or displayCoord1
-           047 : 0802;  -- 	store displayCoord1
-           048 : 0653;  -- 	load x2
-           049 : 3004;  -- 	shift 4
-           04A : 2802;  -- 	or displayCoord1
-           04B : 0802;  -- 	store displayCoord1
-           04C : 0654;  -- 	load y2
-           04D : 2802;  -- 	or displayCoord1
-           04E : 0802;  -- 	store displayCoord1
-           04F : 4C05;  -- 	out SSEG2
-           050 : 0655;  -- 	load x3
-           051 : 300C;  -- 	shift 12
-           052 : 2803;  -- 	or displayCoord2
-           053 : 0803;  -- 	store displayCoord2
-           054 : 0656;  -- 	load y3
-           055 : 3008;  -- 	shift 8
-           056 : 2803;  -- 	or displayCoord2
-           057 : 0803;  -- 	store displayCoord2
-           058 : 4C05;  -- 	out SSEG2
-           059 : 0400;  -- 	load numInputs
-           05A : 37FA;  -- 	addi -6
-           05B : 205D;  -- 	jzero EndInputs
-           05C : 1405;  -- 	jump Main
-           05D : 145D;  -- 	jump EndInputs
-           05E : 0001;  -- Mask0:    DW &B00000001
-           05F : 0002;  -- Mask1:    DW &B00000010
-           060 : 0004;  -- Mask2:    DW &B00000100
-           061 : 0008;  -- Mask3:    DW &B00001000
-           062 : 0010;  -- Mask4:    DW &B00010000
-           063 : 0020;  -- Mask5:    DW &B00100000
-           064 : 0040;  -- Mask6:    DW &B01000000
-           065 : 0080;  -- Mask7:    DW &B10000000
-           066 : FFFF;  -- NegOne:   DW -1
-           067 : 0000;  -- Zero:     DW 0
-           068 : 0001;  -- One:      DW 1
-           069 : 0002;  -- Two:      DW 2
-           06A : 0003;  -- Three:    DW 3
-           06B : 0004;  -- Four:     DW 4
-           06C : 0005;  -- Five:     DW 5
-           06D : 0006;  -- Six:      DW 6
-           06E : 0007;  -- Seven:    DW 7
-           06F : 0008;  -- Eight:    DW 8
-           070 : 0009;  -- Nine:     DW 9
-           071 : 000A;  -- Ten:      DW 10
-           250 : 0250;  -- XYCoordAddr: dw &H250
-           251 : 0000;  -- x1: dw 0
-           252 : 0000;  -- y1: dw 0
-           253 : 0000;  -- x2: dw 0
-           254 : 0000;  -- y2: dw 0
-           255 : 0000;  -- x3: dw 0
-           256 : 0000;  -- y3: dw 0
+           03E : 37FE;  -- 	addi -2
+           03F : 2071;  -- 	jzero setX2
+           040 : 0400;  -- 	load numInputs
+           041 : 37FD;  -- 	addi -3
+           042 : 2074;  -- 	jzero setY2
+           043 : 0400;  -- 	load numInputs
+           044 : 37FC;  -- 	addi -4
+           045 : 2077;  -- 	jzero setX3
+           046 : 0400;  -- 	load numInputs
+           047 : 37FC;  -- 	addi -4
+           048 : 207A;  -- 	jzero setY3
+           049 : 0400;  -- 	load numInputs
+           04A : 3401;  -- 	addi 1
+           04B : 0800;  -- 	store numInputs
+           04C : 37FB;  -- 	addi -5
+           04D : 207D;  -- 	jzero EndInputs
+           04E : 1405;  -- 	jump Main
+           04F : 0650;  -- 	load x1
+           050 : 300C;  -- 	shift 12
+           051 : 2802;  -- 	or displayCoord1
+           052 : 0802;  -- 	store displayCoord1
+           053 : 0651;  -- 	load y1
+           054 : 3008;  -- 	shift 8
+           055 : 2802;  -- 	or displayCoord1
+           056 : 0802;  -- 	store displayCoord1
+           057 : 0652;  -- 	load x2
+           058 : 3004;  -- 	shift 4
+           059 : 2802;  -- 	or displayCoord1
+           05A : 0802;  -- 	store displayCoord1
+           05B : 0653;  -- 	load y2
+           05C : 2802;  -- 	or displayCoord1
+           05D : 0802;  -- 	store displayCoord1
+           05E : 4C04;  -- 	out SSEG1
+           05F : 0654;  -- 	load x3
+           060 : 300C;  -- 	shift 12
+           061 : 2803;  -- 	or displayCoord2
+           062 : 0803;  -- 	store displayCoord2
+           063 : 0655;  -- 	load y3
+           064 : 3008;  -- 	shift 8
+           065 : 2803;  -- 	or displayCoord2
+           066 : 0803;  -- 	store displayCoord2
+           067 : 4C05;  -- 	out SSEG2
+           068 : 0489;  -- 	load Zero
+           069 : 0801;  -- 	store tempCoord
+           06A : 1405;  -- 	jump Main
+           06B : 0401;  -- 	load tempCoord
+           06C : 0A50;  -- 	store x1
+           06D : 144F;  -- 	jump DisplayCoords
+           06E : 0401;  -- 	load tempCoord
+           06F : 0A51;  -- 	store y1
+           070 : 144F;  -- 	jump DisplayCoords
+           071 : 0401;  -- 	load tempCoord
+           072 : 0A52;  -- 	store x2
+           073 : 144F;  -- 	jump DisplayCoords
+           074 : 0401;  -- 	load tempCoord
+           075 : 0A53;  -- 	store y2
+           076 : 144F;  -- 	jump DisplayCoords
+           077 : 0401;  -- 	load tempCoord
+           078 : 0A54;  -- 	store x3
+           079 : 144F;  -- 	jump DisplayCoords
+           07A : 0401;  -- 	load tempCoord
+           07B : 0A55;  -- 	store y3
+           07C : 144F;  -- 	jump DisplayCoords
+           07D : 048A;  -- 	load One
+           07E : 4C01;  -- 	out LEDS
+           07F : 147D;  -- 	jump EndInputs
+           080 : 0001;  -- Mask0:    DW &B00000001
+           081 : 0002;  -- Mask1:    DW &B00000010
+           082 : 0004;  -- Mask2:    DW &B00000100
+           083 : 0008;  -- Mask3:    DW &B00001000
+           084 : 0010;  -- Mask4:    DW &B00010000
+           085 : 0020;  -- Mask5:    DW &B00100000
+           086 : 0040;  -- Mask6:    DW &B01000000
+           087 : 0080;  -- Mask7:    DW &B10000000
+           088 : FFFF;  -- NegOne:   DW -1
+           089 : 0000;  -- Zero:     DW 0
+           08A : 0001;  -- One:      DW 1
+           08B : 0002;  -- Two:      DW 2
+           08C : 0003;  -- Three:    DW 3
+           08D : 0004;  -- Four:     DW 4
+           08E : 0005;  -- Five:     DW 5
+           08F : 0006;  -- Six:      DW 6
+           090 : 0007;  -- Seven:    DW 7
+           091 : 0008;  -- Eight:    DW 8
+           092 : 0009;  -- Nine:     DW 9
+           093 : 000A;  -- Ten:      DW 10
+           094 : 0250;  -- XYCoordAddr: dw &H250
+           250 : 0000;  -- x1: dw 0
+           251 : 0000;  -- y1: dw 0
+           252 : 0000;  -- x2: dw 0
+           253 : 0000;  -- y2: dw 0
+           254 : 0000;  -- x3: dw 0
+           255 : 0000;  -- y3: dw 0
   END;
