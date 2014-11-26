@@ -54,45 +54,51 @@ WaitForUser:
 ;***************************************************************
 Main: ; "Real" program starts here.
 
+
+;-----------Test Code for Turn and Forw---------------;
 	OUT    RESETPOS
+	Call Stop
 	loadi &H001
-	out LEDS
-		
-        
-        LOADI 90
-        CALL TurnLeft
-        LOADI 30
-        Call WaitAC
-        LOAD TwoFeet
-        Call Forward1
-        LOADI 90
-        CALL TurnLeft
-        LOADI 30
-        Call WaitAC
-        LOAD TwoFeet
-        Call Forward2
+	out LEDS   
         LOADI 540
-        CALL TurnLeft
+        out LCD
+        CALL Turn
         LOADI 30
         Call WaitAC
         LOAD TwoFeet
-        Call Forward3
+        Call Forw
         LOADI 90
-        CALL TurnRight
+        out LCD
+        CALL Turn
         LOADI 30
         Call WaitAC
         LOAD TwoFeet
-        CALL Forward1
-        LOADI 630
-        CALL TurnRight
+        Call Forw
+        LOADI 540
+        out LCD
+        CALL Turn
+        LOADI 30
+        Call WaitAC
+        LOAD TwoFeet
+        Call Forw
+        LOADI -90
+        CALL Turn
+        LOADI 30
+        Call WaitAC
+        LOAD TwoFeet
+        CALL Forw
+        LOADI -630
+        CALL Turn
         LOADI 30
         Call WaitAC
         LOADI 30
         Call WaitAC
-        
-        ;LOAD 50
-        ;Call WaitAC
         Jump Die
+;-----------End Test Code for Turn and Forw---------------;
+        
+        
+        
+        
 loop:	load FMid
 		out LVELCMD
 		out RVELCMD
@@ -288,12 +294,25 @@ STOP:
 	Loadi	0
 	OUT		LVELCMD
 	OUT		RVELCMD
-	RETURN
+	OUT 	RESETPOS
+	Call    ResetAngle
+	Return
 
 ;Load a desired angle greater than 0;
 ;Call Turn Left
-TurnLeft:	;Theta goes Uup
+TurnLeft:	;Theta goes Up
 	STORE 	InAngTop
+	IN TIMER
+	Store Time
+TLT:
+	LOADI	-200
+	OUT		LVELCMD
+	LOADI	200
+	OUT		RVELCMD
+	IN TIMER
+	SUB	TIME
+	ADDI -10
+	JNEG TLT
 LoopTL:		;Breaks turn into 160 degree segments
 	ADDI 	-160
 	JNEG	LastTL
@@ -311,8 +330,6 @@ LastTL:		;Last turn for angle is less than 160
 
 TL:
 	STORE	InAng
-	LOADI 0
-	OUT TIMER
 	IN		Theta
 	STORE   StAng
 	ADDI 	-180
@@ -325,9 +342,6 @@ TL1:
 	;Call Sonar
 	LOADI 10
 	OUT LCD
-	IN TIMER
-	ADDI -10
-	JNEG TL1
 	IN 		Theta
 	OUT SSEG1
 	SUB		InAng
@@ -342,9 +356,6 @@ TL2:
 	;Call Sonar
 	LOADI 11
 	OUT LCD
-	IN TIMER
-	ADDI -10
-	JNEG TL2
 	IN 		Theta
 	OUT SSEG1
 	ADDI	-180
@@ -364,6 +375,17 @@ TLEnd:
 ;Call Turn Right
 TurnRight:	;Theta goes down.
 	STORE 	InAngTop
+	IN TIMER
+	Store Time
+TRT:
+	LOADI	200
+	OUT		LVELCMD
+	LOADI	-200
+	OUT		RVELCMD
+	IN TIMER
+	SUB	TIME
+	ADDI -10
+	JNEG TRT
 LoopTR:
 	ADDI 	-160
 	JNEG	LastTR
@@ -381,23 +403,19 @@ LastTR:
 
 TR:
 	STORE	InAng
-	LOADI 0
-	OUT TIMER
+	
 	IN		Theta
 	STORE   StAng
 	ADDI 	-180
 	JNEG	TR2
 TR1:
-	LOADI	100
+	LOADI	200
 	OUT		LVELCMD
-	LOADI	-100
+	LOADI	-200
 	OUT		RVELCMD
 	;Call Sonar
 	LOADI 11
 	OUT LCD
-	IN TIMER
-	ADDI -10
-	JNEG TR1
 	IN 		Theta
 	OUT SSEG1
 	ADD		InAng
@@ -405,9 +423,9 @@ TR1:
 	JNEG	TREnd
 	JUMP	TR1
 TR2:
-	LOADI	100
+	LOADI	200
 	OUT		LVELCMD
-	LOADI	-100
+	LOADI	-200
 	OUT		RVELCMD
 	;Call Sonar
 	LOADI 11
@@ -448,24 +466,26 @@ Forward3:
 	STORE	Speed
 	Jump	Forward
 Forward:
+	In XPOS
+	Store StX
 
-	LOADI	0
-	OUT    RESETPOS
 F1:
 	IN THETA
-	STORE DifY
-	ADDI -180
+	STORE StAng
+	LOADI 180
+	SUB	StAng
 	JNEG FY
 FR:
 	LOAD DifY
 	Sub 360
 	Store DifY
 FY:
+	Call UpdateAngle
 	LOAD Speed
-	;ADD DifY
+	ADD Correction
 	OUT LVELCMD
 	LOAD Speed
-	;SUB DifY
+	SUB Correction
 	OUT RVELCMD
 	;Call Sonar
 	LOADI 12
@@ -482,17 +502,198 @@ FEnd:
 	Call Stop
 	Return
 
+
+;-----------Update Angle---------------;
+;Updates the variable ChgTh to reflect the change in Theta
+;since the start of the move command. This change is used to
+;maintain straight movement using Correction and achieve 
+;accurate and rapid turning using TurnSpeed.
+;Inputs: InAngle
+;Outputs: ChgTh, Correction, TurnSpeed
+
+UpdateAngle:
+	LOAD CurTh
+	Store PreTh
+	IN Theta
+	Store CurTh
+	Sub PreTh
+	Store DifTh
+	ADDI -100
+	JPOS C>100
+	ADDI 200
+	JNeg C<-100
+	JUMP C~0
+C>100:
+	ADDI -100
+	Store DifTh
+	Jump C~0
+C<-100:
+	ADDI 100
+	Store DifTh
+	Jump C~0
+C~0:
+	Load ChgTh
+	Add DifTh
+	Store ChgTh
+	Add ChgTh
+	Store Correction ;Used in forward. Plus or minus (2 * delta theta)
+	
+	Load InAngle
+	Sub ChgTh
+	ADDI -400
+	JPOS C-500
+	Load InAngle
+	Sub ChgTh
+	ADDI 400
+	JNeg C-500
+	Load InAngle
+	Sub ChgTh
+	JNeg Cneg
+	Jump Cpos
+C-500:
+	LOADI 500
+	Jump Cang
+Cneg:
+	LOAD InAngle
+	Sub ChgTh
+	JPos Cpos
+	Store Temp
+	LoadI 0
+	Sub Temp
+Cpos:
+	ADDI 100
+Cang:
+	Store TurnSpeed ;Always Positive, between 0 and 500;
+	return
+
+
+;-----------Reset Angle---------------;
+;Sets CurTh and ChgTh to zero
+ResetAngle:
+	LoadI 0
+	Store CurTh
+	LoadI 0
+	Store ChgTh
+	Return
+
+;-----------Turn---------------;
+;Turns the DE2Bot X degrees.
+;Inputs: InAngle, degree either positive or negative to turn.
+;NOTE: Positive degrees turns left by default. Negative turns right.
+Turn:
+	Store InAngle
+	JNEG TurnRLoop
+	JPOS TurnLLoop
+	Call Stop
+	return
+
+;-----------Turn Left---------------;
+;Turns the DE2Bot to the left X degrees.
+;Inputs: InAngle, degree either positive or negative (no difference) to turn.
+TurnnLeft:
+	Store InAngle
+	JPos TurnLLoop ;Turning left increase theta, so InAngle must be positive.
+	LoadI 0		   ;If it is not positive, it is negated.
+	Sub InAngle
+	Store InAngle
+	Call Stop	   ;To reset variables
+TurnLLoop:
+	Call UpdateAngle
+	Load TurnSpeed
+	Out LVELCMD
+	Loadi 0
+	Sub TurnSpeed
+	Out RVELCMD
+	Load ChgTh
+	Out SSEG1
+	Sub InAngle
+	Out SSeg2
+	JNEG TurnLLoop
+	; JPOS TurnRLoop
+	Call Stop 
+	return
+
+	
+;-----------Turn Right---------------;
+;Turns the DE2Bot to the right X degrees.
+;Inputs: InAngle, degree either positive or negative (no difference) to turn.
+TurnnRight: 
+	Store InAngle
+	JNeg TurnRLoop ;Turning right decreases theta, so InAngle must be negative.
+	LoadI 0		   ;If it is not negative, it is negated.
+	Sub InAngle
+	Store InAngle
+	Call Stop 	   ;To reset variables
+TurnRLoop:
+	Call UpdateAngle
+	Load TurnSpeed
+	Out RVELCMD
+	Loadi 0
+	Sub TurnSpeed
+	Out LVELCMD
+	Load ChgTh
+	Out SSeg1
+	Sub InAngle
+	Out SSeg2
+	JPOS TurnRLoop
+	; JNEG TurnLLoop ; Will add after testing. Causes the robot to reverse direction until it reaches JZero.
+	Call Stop
+	return
+
+	
+;-----------Forward---------------;
+;Moves the robot a distance X in units of 1.05mm.
+;Accepts both positve and negative inputs for forward
+;and backward, respectively. Uses UpdateAngle to correct
+;for deviation from straight movement.
+Forw:
+	Store InDist
+	Call Stop	   ;To reset variables
+	In LPOS
+	Store StX
+	Load InDist
+	JNEG Backward
+Onward:
+	Call UpdateAngle
+	LOADI 200   	;200 is the speed. Can be changed.
+	Add Correction
+	Out LVELCMD
+	Loadi 200
+	Sub Correction
+	Out RVELCMD
+	In LPOS
+	Sub StX
+	Sub InDist
+	JNeg Onward
+	Call Stop
+	return
+Backward:
+	Call UpdateAngle
+	LOADI -200   	;200 is the speed. Can be changed.
+	Add Correction
+	Out LVELCMD
+	Loadi -200
+	Sub Correction
+	Out RVELCMD
+	In LPOS
+	Sub StX
+	Sub InDist
+	JNeg Backward
+	Call Stop
+	return
+	
+	
+	
 	
 	
 	
 
-
-	
 
 ;***************************************************************
 ;* Variables
 ;***************************************************************
 Temp:     DW 0 ; "Temp" is not a great name, but can be useful
+Time:	  DW 0
 
 InAng:	  DW 0
 InAngTop: DW 0
@@ -504,6 +705,21 @@ StX:	  DW 0
 StY:	  DW 0
 DifY:	  DW 0
 Speed:	  DW 100
+
+;The Following variables are used for the correction of the
+;Forward command and Turn command.
+StartAngle:	DW 0
+InAngle:  DW 0
+CurTh:	  DW 0
+PreTh:	  DW 0
+DifTh:	  DW 0   ;Change Theta
+ChgTh:	  DW 0   ;Total Change
+Correction: DW 0 ;Amount to adjust by
+TurnSpeed: DW 0  ;The positive rate at which to turn.
+;
+;
+
+
 ;***************************************************************
 ;* Constants
 ;* (though there is nothing stopping you from writing to these)
