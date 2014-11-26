@@ -53,117 +53,311 @@ Mask6:    DW &B01000000
 Mask7:    DW &B10000000
 LowByte:  DW &HFF      ; binary 00000000 1111111
 LowNibl:  DW &HF       ; 0000 0000 0000 1111
-Low10Bits:		DW	&H03FF
-Const_LOADI:	DW	&H17
-Const_CALL:		DW	&H10
 
 Main:		CALL	PlanPath
-			LOAD	PATH_ADDR
-			SETTMP
-	loop:	READTMP
-			LOADA
-			OUT		LCD
-	wait:	IN		XIO
-			AND		Mask2
-			OUT		LEDS
-			JPOS	wait
-	wait2:	IN		XIO
-			AND		Mask2
-			OUT		LEDS
-			JZERO	wait2
-			CALL	INC_TMP
-			JUMP	loop
+			LOADI	&HFFFF
+			OUT		SSEG2
+halt:		JUMP	halt
 
-PlanPath:	LOAD	PATH_ADDR
-			SETTMP
-			LOAD	S_Y
+PlanPath:	LOAD	S_Y
 			ADDI	-1
 			JPOS	pp1
 			LOAD	E_Y
 			ADDI	-1
 			JPOS	pp_cross
-			JUMP	pp_no_cross
+			JUMP	pp_n_cross
 	pp1:	LOAD	E_Y
 			ADDI	-1
-			JPOS	pp_no_cross
+			JPOS	pp_n_cross
 			JUMP	pp_cross
   pp_cross: LOAD	S_X
 			ADDI	-1
 			JPOS	pp_c_mvx
 			LOAD	S_T 			; Turn ; move to E_Y
 			MULI	90
-			AND		Low10Bits
-			LOAD	Const_LOADI
-			SHIFT	8
-		L2:	OUT		SSEG2
-			JUMP	L2
-			STOREA
-			CALL	INC_TMP
-			CALL 	pp_Add_TurnLeft
-			LOAD	S_Y				; move
-			SUB		E_Y
-			AND		Low10Bits
-			OR		Const_LOADI
-			STOREA
-			CALL	INC_TMP
-			CALL	pp_Add_Move	
-			LOADI	90	
-			OR		Const_LOADI			; Turn ; move to E_X  ( LOADI 90 )
-			STOREA
-			CALL	INC_TMP
-			CALL	pp_Add_TurnLeft
-			LOAD	S_X				; move
-			SUB		E_X
-			AND		Low10Bits
-			OR		Const_LOADI
-			STOREA
-			CALL	INC_TMP
-			CALL	pp_Add_Move
+			CALL	TurnLeft
+			LOAD	E_Y				; move
+			SUB		S_Y
+			CALL	Forward1
+			LOADI	90				; Turn ; move to E_X  ( LOADI 90 )
+			Call	TurnLeft
+			LOAD	E_X				; move
+			SUB		S_X
+			CALL	Forward1
 			RETURN
-  pp_c_mvx: 				; Turn ; move to x = 1
-  							; move
-							; Turn ; move to E_Y
-							; move
-							; Turn ; move to E_X
-							; move
-pp_no_cross: JUMP	pp_no_cross
-
-; Increments the TMP register
-; Note: this will destroy the AC
-INC_TMP:	READTMP
-			ADDI	1
-			SETTMP
+  pp_c_mvx: LOADI	&HFF
+  			OUT		SSEG1
+  			LOAD	S_T				; Turn ; move to x = 1
+  			ADDI	-1
+  			MULI	90
+  			CALL	TurnLeft
+  			LOAD	S_X
+  			ADDI	-1
+  			CALL	Forward1		; move
+			LOADI	90				; Turn ; move to E_Y
+			CALL	TurnLeft
+			LOAD	E_Y				; move
+			SUB		S_Y
+			CALL	Forward1
+			LOADI	90
+			CALL	TurnLeft		; Turn ; move to E_X
+			LOAD	E_X
+			SUB		S_X
+			CALL	Forward1		; move
+			RETURN
+pp_n_cross:	LOAD	S_T
+			MULI	90
+			CALL	TurnLeft
+			LOAD	E_X
+			SUB		S_X
+			CALL	Forward1
+			LOADI	90
+			CALL	TurnLeft
+			LOAD	E_Y
+			SUB		S_Y
+			CALL	Forward1
 			RETURN
 
-; Inserts a call to TurnLeft
-; Note: this will destroy the AC
-pp_Add_TurnLeft:	LOADI	Const_CALL ; Load the call instruction
-					STOREA
-					CALL	INC_TMP
-					RETURN
+STOP:
+	Loadi	0
+	OUT		LVELCMD
+	OUT		RVELCMD
+	RETURN
 
-; Inserts a call to Move
-; Note: this will destroy the AC
-pp_Add_Move:		LOADI	Const_CALL ; Load the call instruction
-					STOREA
-					CALL	INC_TMP
-					RETURN
+;Load a desired angle greater than 0;
+;Call Turn Left
+TurnLeft:	;Theta goes Uup
+	OUT		LCD
+	LOADI	&HA
+	OUT		SSEG2
+	CALL	WaitForKey
+	RETURN
+	STORE 	InAngTop
+LoopTL:		;Breaks turn into 160 degree segments
+	ADDI 	-160
+	JNEG	LastTL
+	STORE 	InAngTop
+	LOADI   160
+	Call    TR
+	LOAD	InAngTop
+	JUMP	LoopTL
+LastTL:		;Last turn for angle is less than 160
+	ADDI	160
+	CALL	TL
+	CALL    STOP
+	RETURN
 
-L:			JUMP	L
+
+TL:
+	STORE	InAng
+	LOADI 0
+	OUT TIMER
+	IN		Theta
+	STORE   StAng
+	ADDI 	-180
+	JPOS	TL2
+TL1:
+	LOADI	-200
+	OUT		LVELCMD
+	LOADI	200
+	OUT		RVELCMD
+	;Call Sonar
+	LOADI 10
+	OUT LCD
+	IN TIMER
+	ADDI -10
+	JNEG TL1
+	IN 		Theta
+	OUT SSEG1
+	SUB		InAng
+	SUB	    StAng
+	JPOS	TLEnd
+	JUMP	TL1
+TL2:
+	LOADI	-200
+	OUT		LVELCMD
+	LOADI	200
+	OUT		RVELCMD
+	;Call Sonar
+	LOADI 11
+	OUT LCD
+	IN TIMER
+	ADDI -10
+	JNEG TL2
+	IN 		Theta
+	OUT SSEG1
+	ADDI	-180
+	JPOS	TL2N
+	ADDI	360
+TL2N:
+	ADDI	180
+	SUB		InAng
+	SUB	    StAng
+	JPOS	TLEnd
+	JUMP	TL2
+	
+TLEnd:
+	Return
+
+;Load a desired angle greater than 0
+;Call Turn Right
+TurnRight:	;Theta goes down.
+	OUT		LCD
+	LOADI	&HB
+	OUT		SSEG2
+	CALL	WaitForKey
+	RETURN
+	STORE 	InAngTop
+LoopTR:
+	ADDI 	-160
+	JNEG	LastTR
+	STORE 	InAngTop
+	LOADI   160
+	Call    TR
+	LOAD	InAngTop
+	JUMP	LoopTR
+LastTR:	
+	ADDI	160
+	CALL	TR
+	CALL    STOP
+	RETURN
+
+
+TR:
+	STORE	InAng
+	LOADI 0
+	OUT TIMER
+	IN		Theta
+	STORE   StAng
+	ADDI 	-180
+	JNEG	TR2
+TR1:
+	LOADI	100
+	OUT		LVELCMD
+	LOADI	-100
+	OUT		RVELCMD
+	;Call Sonar
+	LOADI 11
+	OUT LCD
+	IN TIMER
+	ADDI -10
+	JNEG TR1
+	IN 		Theta
+	OUT SSEG1
+	ADD		InAng
+	SUB	    StAng
+	JNEG	TREnd
+	JUMP	TR1
+TR2:
+	LOADI	100
+	OUT		LVELCMD
+	LOADI	-100
+	OUT		RVELCMD
+	;Call Sonar
+	LOADI 11
+	OUT LCD
+	IN TIMER
+	ADDI -10
+	JNEG TR2
+	IN 		Theta
+	OUT SSEG1
+	
+	ADDI	-180
+	JNEG	TR2N
+	ADDI	-360
+TR2N:
+	ADDI	180
+	ADD		InAng
+	SUB	    StAng
+	JNEG	TREnd
+	JUMP	TR2
+	
+TREnd:
+	Return
+	
+	
+Forward1:
+	OUT		LCD
+	LOADI	&HC
+	OUT		SSEG2
+	CALL	WaitForKey
+	RETURN
+	Store   InDistTop
+	LOADI	100
+	STORE	Speed
+	Jump	Forward
+Forward2:
+	Store   InDistTop
+	LOADI	250
+	STORE	Speed
+	Jump	Forward
+Forward3:
+	Store   InDistTop
+	LOADI	500
+	STORE	Speed
+	Jump	Forward
+Forward:
+
+	LOADI	0
+	OUT    RESETPOS
+F1:
+	IN THETA
+	STORE DifY
+	ADDI -180
+	JNEG FY
+FR:
+	LOAD DifY
+	Sub 360
+	Store DifY
+FY:
+	LOAD Speed
+	;ADD DifY
+	OUT LVELCMD
+	LOAD Speed
+	;SUB DifY
+	OUT RVELCMD
+	;Call Sonar
+	LOADI 12
+	OUT LCD
+	In XPOS
+	OUT SSEG1
+	SUB StX
+	SUB InDistTop
+	OUT SSEG2
+	JPOS FEnd
+	JUMP F1
+	
+FEnd:
+	Call Stop
+	Return
+	
+WaitForKey:
+	IN		XIO
+	AND		Mask2
+	JPOS	WaitForKey
+w2:	IN		XIO
+	AND		Mask2
+	JZERO	w2
+	RETURN
+;***************************************************************
+;* Variables
+;***************************************************************
+Temp:     DW 0 ; "Temp" is not a great name, but can be useful
+
+InAng:	  DW 0
+InAngTop: DW 0
+StAng:	  DW 0
+
+InDistTop: DW 0
+InDist:	  DW 0
+StX:	  DW 0
+StY:	  DW 0
+DifY:	  DW 0
+Speed:	  DW 100
+
 
 S_X:		DW	0
 S_Y:		DW	0
 S_T:		DW	0
 E_X:		DW	0
-E_Y:		DW	3
-PATH_ADDR:	DW	&H100
-ORG			&H100
-PATH:		DW	1
-			DW	2
-			DW	3
-			DW	4
-			DW	5
-			DW	6
-			DW	7
-			DW	8
-			DW	9
+E_Y:		DW	0
