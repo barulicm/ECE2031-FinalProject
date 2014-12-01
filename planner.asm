@@ -68,20 +68,17 @@ RMid:     DW -350
 FFast:    DW 500       ; 500 is almost max speed (511 is max)
 RFast:    DW -500
 
-Main:		;CALL	WaitForKey
-			;LOADI	90
-			;CALL	Turn
-			;CALL	WaitForKey
-			;LOADI	-90
-			;CALL	Turn
-			CALL	WaitForKey
-			LOAD	TwoFeet
-			CALL	Forw
-			;CALL	WaitForKey
-			;LOADI	&H0
-			;SUB		TwoFeet
-			;CALL	Forw
-			;CALL	WaitForKey
+Main:		CALL	WaitForKey
+			LOADI	3
+			STORE	S_X
+			LOADI	1
+			STORE	S_Y
+			LOADI	0
+			STORE	S_T
+			LOADI	3
+			STORE	E_X
+			STORE	E_Y
+			CALL	PlanPath
 			LOADI	&HFFFF
 			OUT		LEDS
 halt:		JUMP	halt
@@ -105,11 +102,13 @@ PlanPath:	LOAD	S_Y
 			CALL	Turn
 			LOAD	S_Y				; move
 			SUB		E_Y
+			MUL		TwoFeet
 			CALL	Forw
 			LOADI	90				; Turn ; move to E_X  ( LOADI 90 )
 			Call	Turn
 			LOAD	E_X				; move
 			SUB		S_X
+			MUL		TwoFeet
 			CALL	Forw
 			RETURN
   pp_c_mvx: LOADI	&HFF
@@ -120,28 +119,33 @@ PlanPath:	LOAD	S_Y
   			CALL	Turn
   			LOAD	S_X
   			ADDI	-2
+  			MUL		TwoFeet
   			CALL	Forw		; move
 			LOADI	90				; Turn ; move to E_Y
 			CALL	Turn
 			LOAD	S_Y				; move
 			SUB		E_Y
+			MUL		TwoFeet
 			CALL	Forw
 			LOADI	90
 			CALL	Turn			; Turn ; move to E_X
 			LOAD	E_X
 			SUB		S_X
+			MUL		TwoFeet
 			CALL	Forw		; move
 			RETURN
 pp_n_cross:	LOAD	S_T
 			MULI	90
 			CALL	Turn
-			LOAD	E_X
-			SUB		S_X
+			LOAD	E_Y
+			SUB		S_Y
+			MUL		TwoFeet
 			CALL	Forw
 			LOADI	90
 			CALL	Turn
-			LOAD	S_Y
-			SUB		E_Y
+			LOAD	S_X
+			SUB		E_X
+			MUL		TwoFeet
 			CALL	Forw
 			RETURN
 
@@ -150,7 +154,12 @@ STOP:
 	OUT		LVELCMD
 	OUT		RVELCMD
 	OUT 	RESETPOS
-	Call    ResetAngle
+	LoadI 0
+	Store CurTh
+	LoadI 0
+	Store ChgTh
+	LoadI 2
+	Call  WaitAC
 	Return
 
 
@@ -175,13 +184,13 @@ UpdateAngle:
 	JNeg C<-100
 	JUMP C~0
 C>100:
-	Load DiffTh ; (matt) - I think this was supposed to be here (11/26/2014)
-	ADDI -100
+	Load DifTh
+	Addi -360
 	Store DifTh
 	Jump C~0
 C<-100:
-	Load DiffTh ; (matt) - I think this was supposed to be here (11/26/2014)
-	ADDI 100
+	Load DifTh
+	Addi 360
 	Store DifTh
 	Jump C~0
 C~0:
@@ -207,9 +216,6 @@ C-500:
 	LOADI 500
 	Jump Cang
 Cneg:
-	LOAD InAngle
-	Sub ChgTh
-	JPos Cpos
 	Store Temp
 	LoadI 0
 	Sub Temp
@@ -219,22 +225,14 @@ Cang:
 	Store TurnSpeed ;Always Positive, between 0 and 500;
 	return
 
-
-;-----------Reset Angle---------------;
-;Sets CurTh and ChgTh to zero
-ResetAngle:
-	LoadI 0
-	Store CurTh
-	LoadI 0
-	Store ChgTh
-	Return
-
 ;-----------Turn---------------;
 ;Turns the DE2Bot X degrees.
 ;Inputs: InAngle, degree either positive or negative to turn.
 ;NOTE: Positive degrees turns left by default. Negative turns right.
 Turn:
 	Store InAngle
+	Call Stop
+	Load InAngle
 	JNEG TurnRLoop
 	JPOS TurnLLoop
 	Call Stop
@@ -332,7 +330,7 @@ Backward:
 	In LPOS
 	Sub StX
 	Sub InDist
-	JNeg Backward
+	JPos Backward
 	Call Stop
 	return
 
@@ -375,8 +373,30 @@ WaitForKey2:	IN		XIO
 				JZERO	WaitForKey2
 				RETURN
 
+; Subroutine to wait (block) for 1 second
+Wait1:
+	OUT    TIMER
+Wloop:
+	IN     TIMER
+	OUT    XLEDS       ; User-feedback that a pause is occurring.
+	ADDI   -10         ; 1 second in 10Hz.
+	JNEG   Wloop
+	RETURN
+
+; Subroutine to wait the number of counts currently in AC
+WaitAC:
+	STORE  WaitTime
+	OUT    Timer
+WACLoop:
+	IN     Timer
+	OUT    XLEDS       ; User-feedback that a pause is occurring.
+	SUB    WaitTime
+	JNEG   WACLoop
+	RETURN
+	WaitTime: DW 0     ; "local" variable.
+
 S_X:		DW	0
 S_Y:		DW	0
 S_T:		DW	0
-E_X:		DW	1
-E_Y:		DW	1
+E_X:		DW	0
+E_Y:		DW	0
