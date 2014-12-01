@@ -56,7 +56,7 @@ LowNibl:  DW &HF       ; 0000 0000 0000 1111
 ; some useful movement values
 OneMeter: DW 961       ; ~1m in 1.05mm units
 HalfMeter: DW 481      ; ~0.5m in 1.05mm units
-TwoFeet:  DW 586       ; ~2ft in 1.05mm units
+TwoFeet:  DW 450       ; ~2ft in 1.05mm units
 Deg90:    DW 90        ; 90 degrees in odometry units
 Deg180:   DW 180       ; 180
 Deg270:   DW 270       ; 270
@@ -71,9 +71,9 @@ RFast:    DW -500
 Main:		CALL	WaitForKey
 			LOADI	3
 			STORE	S_X
-			LOADI	1
+			LOADI	2
 			STORE	S_Y
-			LOADI	0
+			LOADI	1
 			STORE	S_T
 			LOADI	3
 			STORE	E_X
@@ -132,6 +132,7 @@ PlanPath:	LOAD	S_Y
 			CALL	Turn			; Turn ; move to E_X
 			LOAD	E_X
 			SUB		S_X
+			ADDI	2
 			MUL		TwoFeet
 			CALL	Forw		; move
 			RETURN
@@ -200,7 +201,7 @@ C~0:
 	Load ChgTh
 	Add DifTh
 	Store ChgTh
-	Add ChgTh
+	Muli 4
 	Store Correction ;Used in forward. Plus or minus (2 * delta theta)
 	
 	Load InAngle
@@ -216,7 +217,7 @@ C~0:
 	JNeg Cneg
 	Jump Cpos
 C-500:
-	LOADI 500
+	LOADI 450 ; Max turning speed
 	Jump Cang
 Cneg:
 	Store Temp
@@ -310,10 +311,10 @@ Forw:
 	JNEG Backward
 Onward:
 	Call UpdateAngle
-	LOADI 200   	;200 is the speed. Can be changed.
+	LOADI 350   	;200 is the speed. Can be changed.
 	Add Correction
 	Out LVELCMD
-	Loadi 200
+	Loadi 350
 	Sub Correction
 	Out RVELCMD
 	In LPOS
@@ -324,10 +325,10 @@ Onward:
 	return
 Backward:
 	Call UpdateAngle
-	LOADI -200   	;200 is the speed. Can be changed.
+	LOADI -350   	;200 is the speed. Can be changed.
 	Add Correction
 	Out LVELCMD
-	Loadi -200
+	Loadi -350
 	Sub Correction
 	Out RVELCMD
 	In LPOS
