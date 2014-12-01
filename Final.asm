@@ -310,7 +310,8 @@ EndLocalize:
 	store S_X
 	load E_Y
 	store S_Y
-	; -- update S_T
+	loadi 1
+	store S_T
 	load x2
 	store E_X
 	load y2
@@ -328,7 +329,8 @@ EndLocalize:
 	store S_X
 	load E_Y
 	store S_Y
-	; -- update S_T
+	loadi 1
+	store S_T
 	load x3
 	store E_X
 	load y3
@@ -582,7 +584,7 @@ PlanPath:	LOAD	S_Y
   			ADDI	-2
   			MUL		TwoFeet
   			CALL	Forw		; move
-			LOADI	90				; Turn ; move to E_Y
+			LOADI	-90				; Turn ; move to E_Y
 			CALL	Turn
 			LOAD	S_Y				; move
 			SUB		E_Y
