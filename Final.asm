@@ -361,6 +361,85 @@ EndLocalize:
 	return
 ;Localize End=================================
 
+<<<<<<< HEAD
+=======
+;End Localization Start Pathing
+	load coordFound
+	shift -4
+	store S_X
+	load coordFound
+	and Mask4Bits
+	store S_Y
+	load angleFound
+	store S_T
+	
+	load x1
+	store E_X
+	load y1
+	store E_Y
+	
+	;Call planner/pather here
+	call PlanPath
+	load Four
+	out BEEP
+	loadi 2
+	call WaitAC
+	load Zero
+	out BEEP
+	
+	load E_X
+	store S_X
+	load E_Y
+	store S_Y
+	loadi 1
+	store S_T
+	load x2
+	store E_X
+	load y2
+	store E_Y
+	
+	call PlanPath
+	load Four
+	out BEEP
+	loadi 2
+	call WaitAC
+	load Zero
+	out BEEP
+	
+	load E_X
+	store S_X
+	load E_Y
+	store S_Y
+	loadi 1
+	store S_T
+	load x3
+	store E_X
+	load y3
+	store E_Y
+	
+	call PlanPath
+	load Four
+	out BEEP
+	loadi 2
+	call WaitAC
+	load Zero
+	out BEEP
+	
+forever:
+	jump forever
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+;--Subroutines--
+>>>>>>> 4103af72bac05aec719a9c58095b289c209133d7
 ;FindCoords Start=========================================
 FindCoords:
 	store wallDists
@@ -587,7 +666,7 @@ PlanPath:	LOAD	S_Y
   			ADDI	-2
   			MUL		TwoFeet
   			CALL	Forw		; move
-			LOADI	90				; Turn ; move to E_Y
+			LOADI	-90				; Turn ; move to E_Y
 			CALL	Turn
 			LOAD	S_Y				; move
 			SUB		E_Y
