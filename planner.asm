@@ -97,8 +97,10 @@ PlanPath:	LOAD	S_Y
   pp_cross: LOAD	S_X
 			ADDI	-2
 			JPOS	pp_c_mvx
-			LOAD	S_T 			; Turn ; move to E_Y
+			LOADI	4 				; Turn ; move to E_Y
+			SUB		S_T
 			MULI	90
+			ADDI	-360
 			CALL	Turn
 			LOAD	S_Y				; move
 			SUB		E_Y
@@ -111,11 +113,10 @@ PlanPath:	LOAD	S_Y
 			MUL		TwoFeet
 			CALL	Forw
 			RETURN
-  pp_c_mvx: LOADI	&HFF
-  			OUT		SSEG1
-  			LOAD	S_T				; Turn ; move to x = 1
-  			ADDI	-1
+  pp_c_mvx: LOADI	5
+  			SUB		S_T				; Turn ; move to x = 1
   			MULI	90
+  			ADDI	-360
   			CALL	Turn
   			LOAD	S_X
   			ADDI	-2
@@ -134,8 +135,10 @@ PlanPath:	LOAD	S_Y
 			MUL		TwoFeet
 			CALL	Forw		; move
 			RETURN
-pp_n_cross:	LOAD	S_T
+pp_n_cross:	LOADI	4
+			SUB		S_T
 			MULI	90
+			ADDI	-360
 			CALL	Turn
 			LOAD	E_Y
 			SUB		S_Y
