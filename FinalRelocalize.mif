@@ -723,7 +723,7 @@ CONTENT
            2C6 : 000A;  -- Ten:      DW 10
            2C7 : 03C1;  -- OneMeter: DW 961       ; ~1m in 1.05mm units
            2C8 : 01E1;  -- HalfMeter: DW 481      ; ~0.5m in 1.05mm units
-           2C9 : 024A;  -- TwoFeet:  DW 586       ; ~2ft in 1.05mm units
+           2C9 : 01C2;  -- TwoFeet:  DW 450       ; ~2ft in 1.05mm units
            2CA : 06DE;  -- SixFeet: DW 1758
            2CB : 005A;  -- Deg90:    DW 90        ; 90 degrees in odometry units
            2CC : 00B4;  -- Deg180:   DW 180       ; 180

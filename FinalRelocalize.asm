@@ -974,7 +974,7 @@ Ten:      DW 10
 ; some useful movement values
 OneMeter: DW 961       ; ~1m in 1.05mm units
 HalfMeter: DW 481      ; ~0.5m in 1.05mm units
-TwoFeet:  DW 586       ; ~2ft in 1.05mm units
+TwoFeet:  DW 450       ; ~2ft in 1.05mm units
 SixFeet: DW 1758
 Deg90:    DW 90        ; 90 degrees in odometry units
 Deg180:   DW 180       ; 180
