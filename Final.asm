@@ -298,6 +298,7 @@ EndLocalize:
 	store E_Y
 	
 	;Call planner/pather here
+	call PlanPath
 	load Four
 	out BEEP
 	loadi 2
@@ -305,6 +306,41 @@ EndLocalize:
 	load Zero
 	out BEEP
 	
+	load E_X
+	store S_X
+	load E_Y
+	store S_Y
+	; -- update S_T
+	load x2
+	store E_X
+	load y2
+	store E_Y
+	
+	call PlanPath
+	load Four
+	out BEEP
+	loadi 2
+	call WaitAC
+	load Zero
+	out BEEP
+	
+	load E_X
+	store S_X
+	load E_Y
+	store S_Y
+	; -- update S_T
+	load x3
+	store E_X
+	load y3
+	store E_Y
+	
+	call PlanPath
+	load Four
+	out BEEP
+	loadi 2
+	call WaitAC
+	load Zero
+	out BEEP
 	
 forever:
 	jump forever
@@ -505,13 +541,90 @@ GetDistToWallHelper:
 	addi -1
 	return
 ;Get dist to wall in cell units End==========
+	
+;-----------Path Planner---------------;
+PlanPath:	LOAD	S_Y
+			ADDI	-2
+			JPOS	pp1
+			LOAD	E_Y
+			ADDI	-2
+			JPOS	pp_cross
+			JUMP	pp_n_cross
+	pp1:	LOAD	E_Y
+			ADDI	-2
+			JPOS	pp_n_cross
+			JUMP	pp_cross
+  pp_cross: LOAD	S_X
+			ADDI	-2
+			JPOS	pp_c_mvx
+			LOADI	4 				; Turn ; move to E_Y
+			SUB		S_T
+			MULI	90
+			ADDI	-360
+			CALL	Turn
+			LOAD	S_Y				; move
+			SUB		E_Y
+			MUL		TwoFeet
+			CALL	Forw
+			LOADI	90				; Turn ; move to E_X  ( LOADI 90 )
+			Call	Turn
+			LOAD	E_X				; move
+			SUB		S_X
+			MUL		TwoFeet
+			CALL	Forw
+			RETURN
+  pp_c_mvx: LOADI	5
+  			SUB		S_T				; Turn ; move to x = 1
+  			MULI	90
+  			ADDI	-360
+  			CALL	Turn
+  			LOAD	S_X
+  			ADDI	-2
+  			MUL		TwoFeet
+  			CALL	Forw		; move
+			LOADI	90				; Turn ; move to E_Y
+			CALL	Turn
+			LOAD	S_Y				; move
+			SUB		E_Y
+			MUL		TwoFeet
+			CALL	Forw
+			LOADI	90
+			CALL	Turn			; Turn ; move to E_X
+			LOAD	E_X
+			SUB		S_X
+			ADDI	2
+			MUL		TwoFeet
+			CALL	Forw		; move
+			RETURN
+pp_n_cross:	LOADI	4
+			SUB		S_T
+			MULI	90
+			ADDI	-360
+			CALL	Turn
+			LOAD	E_Y
+			SUB		S_Y
+			MUL		TwoFeet
+			CALL	Forw
+			LOADI	90
+			CALL	Turn
+			LOAD	S_X
+			SUB		E_X
+			MUL		TwoFeet
+			CALL	Forw
+			RETURN
 
+;--------------Stop--------------------;
 STOP:
 	Loadi	0
 	OUT		LVELCMD
 	OUT		RVELCMD
 	OUT 	RESETPOS
-	Call    ResetAngle
+	LoadI 0
+	Store CurTh
+	LoadI 0
+	Store ChgTh
+	LoadI 2
+	Call  WaitAC
 	Return
 
 ;-----------Update Angle---------------;
@@ -535,18 +648,20 @@ UpdateAngle:
 	JNeg C<-100
 	JUMP C~0
 C>100:
-	ADDI -100
+	Load DifTh
+	Addi -360
 	Store DifTh
 	Jump C~0
 C<-100:
-	ADDI 100
+	Load DifTh
+	Addi 360
 	Store DifTh
 	Jump C~0
 C~0:
 	Load ChgTh
 	Add DifTh
 	Store ChgTh
-	Add ChgTh
+	Muli 4
 	Store Correction ;Used in forward. Plus or minus (2 * delta theta)
 	
 	Load InAngle
@@ -562,12 +677,9 @@ C~0:
 	JNeg Cneg
 	Jump Cpos
 C-500:
-	LOADI 500
+	LOADI 450 ; Max turning speed
 	Jump Cang
 Cneg:
-	LOAD InAngle
-	Sub ChgTh
-	JPos Cpos
 	Store Temp
 	LoadI 0
 	Sub Temp
@@ -577,21 +689,14 @@ Cang:
 	Store TurnSpeed ;Always Positive, between 0 and 500;
 	return
 
-;-----------Reset Angle---------------;
-;Sets CurTh and ChgTh to zero
-ResetAngle:
-	LoadI 0
-	Store CurTh
-	LoadI 0
-	Store ChgTh
-	Return
-
 ;-----------Turn---------------;
 ;Turns the DE2Bot X degrees.
 ;Inputs: InAngle, degree either positive or negative to turn.
 ;NOTE: Positive degrees turns left by default. Negative turns right.
 Turn:
 	Store InAngle
+	Call Stop
+	Load InAngle
 	JNEG TurnRLoop
 	JPOS TurnLLoop
 	Call Stop
@@ -609,10 +714,11 @@ TurnnLeft:
 	Call Stop	   ;To reset variables
 TurnLLoop:
 	Call UpdateAngle
-	Load TurnSpeed
-	Out LVELCMD
 	Loadi 0
 	Sub TurnSpeed
+	Out LVELCMD
+	Loadi 0
+	Load TurnSpeed
 	Out RVELCMD
 	Load ChgTh
 	Out SSEG1
@@ -637,10 +743,10 @@ TurnnRight:
 TurnRLoop:
 	Call UpdateAngle
 	Load TurnSpeed
-	Out RVELCMD
+	Out LVELCMD
 	Loadi 0
 	Sub TurnSpeed
-	Out LVELCMD
+	Out RVELCMD
 	Load ChgTh
 	Out SSeg1
 	Sub InAngle
@@ -665,10 +771,10 @@ Forw:
 	JNEG Backward
 Onward:
 	Call UpdateAngle
-	LOADI 200   	;200 is the speed. Can be changed.
+	LOADI 350   	;200 is the speed. Can be changed.
 	Add Correction
 	Out LVELCMD
-	Loadi 200
+	Loadi 350
 	Sub Correction
 	Out RVELCMD
 	In LPOS
@@ -679,20 +785,18 @@ Onward:
 	return
 Backward:
 	Call UpdateAngle
-	LOADI -200   	;200 is the speed. Can be changed.
+	LOADI -350   	;200 is the speed. Can be changed.
 	Add Correction
 	Out LVELCMD
-	Loadi -200
+	Loadi -350
 	Sub Correction
 	Out RVELCMD
 	In LPOS
 	Sub StX
 	Sub InDist
-	JNeg Backward
+	JPos Backward
 	Call Stop
 	return
-	
-	
 
 Wait1:
 	OUT    TIMER
