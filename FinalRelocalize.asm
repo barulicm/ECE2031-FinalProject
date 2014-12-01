@@ -166,11 +166,17 @@ WaitToStart:
 	load Zero
 	out BEEP
 	
-	load E_X
+	call Localize
+	
+	load coordFound
+	shift -4
 	store S_X
-	load E_Y
+	load coordFound
+	and Mask4Bits
 	store S_Y
-	; -- update S_T
+	load angleFound
+	store S_T
+	
 	load x2
 	store E_X
 	load y2
@@ -184,14 +190,20 @@ WaitToStart:
 	load Zero
 	out BEEP
 	
-	load E_X
+	call Localize
+	
+	load coordFound
+	shift -4
 	store S_X
-	load E_Y
+	load coordFound
+	and Mask4Bits
 	store S_Y
-	; -- update S_T
-	load x3
+	load angleFound
+	store S_T
+	
+	load x1
 	store E_X
-	load y3
+	load y1
 	store E_Y
 	
 	call PlanPath
