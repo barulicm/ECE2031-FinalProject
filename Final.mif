@@ -10,634 +10,659 @@ CONTENT
   BEGIN
     [000..3FF] : 0000;  -- Default to NOP
 
-           000 : 0631;  -- 	LOAD   Zero
+           000 : 064A;  -- 	LOAD   Zero
            001 : 4C83;  -- 	OUT    LVELCMD     ; Stop motors
            002 : 4C8B;  -- 	OUT    RVELCMD
            003 : 4CB2;  -- 	OUT    SONAREN     ; Disable sonar (optional)
-           004 : 4206;  -- 	CALL   SetupI2C    ; Configure the I2C to read the battery voltage
-           005 : 41E8;  -- 	CALL   BattCheck   ; Get battery voltage (and end if too low).
+           004 : 421F;  -- 	CALL   SetupI2C    ; Configure the I2C to read the battery voltage
+           005 : 4201;  -- 	CALL   BattCheck   ; Get battery voltage (and end if too low).
            006 : 4C06;  -- 	OUT    LCD         ; Display batt voltage on LCD
            007 : 4803;  -- 	IN     XIO         ; XIO contains SAFETY signal
-           008 : 262B;  -- 	AND    Mask4       ; SAFETY signal is bit 4
+           008 : 2644;  -- 	AND    Mask4       ; SAFETY signal is bit 4
            009 : 1C0F;  -- 	JPOS   WaitForUser ; If ready, jump to wait for PB3
            00A : 4802;  -- 	IN     TIMER       ; We'll use the timer value to
-           00B : 2628;  -- 	AND    Mask1       ;  blink LED17 as a reminder to toggle SW17
+           00B : 2641;  -- 	AND    Mask1       ;  blink LED17 as a reminder to toggle SW17
            00C : 3008;  -- 	SHIFT  8           ; Shift over to LED17
            00D : 4C07;  -- 	OUT    XLEDS       ; LED17 blinks at 2.5Hz (10Hz/4)
            00E : 1407;  -- 	JUMP   WaitForSafety
            00F : 4802;  -- 	IN     TIMER       ; We'll blink the LEDs above PB3
-           010 : 2628;  -- 	AND    Mask1
+           010 : 2641;  -- 	AND    Mask1
            011 : 3005;  -- 	SHIFT  5           ; Both LEDG6 and LEDG7
-           012 : 0A1C;  -- 	STORE  Temp        ; (overkill, but looks nice)
+           012 : 0A35;  -- 	STORE  Temp        ; (overkill, but looks nice)
            013 : 3001;  -- 	SHIFT  1
-           014 : 2A1C;  -- 	OR     Temp
+           014 : 2A35;  -- 	OR     Temp
            015 : 4C07;  -- 	OUT    XLEDS
            016 : 4803;  -- 	IN     XIO         ; XIO contains KEYs
-           017 : 2629;  -- 	AND    Mask2       ; KEY3 mask (KEY0 is reset and can't be read)
+           017 : 2642;  -- 	AND    Mask2       ; KEY3 mask (KEY0 is reset and can't be read)
            018 : 1C0F;  -- 	JPOS   WaitForUser ; not ready (KEYs are active-low, hence JPOS)
-           019 : 0631;  -- 	LOAD   Zero
+           019 : 064A;  -- 	LOAD   Zero
            01A : 4C07;  -- 	OUT    XLEDS       ; clear LEDs once ready to continue
-           01B : 0631;  -- 	load Zero
-           01C : 0A24;  -- 	store display1
-           01D : 0A25;  -- 	store display2
+           01B : 064A;  -- 	load Zero
+           01C : 0A3D;  -- 	store display1
+           01D : 0A3E;  -- 	store display2
            01E : 4803;  -- 	in XIO
-           01F : 2629;  -- 	and Mask2 ; pb3
+           01F : 2642;  -- 	and Mask2 ; pb3
            020 : 2029;  -- 	jzero SetCoord
            021 : 141B;  -- 	jump Main
            022 : 4803;  -- 	in XIO
-           023 : 2629;  -- 	and Mask2
+           023 : 2642;  -- 	and Mask2
            024 : 2022;  -- 	jzero Main1
            025 : 4803;  -- 	in XIO
-           026 : 2629;  -- 	and Mask2
+           026 : 2642;  -- 	and Mask2
            027 : 2054;  -- 	jzero SetCoord1
            028 : 1425;  -- 	jump m
            029 : 4800;  -- 	in SWITCHES
-           02A : 0A1D;  -- 	store Switch15to0
-           02B : 061D;  -- 	load Switch15to0
+           02A : 0A36;  -- 	store Switch15to0
+           02B : 0636;  -- 	load Switch15to0
            02C : 301C;  -- 	shift -12
-           02D : 2626;  -- 	and Mask
-           02E : 0A1E;  -- 	store x1
-           02F : 061D;  -- 	load Switch15to0
+           02D : 263F;  -- 	and Mask
+           02E : 0A37;  -- 	store x1
+           02F : 0636;  -- 	load Switch15to0
            030 : 3019;  -- 	shift -9
-           031 : 2626;  -- 	and Mask
-           032 : 0A1F;  -- 	store y1
-           033 : 061D;  -- 	load Switch15to0
+           031 : 263F;  -- 	and Mask
+           032 : 0A38;  -- 	store y1
+           033 : 0636;  -- 	load Switch15to0
            034 : 3016;  -- 	shift -6
-           035 : 2626;  -- 	and Mask
-           036 : 0A20;  -- 	store x2
-           037 : 061D;  -- 	load Switch15to0
+           035 : 263F;  -- 	and Mask
+           036 : 0A39;  -- 	store x2
+           037 : 0636;  -- 	load Switch15to0
            038 : 3013;  -- 	shift -3
-           039 : 2626;  -- 	and Mask
-           03A : 0A21;  -- 	store y2
-           03B : 061D;  -- 	load Switch15to0
-           03C : 2626;  -- 	and Mask
-           03D : 0A22;  -- 	store x3
-           03E : 061E;  -- 	load x1
+           039 : 263F;  -- 	and Mask
+           03A : 0A3A;  -- 	store y2
+           03B : 0636;  -- 	load Switch15to0
+           03C : 263F;  -- 	and Mask
+           03D : 0A3B;  -- 	store x3
+           03E : 0637;  -- 	load x1
            03F : 300C;  -- 	shift 12
-           040 : 2A24;  -- 	or display1
-           041 : 0A24;  -- 	store display1
-           042 : 061F;  -- 	load y1
+           040 : 2A3D;  -- 	or display1
+           041 : 0A3D;  -- 	store display1
+           042 : 0638;  -- 	load y1
            043 : 3008;  -- 	shift 8
-           044 : 2A24;  -- 	or display1
-           045 : 0A24;  -- 	store display1
-           046 : 0620;  -- 	load x2
+           044 : 2A3D;  -- 	or display1
+           045 : 0A3D;  -- 	store display1
+           046 : 0639;  -- 	load x2
            047 : 3004;  -- 	shift 4
-           048 : 2A24;  -- 	or display1
-           049 : 0A24;  -- 	store display1
-           04A : 0621;  -- 	load y2
-           04B : 2A24;  -- 	or display1
-           04C : 0A24;  -- 	store display1
+           048 : 2A3D;  -- 	or display1
+           049 : 0A3D;  -- 	store display1
+           04A : 063A;  -- 	load y2
+           04B : 2A3D;  -- 	or display1
+           04C : 0A3D;  -- 	store display1
            04D : 4C04;  -- 	out SSEG1
-           04E : 0622;  -- 	load x3
+           04E : 063B;  -- 	load x3
            04F : 300C;  -- 	shift 12
-           050 : 2A25;  -- 	or display2
-           051 : 0A25;  -- 	store display2
+           050 : 2A3E;  -- 	or display2
+           051 : 0A3E;  -- 	store display2
            052 : 4C05;  -- 	out SSEG2
            053 : 1422;  -- 	jump Main1
            054 : 4800;  -- 	in SWITCHES
-           055 : 2626;  -- 	and Mask
-           056 : 0A23;  -- 	store y3
+           055 : 263F;  -- 	and Mask
+           056 : 0A3C;  -- 	store y3
            057 : 3008;  -- 	shift 8
-           058 : 2A25;  -- 	or display2
+           058 : 2A3E;  -- 	or display2
            059 : 4C05;  -- 	out SSEG2
            05A : 4802;  -- 	IN     TIMER       ; We'll blink the LEDs above PB2
-           05B : 2628;  -- 	AND    Mask1
+           05B : 2641;  -- 	AND    Mask1
            05C : 3003;  -- 	SHIFT  3           ; Both LEDG4 and LEDG5
-           05D : 0A1C;  -- 	STORE  Temp        ; (overkill, but looks nice)
+           05D : 0A35;  -- 	STORE  Temp        ; (overkill, but looks nice)
            05E : 3001;  -- 	SHIFT  1
-           05F : 2A1C;  -- 	OR     Temp
+           05F : 2A35;  -- 	OR     Temp
            060 : 4C07;  -- 	OUT    XLEDS
            061 : 4803;  -- 	IN     XIO         ; XIO contains KEYs
-           062 : 2628;  -- 	AND    Mask1       ; KEY2 mask (KEY0 is reset and can't be read)
+           062 : 2641;  -- 	AND    Mask1       ; KEY2 mask (KEY0 is reset and can't be read)
            063 : 1C5A;  -- 	JPOS   WaitToStart ; not ready (KEYs are active-low, hence JPOS)
-           064 : 0631;  -- 	LOAD   Zero
+           064 : 064A;  -- 	LOAD   Zero
            065 : 4C07;  -- 	OUT    XLEDS       ; clear LEDs once ready to continue
-           066 : 0631;  -- 	load Zero
+           066 : 064A;  -- 	load Zero
            067 : 4CC3;  -- 	out RESETPOS
            068 : 3421;  -- 	addi &B00100001 ; enable sonar 0,5
            069 : 4CB2;  -- 	out SONAREN
-           06A : 0645;  -- 	load RSlow
+           06A : 065E;  -- 	load RSlow
            06B : 4C83;  -- 	out LVELCMD
-           06C : 0644;  -- 	load FSlow
+           06C : 065D;  -- 	load FSlow
            06D : 4C8B;  -- 	out RVELCMD
            06E : 48C2;  -- 	in THETA
            06F : 3742;  -- 	addi -190	;angle to turn
            070 : 208C;  -- 	jzero EndTurn
            071 : 1C8C;  -- 	jpos EndTurn
            072 : 48A8;  -- 	in DIST0
-           073 : 0A66;  -- 	store curDist0
+           073 : 0A7F;  -- 	store curDist0
            074 : 48AD;  -- 	in DIST5
-           075 : 0A67;  -- 	store curDist5
-           076 : 1266;  -- 	sub curDist0
+           075 : 0A80;  -- 	store curDist5
+           076 : 127F;  -- 	sub curDist0
            077 : 1C7A;  -- 	jpos dist0Smaller
            078 : 207A;  -- 	jzero dist0Smaller
            079 : 1883;  -- 	jneg dist5Smaller
-           07A : 0666;  -- 	load curDist0
-           07B : 1264;  -- 	sub minDist
+           07A : 067F;  -- 	load curDist0
+           07B : 127D;  -- 	sub minDist
            07C : 1C6A;  -- 	jpos SpinAndPing
            07D : 206A;  -- 	jzero SpinAndPing
-           07E : 0666;  -- 	load curDist0
-           07F : 0A64;  -- 	store minDist
+           07E : 067F;  -- 	load curDist0
+           07F : 0A7D;  -- 	store minDist
            080 : 48C2;  -- 	in THETA
-           081 : 0A65;  -- 	store minDistAngle
+           081 : 0A7E;  -- 	store minDistAngle
            082 : 146A;  -- 	jump SpinAndPing
-           083 : 0667;  -- 	load curDist5
-           084 : 1264;  -- 	sub minDist
+           083 : 0680;  -- 	load curDist5
+           084 : 127D;  -- 	sub minDist
            085 : 1C6A;  -- 	jpos SpinAndPing
            086 : 206A;  -- 	jzero SpinAndPing
-           087 : 0667;  -- 	load curDist5
-           088 : 0A64;  -- 	store minDist
+           087 : 0680;  -- 	load curDist5
+           088 : 0A7D;  -- 	store minDist
            089 : 48C2;  -- 	in THETA
-           08A : 0A65;  -- 	store minDistAngle
+           08A : 0A7E;  -- 	store minDistAngle
            08B : 146A;  -- 	jump SpinAndPing
-           08C : 0631;  -- 	load Zero
+           08C : 064A;  -- 	load Zero
            08D : 4C83;  -- 	out LVELCMD
            08E : 4C8B;  -- 	out RVELCMD
-           08F : 0665;  -- 	load minDistAngle
-           090 : 4139;  -- 	call TurnToAngle
-           091 : 0631;  -- 	load Zero
+           08F : 067E;  -- 	load minDistAngle
+           090 : 4152;  -- 	call TurnToAngle
+           091 : 064A;  -- 	load Zero
            092 : 3421;  -- 	addi &B00100001
            093 : 4CB2;  -- 	out SONAREN
-           094 : 41DA;  -- 	call Wait1
+           094 : 41F3;  -- 	call Wait1
            095 : 48A8;  -- 	in DIST0
-           096 : 4148;  -- 	call GetDistToWall
+           096 : 4161;  -- 	call GetDistToWall
            097 : 0B34;  -- 	store t
            098 : 3009;  -- 	shift 9
-           099 : 0A68;  -- 	store wallDistances
+           099 : 0A81;  -- 	store wallDistances
            09A : 0734;  -- 	load t
            09B : 300C;  -- 	shift 12
            09C : 0B33;  -- 	store display
            09D : 48AD;  -- 	in DIST5
-           09E : 4148;  -- 	call GetDistToWall
+           09E : 4161;  -- 	call GetDistToWall
            09F : 0B34;  -- 	store t
            0A0 : 3003;  -- 	shift 3
-           0A1 : 2A68;  -- 	or wallDistances
-           0A2 : 0A68;  -- 	store wallDistances
+           0A1 : 2A81;  -- 	or wallDistances
+           0A2 : 0A81;  -- 	store wallDistances
            0A3 : 0734;  -- 	load t
            0A4 : 3004;  -- 	shift 4
            0A5 : 2B33;  -- 	or display
            0A6 : 0B33;  -- 	store display
            0A7 : 4CC3;  -- 	out RESETPOS
-           0A8 : 0631;  -- 	load Zero
+           0A8 : 064A;  -- 	load Zero
            0A9 : 350E;  -- 	addi 270
-           0AA : 4139;  -- 	call TurnToAngle	;turn 90 degrees
-           0AB : 41DA;  -- 	call Wait1
+           0AA : 4152;  -- 	call TurnToAngle	;turn 90 degrees
+           0AB : 41F3;  -- 	call Wait1
            0AC : 48A8;  -- 	in DIST0
-           0AD : 4148;  -- 	call GetDistToWall
+           0AD : 4161;  -- 	call GetDistToWall
            0AE : 0B34;  -- 	store t
            0AF : 3006;  -- 	shift 6
-           0B0 : 2A68;  -- 	or wallDistances
-           0B1 : 0A68;  -- 	store wallDistances
+           0B0 : 2A81;  -- 	or wallDistances
+           0B1 : 0A81;  -- 	store wallDistances
            0B2 : 0734;  -- 	load t
            0B3 : 3008;  -- 	shift 8
            0B4 : 2B33;  -- 	or display
            0B5 : 0B33;  -- 	store display
            0B6 : 48AD;  -- 	in DIST5
-           0B7 : 4148;  -- 	call GetDistToWall
+           0B7 : 4161;  -- 	call GetDistToWall
            0B8 : 0B34;  -- 	store t
-           0B9 : 2A68;  -- 	or wallDistances
-           0BA : 0A68;  -- 	store wallDistances
+           0B9 : 2A81;  -- 	or wallDistances
+           0BA : 0A81;  -- 	store wallDistances
            0BB : 0734;  -- 	load t
            0BC : 2B33;  -- 	or display
            0BD : 0B33;  -- 	store display
            0BE : 0733;  -- 	load display
            0BF : 4C06;  -- 	out LCD
-           0C0 : 0668;  -- 	load wallDistances
-           0C1 : 40D9;  -- 	call FindCoords
-           0C2 : 066F;  -- 	load hasFoundCoord
-           0C3 : 2066;  -- 	jzero Localize		;if we havent found what cell we are in localize again
-           0C4 : 0670;  -- 	load coordFound
+           0C0 : 0681;  -- 	load wallDistances
+           0C1 : 40E4;  -- 	call FindCoords
+           0C2 : 0688;  -- 	load hasFoundCoord
+           0C3 : 20C9;  -- 	jzero Relocalize		;if we havent found what cell we are in localize again
+           0C4 : 0689;  -- 	load coordFound
            0C5 : 4C05;  -- 	out SSEG2
-           0C6 : 0671;  -- 	load angleFound
+           0C6 : 068A;  -- 	load angleFound
            0C7 : 4C04;  -- 	out SSEG1
-           0C8 : 14C9;  -- 	jump EndLocalize
-           0C9 : 0631;  -- 	load   Zero        
-           0CA : 4C83;  -- 	out    LVELCMD
-           0CB : 4C8B;  -- 	out    RVELCMD
-           0CC : 4CB2;  -- 	out    SONAREN
-           0CD : 0670;  -- 	load coordFound
-           0CE : 3014;  -- 	shift -4
-           0CF : 0A4D;  -- 	store S_X
-           0D0 : 0670;  -- 	load coordFound
-           0D1 : 262F;  -- 	and Mask4Bits
-           0D2 : 0A4E;  -- 	store S_Y
-           0D3 : 0671;  -- 	load angleFound
-           0D4 : 0A4F;  -- 	store S_T
-           0D5 : 061E;  -- 	load x1
-           0D6 : 0A50;  -- 	store E_X
-           0D7 : 061F;  -- 	load y1
-           0D8 : 0A51;  -- 	store E_Y
-           0D9 : 0A69;  -- 	store wallDists
-           0DA : 0631;  -- 	load Zero
-           0DB : 0A70;  -- 	store coordFound
-           0DC : 0A71;  -- 	store angleFound
-           0DD : 0A6F;  -- 	store hasFoundCoord
-           0DE : 37FF;  -- 	addi -1
-           0DF : 0A6A;  -- 	store numCoordsCount
-           0E0 : 0631;  -- 	load Zero
-           0E1 : 3412;  -- 	addi 18
-           0E2 : 0A6B;  -- 	store totalNumCoords
-           0E3 : 0631;  -- 	load Zero
-           0E4 : 0A6C;  -- 	store numShifts
-           0E5 : 3405;  -- 	addi 5
-           0E6 : 0A6D;  -- 	store totalNumShifts
-           0E7 : 0631;  -- 	load Zero
-           0E8 : 3400;  -- 	addi &B00
-           0E9 : 0A6E;  -- 	store angle
-           0EA : 066A;  -- 	load numCoordsCount
-           0EB : 066A;  -- 	load numCoordsCount
-           0EC : 3401;  -- 	addi 1
-           0ED : 0A6A;  -- 	store numCoordsCount
-           0EE : 4C04;  -- 	out SSEG1
-           0EF : 126B;  -- 	sub totalNumCoords
-           0F0 : 2111;  -- 	jzero loop1End
-           0F1 : 0673;  -- 	load wallDistArrayAddr
-           0F2 : 0E6A;  -- 	add numCoordsCount
-           0F3 : 6000;  -- 	loada
-           0F4 : 0A72;  -- 	store curWallDist
-           0F5 : 4C06;  -- 	out LCD
-           0F6 : 0631;  -- 	load Zero
-           0F7 : 3402;  -- 	addi 2
-           0F8 : 4C01;  -- 	out LEDS
-           0F9 : 066C;  -- 	load numShifts
-           0FA : 3401;  -- 	addi 1
-           0FB : 0A6C;  -- 	store numShifts
-           0FC : 126D;  -- 	sub totalNumShifts
-           0FD : 210D;  -- 	jzero loop2End
-           0FE : 0672;  -- 	load curWallDist
-           0FF : 1269;  -- 	sub wallDists
-           100 : 2119;  -- 	jzero foundWall
-           101 : 0631;  -- 	load Zero
-           102 : 3410;  -- 	addi 16
+           0C8 : 14CD;  -- 	jump EndLocalize
+           0C9 : 064A;  -- 	load Zero
+           0CA : 3423;  -- 	addi 35
+           0CB : 41A8;  -- 	call Turn
+           0CC : 1466;  -- 	jump Localize
+           0CD : 064A;  -- 	load   Zero        
+           0CE : 4C83;  -- 	out    LVELCMD
+           0CF : 4C8B;  -- 	out    RVELCMD
+           0D0 : 4CB2;  -- 	out    SONAREN
+           0D1 : 0689;  -- 	load coordFound
+           0D2 : 3014;  -- 	shift -4
+           0D3 : 0A66;  -- 	store S_X
+           0D4 : 0689;  -- 	load coordFound
+           0D5 : 2648;  -- 	and Mask4Bits
+           0D6 : 0A67;  -- 	store S_Y
+           0D7 : 068A;  -- 	load angleFound
+           0D8 : 0A68;  -- 	store S_T
+           0D9 : 0637;  -- 	load x1
+           0DA : 0A69;  -- 	store E_X
+           0DB : 0638;  -- 	load y1
+           0DC : 0A6A;  -- 	store E_Y
+           0DD : 064E;  -- 	load Four
+           0DE : 4C0A;  -- 	out BEEP
+           0DF : 5C02;  -- 	loadi 2
+           0E0 : 41F9;  -- 	call WaitAC
+           0E1 : 064A;  -- 	load Zero
+           0E2 : 4C0A;  -- 	out BEEP
+           0E3 : 14E3;  -- 	jump forever
+           0E4 : 0A82;  -- 	store wallDists
+           0E5 : 064A;  -- 	load Zero
+           0E6 : 0A89;  -- 	store coordFound
+           0E7 : 0A8A;  -- 	store angleFound
+           0E8 : 0A88;  -- 	store hasFoundCoord
+           0E9 : 37FF;  -- 	addi -1
+           0EA : 0A83;  -- 	store numCoordsCount
+           0EB : 064A;  -- 	load Zero
+           0EC : 3412;  -- 	addi 18
+           0ED : 0A84;  -- 	store totalNumCoords
+           0EE : 064A;  -- 	load Zero
+           0EF : 0A85;  -- 	store numShifts
+           0F0 : 3405;  -- 	addi 5
+           0F1 : 0A86;  -- 	store totalNumShifts
+           0F2 : 064A;  -- 	load Zero
+           0F3 : 3400;  -- 	addi &B00
+           0F4 : 0A87;  -- 	store angle
+           0F5 : 0683;  -- 	load numCoordsCount
+           0F6 : 0683;  -- 	load numCoordsCount
+           0F7 : 3401;  -- 	addi 1
+           0F8 : 0A83;  -- 	store numCoordsCount
+           0F9 : 4C04;  -- 	out SSEG1
+           0FA : 1284;  -- 	sub totalNumCoords
+           0FB : 211C;  -- 	jzero loop1End
+           0FC : 068C;  -- 	load wallDistArrayAddr
+           0FD : 0E83;  -- 	add numCoordsCount
+           0FE : 6000;  -- 	loada
+           0FF : 0A8B;  -- 	store curWallDist
+           100 : 4C06;  -- 	out LCD
+           101 : 064A;  -- 	load Zero
+           102 : 3402;  -- 	addi 2
            103 : 4C01;  -- 	out LEDS
-           104 : 0672;  -- 	load curWallDist
-           105 : 412E;  -- 	call RightRotate3
-           106 : 0A72;  -- 	store curWallDist
-           107 : 066E;  -- 	load angle
-           108 : 3401;  -- 	addi 1
-           109 : 0A6E;  -- 	store angle
-           10A : 37FD;  -- 	addi -3
-           10B : 1D16;  -- 	jpos resetAng
-           10C : 14F9;  -- 	jump loop2
-           10D : 0631;  -- 	load Zero
-           10E : 0A6C;  -- 	store numShifts
-           10F : 0A6E;  -- 	store angle
-           110 : 14EB;  -- 	jump loop1
-           111 : 0631;  -- 	load Zero
-           112 : 0A6A;  -- 	store numCoordsCount
-           113 : 5C00;  -- 	loadi 0
-           114 : 0A6F;  -- 	store hasFoundCoord
-           115 : 4400;  -- 	return
-           116 : 0631;  -- 	load Zero
-           117 : 0A6E;  -- 	store angle
-           118 : 14F9;  -- 	jump loop2
-           119 : 0631;  -- 	load Zero
-           11A : 3404;  -- 	addi 4
-           11B : 4C01;  -- 	out LEDS
-           11C : 0713;  -- 	load coordArrayAddr
-           11D : 0E6A;  -- 	add numCoordsCount
-           11E : 6000;  -- 	loada
-           11F : 4C06;  -- 	out LCD
-           120 : 0A70;  -- 	store coordFound
-           121 : 066E;  -- 	load angle
-           122 : 0A71;  -- 	store angleFound
-           123 : 0631;  -- 	load Zero
-           124 : 3401;  -- 	addi 1
-           125 : 0A6F;  -- 	store hasFoundCoord
-           126 : 0631;  -- 	load Zero
-           127 : 3408;  -- 	addi 8
-           128 : 4C01;  -- 	out LEDS
-           129 : 4400;  -- 	return
-           12A : 0007;  -- rotateMask: dw &B0000000000000111
-           12B : 0000;  -- origVal: dw 0
-           12C : 0000;  -- last3Bits: dw 0
-           12D : 0000;  -- shiftVal: dw 0
-           12E : 092B;  -- 	store origVal
-           12F : 252A;  -- 	and rotateMask
-           130 : 092C;  -- 	store last3Bits
-           131 : 052B;  -- 	load origVal
-           132 : 3013;  -- 	shift -3
-           133 : 092D;  -- 	store shiftVal
-           134 : 052C;  -- 	load last3Bits
-           135 : 3009;  -- 	shift 9
-           136 : 292D;  -- 	or shiftVal
-           137 : 4400;  -- 	return
-           138 : 0000;  -- angleToTurnTo: dw 0
-           139 : 0938;  -- 	store angleToTurnTo
-           13A : 48C2;  -- 	in THETA
-           13B : 1138;  -- 	sub angleToTurnTo
-           13C : 2142;  -- 	jzero TurnComplete
-           13D : 0644;  -- 	load FSlow
-           13E : 4C83;  -- 	out LVELCMD
-           13F : 0645;  -- 	load RSlow
-           140 : 4C8B;  -- 	out RVELCMD
-           141 : 153A;  -- 	jump tta
-           142 : 0631;  -- 	load Zero
-           143 : 4C83;  -- 	out LVELCMD
-           144 : 4C8B;  -- 	out RVELCMD
-           145 : 4400;  -- 	return
-           146 : 0000;  -- Count: dw 0
-           147 : 0000;  -- Value: dw 0
-           148 : 0947;  -- 	store Value
-           149 : 0631;  -- 	load Zero
-           14A : 0946;  -- 	store Count
-           14B : 0547;  -- 	load Value
-           14C : 123E;  -- 	sub TwoFeet
-           14D : 0947;  -- 	store Value
-           14E : 0546;  -- 	load Count
-           14F : 3401;  -- 	addi 1
-           150 : 0946;  -- 	store Count
-           151 : 0547;  -- 	load Value
-           152 : 1D4B;  -- 	jpos GetDistToWallHelper
-           153 : 214B;  -- 	jzero GetDistToWallHelper
-           154 : 0546;  -- 	load Count
-           155 : 37FF;  -- 	addi -1
-           156 : 4400;  -- 	return
-           157 : 5C00;  -- 	Loadi	0
-           158 : 4C83;  -- 	OUT		LVELCMD
-           159 : 4C8B;  -- 	OUT		RVELCMD
-           15A : 4CC3;  -- 	OUT 	RESETPOS
-           15B : 418A;  -- 	Call    ResetAngle
-           15C : 4400;  -- 	Return
-           15D : 065E;  -- 	LOAD CurTh
-           15E : 0A5F;  -- 	Store PreTh
-           15F : 48C2;  -- 	IN Theta
-           160 : 0A5E;  -- 	Store CurTh
-           161 : 125F;  -- 	Sub PreTh
-           162 : 0A60;  -- 	Store DifTh
-           163 : 379C;  -- 	ADDI -100
-           164 : 1D68;  -- 	JPOS C>100
-           165 : 34C8;  -- 	ADDI 200
-           166 : 196B;  -- 	JNeg C<-100
-           167 : 156E;  -- 	JUMP C~0
-           168 : 379C;  -- 	ADDI -100
-           169 : 0A60;  -- 	Store DifTh
-           16A : 156E;  -- 	Jump C~0
-           16B : 3464;  -- 	ADDI 100
-           16C : 0A60;  -- 	Store DifTh
-           16D : 156E;  -- 	Jump C~0
-           16E : 0661;  -- 	Load ChgTh
-           16F : 0E60;  -- 	Add DifTh
-           170 : 0A61;  -- 	Store ChgTh
-           171 : 0E61;  -- 	Add ChgTh
-           172 : 0A62;  -- 	Store Correction ;Used in forward. Plus or minus (2 * delta theta)
-           173 : 065D;  -- 	Load InAngle
-           174 : 1261;  -- 	Sub ChgTh
-           175 : 3670;  -- 	ADDI -400
-           176 : 1D7F;  -- 	JPOS C-500
-           177 : 065D;  -- 	Load InAngle
-           178 : 1261;  -- 	Sub ChgTh
-           179 : 3590;  -- 	ADDI 400
-           17A : 197F;  -- 	JNeg C-500
-           17B : 065D;  -- 	Load InAngle
-           17C : 1261;  -- 	Sub ChgTh
-           17D : 1981;  -- 	JNeg Cneg
-           17E : 1587;  -- 	Jump Cpos
-           17F : 5DF4;  -- 	LOADI 500
-           180 : 1588;  -- 	Jump Cang
-           181 : 065D;  -- 	LOAD InAngle
-           182 : 1261;  -- 	Sub ChgTh
-           183 : 1D87;  -- 	JPos Cpos
-           184 : 0A1C;  -- 	Store Temp
-           185 : 5C00;  -- 	LoadI 0
-           186 : 121C;  -- 	Sub Temp
-           187 : 3464;  -- 	ADDI 100
-           188 : 0A63;  -- 	Store TurnSpeed ;Always Positive, between 0 and 500;
-           189 : 4400;  -- 	return
-           18A : 5C00;  -- 	LoadI 0
-           18B : 0A5E;  -- 	Store CurTh
-           18C : 5C00;  -- 	LoadI 0
-           18D : 0A61;  -- 	Store ChgTh
-           18E : 4400;  -- 	Return
-           18F : 0A5D;  -- 	Store InAngle
-           190 : 19AD;  -- 	JNEG TurnRLoop
-           191 : 1D9A;  -- 	JPOS TurnLLoop
-           192 : 4157;  -- 	Call Stop
-           193 : 4400;  -- 	return
-           194 : 0A5D;  -- 	Store InAngle
-           195 : 1D9A;  -- 	JPos TurnLLoop ;Turning left increase theta, so InAngle must be positive.
-           196 : 5C00;  -- 	LoadI 0		   ;If it is not positive, it is negated.
-           197 : 125D;  -- 	Sub InAngle
-           198 : 0A5D;  -- 	Store InAngle
-           199 : 4157;  -- 	Call Stop	   ;To reset variables
-           19A : 415D;  -- 	Call UpdateAngle
-           19B : 0663;  -- 	Load TurnSpeed
-           19C : 4C83;  -- 	Out LVELCMD
-           19D : 5C00;  -- 	Loadi 0
-           19E : 1263;  -- 	Sub TurnSpeed
-           19F : 4C8B;  -- 	Out RVELCMD
-           1A0 : 0661;  -- 	Load ChgTh
-           1A1 : 4C04;  -- 	Out SSEG1
-           1A2 : 125D;  -- 	Sub InAngle
-           1A3 : 4C05;  -- 	Out SSeg2
-           1A4 : 199A;  -- 	JNEG TurnLLoop
-           1A5 : 4157;  -- 	Call Stop 
-           1A6 : 4400;  -- 	return
-           1A7 : 0A5D;  -- 	Store InAngle
-           1A8 : 19AD;  -- 	JNeg TurnRLoop ;Turning right decreases theta, so InAngle must be negative.
-           1A9 : 5C00;  -- 	LoadI 0		   ;If it is not negative, it is negated.
-           1AA : 125D;  -- 	Sub InAngle
-           1AB : 0A5D;  -- 	Store InAngle
-           1AC : 4157;  -- 	Call Stop 	   ;To reset variables
-           1AD : 415D;  -- 	Call UpdateAngle
-           1AE : 0663;  -- 	Load TurnSpeed
-           1AF : 4C8B;  -- 	Out RVELCMD
-           1B0 : 5C00;  -- 	Loadi 0
-           1B1 : 1263;  -- 	Sub TurnSpeed
-           1B2 : 4C83;  -- 	Out LVELCMD
-           1B3 : 0661;  -- 	Load ChgTh
-           1B4 : 4C04;  -- 	Out SSeg1
-           1B5 : 125D;  -- 	Sub InAngle
-           1B6 : 4C05;  -- 	Out SSeg2
-           1B7 : 1DAD;  -- 	JPOS TurnRLoop
-           1B8 : 4157;  -- 	Call Stop
-           1B9 : 4400;  -- 	return
-           1BA : 0A57;  -- 	Store InDist
-           1BB : 4157;  -- 	Call Stop	   ;To reset variables
-           1BC : 4880;  -- 	In LPOS
-           1BD : 0A58;  -- 	Store StX
-           1BE : 0657;  -- 	Load InDist
-           1BF : 19CD;  -- 	JNEG Backward
-           1C0 : 415D;  -- 	Call UpdateAngle
-           1C1 : 5CC8;  -- 	LOADI 200   	;200 is the speed. Can be changed.
-           1C2 : 0E62;  -- 	Add Correction
-           1C3 : 4C83;  -- 	Out LVELCMD
-           1C4 : 5CC8;  -- 	Loadi 200
-           1C5 : 1262;  -- 	Sub Correction
-           1C6 : 4C8B;  -- 	Out RVELCMD
-           1C7 : 4880;  -- 	In LPOS
-           1C8 : 1258;  -- 	Sub StX
-           1C9 : 1257;  -- 	Sub InDist
-           1CA : 19C0;  -- 	JNeg Onward
-           1CB : 4157;  -- 	Call Stop
-           1CC : 4400;  -- 	return
-           1CD : 415D;  -- 	Call UpdateAngle
-           1CE : 5F38;  -- 	LOADI -200   	;200 is the speed. Can be changed.
-           1CF : 0E62;  -- 	Add Correction
-           1D0 : 4C83;  -- 	Out LVELCMD
-           1D1 : 5F38;  -- 	Loadi -200
-           1D2 : 1262;  -- 	Sub Correction
-           1D3 : 4C8B;  -- 	Out RVELCMD
-           1D4 : 4880;  -- 	In LPOS
-           1D5 : 1258;  -- 	Sub StX
-           1D6 : 1257;  -- 	Sub InDist
-           1D7 : 19CD;  -- 	JNeg Backward
-           1D8 : 4157;  -- 	Call Stop
-           1D9 : 4400;  -- 	return
-           1DA : 4C02;  -- 	OUT    TIMER
-           1DB : 4802;  -- 	IN     TIMER
-           1DC : 4C07;  -- 	OUT    XLEDS       ; User-feedback that a pause is occurring.
-           1DD : 37F6;  -- 	ADDI   -10         ; 1 second in 10Hz.
-           1DE : 19DB;  -- 	JNEG   Wloop
-           1DF : 4400;  -- 	RETURN
-           1E0 : 09E7;  -- 	STORE  WaitTime
-           1E1 : 4C02;  -- 	OUT    Timer
-           1E2 : 4802;  -- 	IN     Timer
-           1E3 : 4C07;  -- 	OUT    XLEDS       ; User-feedback that a pause is occurring.
-           1E4 : 11E7;  -- 	SUB    WaitTime
-           1E5 : 19E2;  -- 	JNEG   WACLoop
-           1E6 : 4400;  -- 	RETURN
-           1E7 : 0000;  -- 	WaitTime: DW 0     ; "local" variable.
-           1E8 : 4200;  -- 	CALL   GetBattLvl
-           1E9 : 21E8;  -- 	JZERO  BattCheck   ; A/D hasn't had time to initialize
-           1EA : 124A;  -- 	SUB    MinBatt
-           1EB : 19EE;  -- 	JNEG   DeadBatt
-           1EC : 0E4A;  -- 	ADD    MinBatt     ; get original value back
-           1ED : 4400;  -- 	RETURN
-           1EE : 0635;  -- 	LOAD   Four
-           1EF : 4C0A;  -- 	OUT    BEEP        ; start beep sound
-           1F0 : 4200;  -- 	CALL   GetBattLvl  ; get the battery level
-           1F1 : 4C04;  -- 	OUT    SSEG1       ; display it everywhere
-           1F2 : 4C05;  -- 	OUT    SSEG2
-           1F3 : 4C06;  -- 	OUT    LCD
-           1F4 : 0631;  -- 	LOAD   Zero
-           1F5 : 37FF;  -- 	ADDI   -1          ; 0xFFFF
-           1F6 : 4C01;  -- 	OUT    LEDS        ; all LEDs on
-           1F7 : 4C07;  -- 	OUT    XLEDS
-           1F8 : 41DA;  -- 	CALL   Wait1       ; 1 second
-           1F9 : 0631;  -- 	Load   Zero
-           1FA : 4C0A;  -- 	OUT    BEEP        ; stop beeping
-           1FB : 0631;  -- 	LOAD   Zero
-           1FC : 4C01;  -- 	OUT    LEDS        ; LEDs off
-           1FD : 4C07;  -- 	OUT    XLEDS
-           1FE : 41DA;  -- 	CALL   Wait1       ; 1 second
-           1FF : 15EE;  -- 	JUMP   DeadBatt    ; repeat forever
-           200 : 064C;  -- 	LOAD   I2CRCmd     ; 0x0190 (write 0B, read 1B, addr 0x90)
-           201 : 4C90;  -- 	OUT    I2C_CMD     ; to I2C_CMD
-           202 : 4C92;  -- 	OUT    I2C_RDY     ; start the communication
-           203 : 420D;  -- 	CALL   BlockI2C    ; wait for it to finish
-           204 : 4891;  -- 	IN     I2C_DATA    ; get the returned data
-           205 : 4400;  -- 	RETURN
-           206 : 420D;  -- 	CALL   BlockI2C    ; wait for idle
-           207 : 064B;  -- 	LOAD   I2CWCmd     ; 0x1190 (write 1B, read 1B, addr 0x90)
-           208 : 4C90;  -- 	OUT    I2C_CMD     ; to I2C_CMD register
-           209 : 0631;  -- 	LOAD   Zero        ; 0x0000 (A/D port 0, no increment)
-           20A : 4C91;  -- 	OUT    I2C_DATA    ; to I2C_DATA register
-           20B : 4C92;  -- 	OUT    I2C_RDY     ; start the communication
-           20C : 420D;  -- 	CALL   BlockI2C    ; wait for it to finish
-           20D : 0631;  -- 	LOAD   Zero
-           20E : 0A1C;  -- 	STORE  Temp        ; Used to check for timeout
-           20F : 061C;  -- 	LOAD   Temp
-           210 : 3401;  -- 	ADDI   1           ; this will result in ~0.1s timeout
-           211 : 0A1C;  -- 	STORE  Temp
-           212 : 2216;  -- 	JZERO  I2CError    ; Timeout occurred; error
-           213 : 4892;  -- 	IN     I2C_RDY     ; Read busy signal
-           214 : 1E0F;  -- 	JPOS   BI2CL       ; If not 0, try again
-           215 : 4400;  -- 	RETURN             ; Else return
-           216 : 0631;  -- 	LOAD   Zero
-           217 : 352C;  -- 	ADDI   &H12C       ; "I2C"
-           218 : 4C04;  -- 	OUT    SSEG1
-           219 : 4C05;  -- 	OUT    SSEG2       ; display error message
-           21A : 1616;  -- 	JUMP   I2CError
-           21B : DEAD;  -- DEAD: dw &HDEAD
-           21C : 0000;  -- Temp:     DW 0 ; "Temp" is not a great name, but can be useful
-           21D : 0000;  -- Switch15to0: dw 0
-           21E : 0000;  -- x1: dw 0
-           21F : 0000;  -- y1: dw 0
-           220 : 0000;  -- x2: dw 0
-           221 : 0000;  -- y2: dw 0
-           222 : 0000;  -- x3: dw 0
-           223 : 0000;  -- y3: dw 0
-           224 : 0000;  -- display1: dw 0
-           225 : 0000;  -- display2: dw 0
-           226 : 0007;  -- Mask: dw &H007
-           227 : 0001;  -- Mask0:    DW &B00000001
-           228 : 0002;  -- Mask1:    DW &B00000010
-           229 : 0004;  -- Mask2:    DW &B00000100
-           22A : 0008;  -- Mask3:    DW &B00001000
-           22B : 0010;  -- Mask4:    DW &B00010000
-           22C : 0020;  -- Mask5:    DW &B00100000
-           22D : 0040;  -- Mask6:    DW &B01000000
-           22E : 0080;  -- Mask7:    DW &B10000000
-           22F : 000F;  -- Mask4bits: dw &H00F
-           230 : FFFF;  -- NegOne:   DW -1
-           231 : 0000;  -- Zero:     DW 0
-           232 : 0001;  -- One:      DW 1
-           233 : 0002;  -- Two:      DW 2
-           234 : 0003;  -- Three:    DW 3
-           235 : 0004;  -- Four:     DW 4
-           236 : 0005;  -- Five:     DW 5
-           237 : 0006;  -- Six:      DW 6
-           238 : 0007;  -- Seven:    DW 7
-           239 : 0008;  -- Eight:    DW 8
-           23A : 0009;  -- Nine:     DW 9
-           23B : 000A;  -- Ten:      DW 10
-           23C : 03C1;  -- OneMeter: DW 961       ; ~1m in 1.05mm units
-           23D : 01E1;  -- HalfMeter: DW 481      ; ~0.5m in 1.05mm units
-           23E : 024A;  -- TwoFeet:  DW 586       ; ~2ft in 1.05mm units
-           23F : 06DE;  -- SixFeet: DW 1758
-           240 : 005A;  -- Deg90:    DW 90        ; 90 degrees in odometry units
-           241 : 00B4;  -- Deg180:   DW 180       ; 180
-           242 : 010E;  -- Deg270:   DW 270       ; 270
-           243 : 0168;  -- Deg360:   DW 360       ; can never actually happen; for math only
-           244 : 0064;  -- FSlow:    DW 100       ; 100 is about the lowest velocity value that will move
-           245 : FF9C;  -- RSlow:    DW -100
-           246 : 015E;  -- FMid:     DW 350       ; 350 is a medium speed
-           247 : FEA2;  -- RMid:     DW -350
-           248 : 01F4;  -- FFast:    DW 500       ; 500 is almost max speed (511 is max)
-           249 : FE0C;  -- RFast:    DW -500
-           24A : 0082;  -- MinBatt:  DW 130       ; 13.0V - minimum safe battery voltage
-           24B : 1190;  -- I2CWCmd:  DW &H1190    ; write one i2c byte, read one byte, addr 0x90
-           24C : 0190;  -- I2CRCmd:  DW &H0190    ; write nothing, read one byte, addr 0x90
-           24D : 0000;  -- S_X:		DW	0
-           24E : 0000;  -- S_Y:		DW	0
-           24F : 0000;  -- S_T:		DW	0
-           250 : 0000;  -- E_X:		DW	0
-           251 : 0000;  -- E_Y:		DW	0
-           252 : 0000;  -- Time:	  DW 0
-           253 : 0000;  -- InAng:	  DW 0
-           254 : 0000;  -- InAngTop: DW 0
-           255 : 0000;  -- StAng:	  DW 0
-           256 : 0000;  -- InDistTop: DW 0
-           257 : 0000;  -- InDist:	  DW 0
-           258 : 0000;  -- StX:	  DW 0
-           259 : 0000;  -- StY:	  DW 0
-           25A : 0000;  -- DifY:	  DW 0
-           25B : 0064;  -- Speed:	  DW 100
-           25C : 0000;  -- StartAngle:	DW 0
-           25D : 0000;  -- InAngle:  DW 0
-           25E : 0000;  -- CurTh:	  DW 0
-           25F : 0000;  -- PreTh:	  DW 0
-           260 : 0000;  -- DifTh:	  DW 0   ;Change Theta
-           261 : 0000;  -- ChgTh:	  DW 0   ;Total Change
-           262 : 0000;  -- Correction: DW 0 ;Amount to adjust by
-           263 : 0000;  -- TurnSpeed: DW 0  ;The positive rate at which to turn.
-           264 : 7FFF;  -- minDist: dw &H7fff
-           265 : 0000;  -- minDistAngle: dw 0
-           266 : 0000;  -- curDist0: dw 0
-           267 : 0000;  -- curDist5: dw 0
-           268 : 0000;  -- wallDistances: dw 0
-           269 : 0000;  -- wallDists: dw 0
-           26A : FFFF;  -- numCoordsCount: dw -1
-           26B : 0012;  -- totalNumCoords: dw 18
-           26C : 0000;  -- numShifts: dw 0
-           26D : 0005;  -- totalNumShifts: dw 5
-           26E : 0000;  -- angle: dw &B00
-           26F : 0000;  -- hasFoundCoord: dw 0
-           270 : 0000;  -- coordFound: dw 0
-           271 : 0000;  -- angleFound: dw 0
-           272 : 0000;  -- curWallDist: dw 0
-           273 : 0300;  -- wallDistArrayAddr: dw &H300
+           104 : 0685;  -- 	load numShifts
+           105 : 3401;  -- 	addi 1
+           106 : 0A85;  -- 	store numShifts
+           107 : 1286;  -- 	sub totalNumShifts
+           108 : 2118;  -- 	jzero loop2End
+           109 : 068B;  -- 	load curWallDist
+           10A : 1282;  -- 	sub wallDists
+           10B : 2124;  -- 	jzero foundWall
+           10C : 064A;  -- 	load Zero
+           10D : 3410;  -- 	addi 16
+           10E : 4C01;  -- 	out LEDS
+           10F : 068B;  -- 	load curWallDist
+           110 : 4147;  -- 	call RightRotate3
+           111 : 0A8B;  -- 	store curWallDist
+           112 : 0687;  -- 	load angle
+           113 : 3401;  -- 	addi 1
+           114 : 0A87;  -- 	store angle
+           115 : 37FD;  -- 	addi -3
+           116 : 1D21;  -- 	jpos resetAng
+           117 : 1504;  -- 	jump loop2
+           118 : 064A;  -- 	load Zero
+           119 : 0A85;  -- 	store numShifts
+           11A : 0A87;  -- 	store angle
+           11B : 14F6;  -- 	jump loop1
+           11C : 064A;  -- 	load Zero
+           11D : 0A83;  -- 	store numCoordsCount
+           11E : 5C00;  -- 	loadi 0
+           11F : 0A88;  -- 	store hasFoundCoord
+           120 : 4400;  -- 	return
+           121 : 064A;  -- 	load Zero
+           122 : 0A87;  -- 	store angle
+           123 : 1504;  -- 	jump loop2
+           124 : 064A;  -- 	load Zero
+           125 : 3404;  -- 	addi 4
+           126 : 4C01;  -- 	out LEDS
+           127 : 0713;  -- 	load coordArrayAddr
+           128 : 0E83;  -- 	add numCoordsCount
+           129 : 6000;  -- 	loada
+           12A : 4C06;  -- 	out LCD
+           12B : 0A89;  -- 	store coordFound
+           12C : 0687;  -- 	load angle
+           12D : 0A8A;  -- 	store angleFound
+           12E : 064A;  -- 	load Zero
+           12F : 3401;  -- 	addi 1
+           130 : 0A88;  -- 	store hasFoundCoord
+           131 : 064A;  -- 	load Zero
+           132 : 3408;  -- 	addi 8
+           133 : 4C01;  -- 	out LEDS
+           134 : 068A;  -- 	load angleFound
+           135 : 3402;  -- 	addi 2
+           136 : 0A8A;  -- 	store angleFound
+           137 : 37FC;  -- 	addi -4
+           138 : 213C;  -- 	jzero angle0
+           139 : 37FF;  -- 	addi -1
+           13A : 213F;  -- 	jzero angle1
+           13B : 1542;  -- 	jump angleRet
+           13C : 5C00;  -- 	loadi 0
+           13D : 0A8A;  -- 	store angleFound
+           13E : 1542;  -- 	jump angleRet
+           13F : 5C01;  -- 	loadi 1
+           140 : 0A8A;  -- 	store angleFound
+           141 : 1542;  -- 	jump angleRet
+           142 : 4400;  -- 	return
+           143 : 0007;  -- rotateMask: dw &B0000000000000111
+           144 : 0000;  -- origVal: dw 0
+           145 : 0000;  -- last3Bits: dw 0
+           146 : 0000;  -- shiftVal: dw 0
+           147 : 0944;  -- 	store origVal
+           148 : 2543;  -- 	and rotateMask
+           149 : 0945;  -- 	store last3Bits
+           14A : 0544;  -- 	load origVal
+           14B : 3013;  -- 	shift -3
+           14C : 0946;  -- 	store shiftVal
+           14D : 0545;  -- 	load last3Bits
+           14E : 3009;  -- 	shift 9
+           14F : 2946;  -- 	or shiftVal
+           150 : 4400;  -- 	return
+           151 : 0000;  -- angleToTurnTo: dw 0
+           152 : 0951;  -- 	store angleToTurnTo
+           153 : 48C2;  -- 	in THETA
+           154 : 1151;  -- 	sub angleToTurnTo
+           155 : 215B;  -- 	jzero TurnComplete
+           156 : 065D;  -- 	load FSlow
+           157 : 4C83;  -- 	out LVELCMD
+           158 : 065E;  -- 	load RSlow
+           159 : 4C8B;  -- 	out RVELCMD
+           15A : 1553;  -- 	jump tta
+           15B : 064A;  -- 	load Zero
+           15C : 4C83;  -- 	out LVELCMD
+           15D : 4C8B;  -- 	out RVELCMD
+           15E : 4400;  -- 	return
+           15F : 0000;  -- Count: dw 0
+           160 : 0000;  -- Value: dw 0
+           161 : 0960;  -- 	store Value
+           162 : 064A;  -- 	load Zero
+           163 : 095F;  -- 	store Count
+           164 : 0560;  -- 	load Value
+           165 : 1257;  -- 	sub TwoFeet
+           166 : 0960;  -- 	store Value
+           167 : 055F;  -- 	load Count
+           168 : 3401;  -- 	addi 1
+           169 : 095F;  -- 	store Count
+           16A : 0560;  -- 	load Value
+           16B : 1D64;  -- 	jpos GetDistToWallHelper
+           16C : 2164;  -- 	jzero GetDistToWallHelper
+           16D : 055F;  -- 	load Count
+           16E : 37FF;  -- 	addi -1
+           16F : 4400;  -- 	return
+           170 : 5C00;  -- 	Loadi	0
+           171 : 4C83;  -- 	OUT		LVELCMD
+           172 : 4C8B;  -- 	OUT		RVELCMD
+           173 : 4CC3;  -- 	OUT 	RESETPOS
+           174 : 41A3;  -- 	Call    ResetAngle
+           175 : 4400;  -- 	Return
+           176 : 0677;  -- 	LOAD CurTh
+           177 : 0A78;  -- 	Store PreTh
+           178 : 48C2;  -- 	IN Theta
+           179 : 0A77;  -- 	Store CurTh
+           17A : 1278;  -- 	Sub PreTh
+           17B : 0A79;  -- 	Store DifTh
+           17C : 379C;  -- 	ADDI -100
+           17D : 1D81;  -- 	JPOS C>100
+           17E : 34C8;  -- 	ADDI 200
+           17F : 1984;  -- 	JNeg C<-100
+           180 : 1587;  -- 	JUMP C~0
+           181 : 379C;  -- 	ADDI -100
+           182 : 0A79;  -- 	Store DifTh
+           183 : 1587;  -- 	Jump C~0
+           184 : 3464;  -- 	ADDI 100
+           185 : 0A79;  -- 	Store DifTh
+           186 : 1587;  -- 	Jump C~0
+           187 : 067A;  -- 	Load ChgTh
+           188 : 0E79;  -- 	Add DifTh
+           189 : 0A7A;  -- 	Store ChgTh
+           18A : 0E7A;  -- 	Add ChgTh
+           18B : 0A7B;  -- 	Store Correction ;Used in forward. Plus or minus (2 * delta theta)
+           18C : 0676;  -- 	Load InAngle
+           18D : 127A;  -- 	Sub ChgTh
+           18E : 3670;  -- 	ADDI -400
+           18F : 1D98;  -- 	JPOS C-500
+           190 : 0676;  -- 	Load InAngle
+           191 : 127A;  -- 	Sub ChgTh
+           192 : 3590;  -- 	ADDI 400
+           193 : 1998;  -- 	JNeg C-500
+           194 : 0676;  -- 	Load InAngle
+           195 : 127A;  -- 	Sub ChgTh
+           196 : 199A;  -- 	JNeg Cneg
+           197 : 15A0;  -- 	Jump Cpos
+           198 : 5DF4;  -- 	LOADI 500
+           199 : 15A1;  -- 	Jump Cang
+           19A : 0676;  -- 	LOAD InAngle
+           19B : 127A;  -- 	Sub ChgTh
+           19C : 1DA0;  -- 	JPos Cpos
+           19D : 0A35;  -- 	Store Temp
+           19E : 5C00;  -- 	LoadI 0
+           19F : 1235;  -- 	Sub Temp
+           1A0 : 3464;  -- 	ADDI 100
+           1A1 : 0A7C;  -- 	Store TurnSpeed ;Always Positive, between 0 and 500;
+           1A2 : 4400;  -- 	return
+           1A3 : 5C00;  -- 	LoadI 0
+           1A4 : 0A77;  -- 	Store CurTh
+           1A5 : 5C00;  -- 	LoadI 0
+           1A6 : 0A7A;  -- 	Store ChgTh
+           1A7 : 4400;  -- 	Return
+           1A8 : 0A76;  -- 	Store InAngle
+           1A9 : 19C6;  -- 	JNEG TurnRLoop
+           1AA : 1DB3;  -- 	JPOS TurnLLoop
+           1AB : 4170;  -- 	Call Stop
+           1AC : 4400;  -- 	return
+           1AD : 0A76;  -- 	Store InAngle
+           1AE : 1DB3;  -- 	JPos TurnLLoop ;Turning left increase theta, so InAngle must be positive.
+           1AF : 5C00;  -- 	LoadI 0		   ;If it is not positive, it is negated.
+           1B0 : 1276;  -- 	Sub InAngle
+           1B1 : 0A76;  -- 	Store InAngle
+           1B2 : 4170;  -- 	Call Stop	   ;To reset variables
+           1B3 : 4176;  -- 	Call UpdateAngle
+           1B4 : 067C;  -- 	Load TurnSpeed
+           1B5 : 4C83;  -- 	Out LVELCMD
+           1B6 : 5C00;  -- 	Loadi 0
+           1B7 : 127C;  -- 	Sub TurnSpeed
+           1B8 : 4C8B;  -- 	Out RVELCMD
+           1B9 : 067A;  -- 	Load ChgTh
+           1BA : 4C04;  -- 	Out SSEG1
+           1BB : 1276;  -- 	Sub InAngle
+           1BC : 4C05;  -- 	Out SSeg2
+           1BD : 19B3;  -- 	JNEG TurnLLoop
+           1BE : 4170;  -- 	Call Stop 
+           1BF : 4400;  -- 	return
+           1C0 : 0A76;  -- 	Store InAngle
+           1C1 : 19C6;  -- 	JNeg TurnRLoop ;Turning right decreases theta, so InAngle must be negative.
+           1C2 : 5C00;  -- 	LoadI 0		   ;If it is not negative, it is negated.
+           1C3 : 1276;  -- 	Sub InAngle
+           1C4 : 0A76;  -- 	Store InAngle
+           1C5 : 4170;  -- 	Call Stop 	   ;To reset variables
+           1C6 : 4176;  -- 	Call UpdateAngle
+           1C7 : 067C;  -- 	Load TurnSpeed
+           1C8 : 4C8B;  -- 	Out RVELCMD
+           1C9 : 5C00;  -- 	Loadi 0
+           1CA : 127C;  -- 	Sub TurnSpeed
+           1CB : 4C83;  -- 	Out LVELCMD
+           1CC : 067A;  -- 	Load ChgTh
+           1CD : 4C04;  -- 	Out SSeg1
+           1CE : 1276;  -- 	Sub InAngle
+           1CF : 4C05;  -- 	Out SSeg2
+           1D0 : 1DC6;  -- 	JPOS TurnRLoop
+           1D1 : 4170;  -- 	Call Stop
+           1D2 : 4400;  -- 	return
+           1D3 : 0A70;  -- 	Store InDist
+           1D4 : 4170;  -- 	Call Stop	   ;To reset variables
+           1D5 : 4880;  -- 	In LPOS
+           1D6 : 0A71;  -- 	Store StX
+           1D7 : 0670;  -- 	Load InDist
+           1D8 : 19E6;  -- 	JNEG Backward
+           1D9 : 4176;  -- 	Call UpdateAngle
+           1DA : 5CC8;  -- 	LOADI 200   	;200 is the speed. Can be changed.
+           1DB : 0E7B;  -- 	Add Correction
+           1DC : 4C83;  -- 	Out LVELCMD
+           1DD : 5CC8;  -- 	Loadi 200
+           1DE : 127B;  -- 	Sub Correction
+           1DF : 4C8B;  -- 	Out RVELCMD
+           1E0 : 4880;  -- 	In LPOS
+           1E1 : 1271;  -- 	Sub StX
+           1E2 : 1270;  -- 	Sub InDist
+           1E3 : 19D9;  -- 	JNeg Onward
+           1E4 : 4170;  -- 	Call Stop
+           1E5 : 4400;  -- 	return
+           1E6 : 4176;  -- 	Call UpdateAngle
+           1E7 : 5F38;  -- 	LOADI -200   	;200 is the speed. Can be changed.
+           1E8 : 0E7B;  -- 	Add Correction
+           1E9 : 4C83;  -- 	Out LVELCMD
+           1EA : 5F38;  -- 	Loadi -200
+           1EB : 127B;  -- 	Sub Correction
+           1EC : 4C8B;  -- 	Out RVELCMD
+           1ED : 4880;  -- 	In LPOS
+           1EE : 1271;  -- 	Sub StX
+           1EF : 1270;  -- 	Sub InDist
+           1F0 : 19E6;  -- 	JNeg Backward
+           1F1 : 4170;  -- 	Call Stop
+           1F2 : 4400;  -- 	return
+           1F3 : 4C02;  -- 	OUT    TIMER
+           1F4 : 4802;  -- 	IN     TIMER
+           1F5 : 4C07;  -- 	OUT    XLEDS       ; User-feedback that a pause is occurring.
+           1F6 : 37F6;  -- 	ADDI   -10         ; 1 second in 10Hz.
+           1F7 : 19F4;  -- 	JNEG   Wloop
+           1F8 : 4400;  -- 	RETURN
+           1F9 : 0A00;  -- 	STORE  WaitTime
+           1FA : 4C02;  -- 	OUT    Timer
+           1FB : 4802;  -- 	IN     Timer
+           1FC : 4C07;  -- 	OUT    XLEDS       ; User-feedback that a pause is occurring.
+           1FD : 1200;  -- 	SUB    WaitTime
+           1FE : 19FB;  -- 	JNEG   WACLoop
+           1FF : 4400;  -- 	RETURN
+           200 : 0000;  -- 	WaitTime: DW 0     ; "local" variable.
+           201 : 4219;  -- 	CALL   GetBattLvl
+           202 : 2201;  -- 	JZERO  BattCheck   ; A/D hasn't had time to initialize
+           203 : 1263;  -- 	SUB    MinBatt
+           204 : 1A07;  -- 	JNEG   DeadBatt
+           205 : 0E63;  -- 	ADD    MinBatt     ; get original value back
+           206 : 4400;  -- 	RETURN
+           207 : 064E;  -- 	LOAD   Four
+           208 : 4C0A;  -- 	OUT    BEEP        ; start beep sound
+           209 : 4219;  -- 	CALL   GetBattLvl  ; get the battery level
+           20A : 4C04;  -- 	OUT    SSEG1       ; display it everywhere
+           20B : 4C05;  -- 	OUT    SSEG2
+           20C : 4C06;  -- 	OUT    LCD
+           20D : 064A;  -- 	LOAD   Zero
+           20E : 37FF;  -- 	ADDI   -1          ; 0xFFFF
+           20F : 4C01;  -- 	OUT    LEDS        ; all LEDs on
+           210 : 4C07;  -- 	OUT    XLEDS
+           211 : 41F3;  -- 	CALL   Wait1       ; 1 second
+           212 : 064A;  -- 	Load   Zero
+           213 : 4C0A;  -- 	OUT    BEEP        ; stop beeping
+           214 : 064A;  -- 	LOAD   Zero
+           215 : 4C01;  -- 	OUT    LEDS        ; LEDs off
+           216 : 4C07;  -- 	OUT    XLEDS
+           217 : 41F3;  -- 	CALL   Wait1       ; 1 second
+           218 : 1607;  -- 	JUMP   DeadBatt    ; repeat forever
+           219 : 0665;  -- 	LOAD   I2CRCmd     ; 0x0190 (write 0B, read 1B, addr 0x90)
+           21A : 4C90;  -- 	OUT    I2C_CMD     ; to I2C_CMD
+           21B : 4C92;  -- 	OUT    I2C_RDY     ; start the communication
+           21C : 4226;  -- 	CALL   BlockI2C    ; wait for it to finish
+           21D : 4891;  -- 	IN     I2C_DATA    ; get the returned data
+           21E : 4400;  -- 	RETURN
+           21F : 4226;  -- 	CALL   BlockI2C    ; wait for idle
+           220 : 0664;  -- 	LOAD   I2CWCmd     ; 0x1190 (write 1B, read 1B, addr 0x90)
+           221 : 4C90;  -- 	OUT    I2C_CMD     ; to I2C_CMD register
+           222 : 064A;  -- 	LOAD   Zero        ; 0x0000 (A/D port 0, no increment)
+           223 : 4C91;  -- 	OUT    I2C_DATA    ; to I2C_DATA register
+           224 : 4C92;  -- 	OUT    I2C_RDY     ; start the communication
+           225 : 4226;  -- 	CALL   BlockI2C    ; wait for it to finish
+           226 : 064A;  -- 	LOAD   Zero
+           227 : 0A35;  -- 	STORE  Temp        ; Used to check for timeout
+           228 : 0635;  -- 	LOAD   Temp
+           229 : 3401;  -- 	ADDI   1           ; this will result in ~0.1s timeout
+           22A : 0A35;  -- 	STORE  Temp
+           22B : 222F;  -- 	JZERO  I2CError    ; Timeout occurred; error
+           22C : 4892;  -- 	IN     I2C_RDY     ; Read busy signal
+           22D : 1E28;  -- 	JPOS   BI2CL       ; If not 0, try again
+           22E : 4400;  -- 	RETURN             ; Else return
+           22F : 064A;  -- 	LOAD   Zero
+           230 : 352C;  -- 	ADDI   &H12C       ; "I2C"
+           231 : 4C04;  -- 	OUT    SSEG1
+           232 : 4C05;  -- 	OUT    SSEG2       ; display error message
+           233 : 162F;  -- 	JUMP   I2CError
+           234 : DEAD;  -- DEAD: dw &HDEAD
+           235 : 0000;  -- Temp:     DW 0 ; "Temp" is not a great name, but can be useful
+           236 : 0000;  -- Switch15to0: dw 0
+           237 : 0000;  -- x1: dw 0
+           238 : 0000;  -- y1: dw 0
+           239 : 0000;  -- x2: dw 0
+           23A : 0000;  -- y2: dw 0
+           23B : 0000;  -- x3: dw 0
+           23C : 0000;  -- y3: dw 0
+           23D : 0000;  -- display1: dw 0
+           23E : 0000;  -- display2: dw 0
+           23F : 0007;  -- Mask: dw &H007
+           240 : 0001;  -- Mask0:    DW &B00000001
+           241 : 0002;  -- Mask1:    DW &B00000010
+           242 : 0004;  -- Mask2:    DW &B00000100
+           243 : 0008;  -- Mask3:    DW &B00001000
+           244 : 0010;  -- Mask4:    DW &B00010000
+           245 : 0020;  -- Mask5:    DW &B00100000
+           246 : 0040;  -- Mask6:    DW &B01000000
+           247 : 0080;  -- Mask7:    DW &B10000000
+           248 : 000F;  -- Mask4bits: dw &H00F
+           249 : FFFF;  -- NegOne:   DW -1
+           24A : 0000;  -- Zero:     DW 0
+           24B : 0001;  -- One:      DW 1
+           24C : 0002;  -- Two:      DW 2
+           24D : 0003;  -- Three:    DW 3
+           24E : 0004;  -- Four:     DW 4
+           24F : 0005;  -- Five:     DW 5
+           250 : 0006;  -- Six:      DW 6
+           251 : 0007;  -- Seven:    DW 7
+           252 : 0008;  -- Eight:    DW 8
+           253 : 0009;  -- Nine:     DW 9
+           254 : 000A;  -- Ten:      DW 10
+           255 : 03C1;  -- OneMeter: DW 961       ; ~1m in 1.05mm units
+           256 : 01E1;  -- HalfMeter: DW 481      ; ~0.5m in 1.05mm units
+           257 : 024A;  -- TwoFeet:  DW 586       ; ~2ft in 1.05mm units
+           258 : 06DE;  -- SixFeet: DW 1758
+           259 : 005A;  -- Deg90:    DW 90        ; 90 degrees in odometry units
+           25A : 00B4;  -- Deg180:   DW 180       ; 180
+           25B : 010E;  -- Deg270:   DW 270       ; 270
+           25C : 0168;  -- Deg360:   DW 360       ; can never actually happen; for math only
+           25D : 0064;  -- FSlow:    DW 100       ; 100 is about the lowest velocity value that will move
+           25E : FF9C;  -- RSlow:    DW -100
+           25F : 015E;  -- FMid:     DW 350       ; 350 is a medium speed
+           260 : FEA2;  -- RMid:     DW -350
+           261 : 01F4;  -- FFast:    DW 500       ; 500 is almost max speed (511 is max)
+           262 : FE0C;  -- RFast:    DW -500
+           263 : 0082;  -- MinBatt:  DW 130       ; 13.0V - minimum safe battery voltage
+           264 : 1190;  -- I2CWCmd:  DW &H1190    ; write one i2c byte, read one byte, addr 0x90
+           265 : 0190;  -- I2CRCmd:  DW &H0190    ; write nothing, read one byte, addr 0x90
+           266 : 0000;  -- S_X:		DW	0
+           267 : 0000;  -- S_Y:		DW	0
+           268 : 0000;  -- S_T:		DW	0
+           269 : 0000;  -- E_X:		DW	0
+           26A : 0000;  -- E_Y:		DW	0
+           26B : 0000;  -- Time:	  DW 0
+           26C : 0000;  -- InAng:	  DW 0
+           26D : 0000;  -- InAngTop: DW 0
+           26E : 0000;  -- StAng:	  DW 0
+           26F : 0000;  -- InDistTop: DW 0
+           270 : 0000;  -- InDist:	  DW 0
+           271 : 0000;  -- StX:	  DW 0
+           272 : 0000;  -- StY:	  DW 0
+           273 : 0000;  -- DifY:	  DW 0
+           274 : 0064;  -- Speed:	  DW 100
+           275 : 0000;  -- StartAngle:	DW 0
+           276 : 0000;  -- InAngle:  DW 0
+           277 : 0000;  -- CurTh:	  DW 0
+           278 : 0000;  -- PreTh:	  DW 0
+           279 : 0000;  -- DifTh:	  DW 0   ;Change Theta
+           27A : 0000;  -- ChgTh:	  DW 0   ;Total Change
+           27B : 0000;  -- Correction: DW 0 ;Amount to adjust by
+           27C : 0000;  -- TurnSpeed: DW 0  ;The positive rate at which to turn.
+           27D : 7FFF;  -- minDist: dw &H7fff
+           27E : 0000;  -- minDistAngle: dw 0
+           27F : 0000;  -- curDist0: dw 0
+           280 : 0000;  -- curDist5: dw 0
+           281 : 0000;  -- wallDistances: dw 0
+           282 : 0000;  -- wallDists: dw 0
+           283 : FFFF;  -- numCoordsCount: dw -1
+           284 : 0012;  -- totalNumCoords: dw 18
+           285 : 0000;  -- numShifts: dw 0
+           286 : 0005;  -- totalNumShifts: dw 5
+           287 : 0000;  -- angle: dw &B00
+           288 : 0000;  -- hasFoundCoord: dw 0
+           289 : 0000;  -- coordFound: dw 0
+           28A : 0000;  -- angleFound: dw 0
+           28B : 0000;  -- curWallDist: dw 0
+           28C : 0300;  -- wallDistArrayAddr: dw &H300
            300 : 0603;  -- c11: dw &H0603 ; --3300
            301 : 0681;  -- c21: dw &H0681 ; --3201
            302 : 0242;  -- c31: dw &h0242 ; --1102

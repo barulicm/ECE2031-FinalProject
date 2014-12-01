@@ -261,13 +261,20 @@ EndTurn:
 	call FindCoords
 	
 	load hasFoundCoord
-	jzero Localize		;if we havent found what cell we are in localize again
+	jzero Relocalize		;if we havent found what cell we are in localize again
 	
 	load coordFound
 	out SSEG2
 	load angleFound
 	out SSEG1
 	jump EndLocalize
+	
+Relocalize:
+	load Zero
+	addi 35
+	call Turn
+	jump Localize
+	
 
 EndLocalize:	
 	load   Zero        
@@ -291,8 +298,16 @@ EndLocalize:
 	store E_Y
 	
 	;Call planner/pather here
+	load Four
+	out BEEP
+	loadi 2
+	call WaitAC
+	load Zero
+	out BEEP
 	
-
+	
+forever:
+	jump forever
 	
 	
 	
@@ -406,6 +421,26 @@ foundWall:
 	load Zero
 	addi 8
 	out LEDS
+	load angleFound
+	addi 2
+	store angleFound
+	addi -4
+	jzero angle0
+	addi -1
+	jzero angle1
+	jump angleRet
+	
+angle0:
+	loadi 0
+	store angleFound
+	jump angleRet
+	
+angle1:
+	loadi 1
+	store angleFound
+	jump angleRet
+	
+angleRet:
 	return
 ;FindCoords End==============================
 
