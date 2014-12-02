@@ -221,7 +221,7 @@ forever:
 ;Localize Start=============================
 Localize:
 ;Get perpendicular to a wall and measure all 4 wall distances by cells
-	loadi &H7fff
+	load origMinDist
 	store minDist
 	load Zero
 	store minDistAngle
@@ -1058,6 +1058,7 @@ THETA:    EQU &HC2  ; Current rotational position of robot (0-359)
 RESETPOS: EQU &HC3  ; write anything here to reset odometry to 0
 
 minDist: dw &H7fff
+origMinDist: dw &H7fff
 minDistAngle: dw 0
 curDist0: dw 0
 curDist5: dw 0

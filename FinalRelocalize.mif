@@ -113,13 +113,13 @@ CONTENT
            064 : 06C1;  -- 	LOAD   Zero
            065 : 4C07;  -- 	OUT    XLEDS       ; clear LEDs once ready to continue
            066 : 40A3;  -- 	call Localize
-           067 : 0700;  -- 	load coordFound
+           067 : 0701;  -- 	load coordFound
            068 : 3014;  -- 	shift -4
            069 : 0ADD;  -- 	store S_X
-           06A : 0700;  -- 	load coordFound
+           06A : 0701;  -- 	load coordFound
            06B : 26BF;  -- 	and Mask4Bits
            06C : 0ADE;  -- 	store S_Y
-           06D : 0701;  -- 	load angleFound
+           06D : 0702;  -- 	load angleFound
            06E : 0ADF;  -- 	store S_T
            06F : 06AE;  -- 	load x1
            070 : 0AE0;  -- 	store E_X
@@ -133,13 +133,13 @@ CONTENT
            078 : 06C1;  -- 	load Zero
            079 : 4C0A;  -- 	out BEEP
            07A : 40A3;  -- 	call Localize
-           07B : 0700;  -- 	load coordFound
+           07B : 0701;  -- 	load coordFound
            07C : 3014;  -- 	shift -4
            07D : 0ADD;  -- 	store S_X
-           07E : 0700;  -- 	load coordFound
+           07E : 0701;  -- 	load coordFound
            07F : 26BF;  -- 	and Mask4Bits
            080 : 0ADE;  -- 	store S_Y
-           081 : 0701;  -- 	load angleFound
+           081 : 0702;  -- 	load angleFound
            082 : 0ADF;  -- 	store S_T
            083 : 06B0;  -- 	load x2
            084 : 0AE0;  -- 	store E_X
@@ -153,13 +153,13 @@ CONTENT
            08C : 06C1;  -- 	load Zero
            08D : 4C0A;  -- 	out BEEP
            08E : 40A3;  -- 	call Localize
-           08F : 0700;  -- 	load coordFound
+           08F : 0701;  -- 	load coordFound
            090 : 3014;  -- 	shift -4
            091 : 0ADD;  -- 	store S_X
-           092 : 0700;  -- 	load coordFound
+           092 : 0701;  -- 	load coordFound
            093 : 26BF;  -- 	and Mask4Bits
            094 : 0ADE;  -- 	store S_Y
-           095 : 0701;  -- 	load angleFound
+           095 : 0702;  -- 	load angleFound
            096 : 0ADF;  -- 	store S_T
            097 : 06AE;  -- 	load x1
            098 : 0AE0;  -- 	store E_X
@@ -173,12 +173,12 @@ CONTENT
            0A0 : 06C1;  -- 	load Zero
            0A1 : 4C0A;  -- 	out BEEP
            0A2 : 14A2;  -- 	jump forever
-           0A3 : 5FFF;  -- 	loadi &H7fff
+           0A3 : 06F5;  -- 	load origMinDist
            0A4 : 0AF4;  -- 	store minDist
            0A5 : 06C1;  -- 	load Zero
-           0A6 : 0AF5;  -- 	store minDistAngle
-           0A7 : 0AF6;  -- 	store curDist0
-           0A8 : 0AF7;  -- 	store curDist5
+           0A6 : 0AF6;  -- 	store minDistAngle
+           0A7 : 0AF7;  -- 	store curDist0
+           0A8 : 0AF8;  -- 	store curDist5
            0A9 : 4CC3;  -- 	out RESETPOS
            0AA : 3421;  -- 	addi &B00100001 ; enable sonar 0,5
            0AB : 4CB2;  -- 	out SONAREN
@@ -191,35 +191,35 @@ CONTENT
            0B2 : 20CE;  -- 	jzero EndTurn
            0B3 : 1CCE;  -- 	jpos EndTurn
            0B4 : 48A8;  -- 	in DIST0
-           0B5 : 0AF6;  -- 	store curDist0
+           0B5 : 0AF7;  -- 	store curDist0
            0B6 : 48AD;  -- 	in DIST5
-           0B7 : 0AF7;  -- 	store curDist5
-           0B8 : 12F6;  -- 	sub curDist0
+           0B7 : 0AF8;  -- 	store curDist5
+           0B8 : 12F7;  -- 	sub curDist0
            0B9 : 1CBC;  -- 	jpos dist0Smaller
            0BA : 20BC;  -- 	jzero dist0Smaller
            0BB : 18C5;  -- 	jneg dist5Smaller
-           0BC : 06F6;  -- 	load curDist0
+           0BC : 06F7;  -- 	load curDist0
            0BD : 12F4;  -- 	sub minDist
            0BE : 1CAC;  -- 	jpos SpinAndPing
            0BF : 20AC;  -- 	jzero SpinAndPing
-           0C0 : 06F6;  -- 	load curDist0
+           0C0 : 06F7;  -- 	load curDist0
            0C1 : 0AF4;  -- 	store minDist
            0C2 : 48C2;  -- 	in THETA
-           0C3 : 0AF5;  -- 	store minDistAngle
+           0C3 : 0AF6;  -- 	store minDistAngle
            0C4 : 14AC;  -- 	jump SpinAndPing
-           0C5 : 06F7;  -- 	load curDist5
+           0C5 : 06F8;  -- 	load curDist5
            0C6 : 12F4;  -- 	sub minDist
            0C7 : 1CAC;  -- 	jpos SpinAndPing
            0C8 : 20AC;  -- 	jzero SpinAndPing
-           0C9 : 06F7;  -- 	load curDist5
+           0C9 : 06F8;  -- 	load curDist5
            0CA : 0AF4;  -- 	store minDist
            0CB : 48C2;  -- 	in THETA
-           0CC : 0AF5;  -- 	store minDistAngle
+           0CC : 0AF6;  -- 	store minDistAngle
            0CD : 14AC;  -- 	jump SpinAndPing
            0CE : 06C1;  -- 	load Zero
            0CF : 4C83;  -- 	out LVELCMD
            0D0 : 4C8B;  -- 	out RVELCMD
-           0D1 : 06F5;  -- 	load minDistAngle
+           0D1 : 06F6;  -- 	load minDistAngle
            0D2 : 4182;  -- 	call TurnToAngle
            0D3 : 06C1;  -- 	load Zero
            0D4 : 3421;  -- 	addi &B00100001
@@ -229,7 +229,7 @@ CONTENT
            0D8 : 4191;  -- 	call GetDistToWall
            0D9 : 0B84;  -- 	store t
            0DA : 3009;  -- 	shift 9
-           0DB : 0AF8;  -- 	store wallDistances
+           0DB : 0AF9;  -- 	store wallDistances
            0DC : 0784;  -- 	load t
            0DD : 300C;  -- 	shift 12
            0DE : 0B83;  -- 	store display
@@ -237,8 +237,8 @@ CONTENT
            0E0 : 4191;  -- 	call GetDistToWall
            0E1 : 0B84;  -- 	store t
            0E2 : 3003;  -- 	shift 3
-           0E3 : 2AF8;  -- 	or wallDistances
-           0E4 : 0AF8;  -- 	store wallDistances
+           0E3 : 2AF9;  -- 	or wallDistances
+           0E4 : 0AF9;  -- 	store wallDistances
            0E5 : 0784;  -- 	load t
            0E6 : 3004;  -- 	shift 4
            0E7 : 2B83;  -- 	or display
@@ -252,8 +252,8 @@ CONTENT
            0EF : 4191;  -- 	call GetDistToWall
            0F0 : 0B84;  -- 	store t
            0F1 : 3006;  -- 	shift 6
-           0F2 : 2AF8;  -- 	or wallDistances
-           0F3 : 0AF8;  -- 	store wallDistances
+           0F2 : 2AF9;  -- 	or wallDistances
+           0F3 : 0AF9;  -- 	store wallDistances
            0F4 : 0784;  -- 	load t
            0F5 : 3008;  -- 	shift 8
            0F6 : 2B83;  -- 	or display
@@ -261,20 +261,20 @@ CONTENT
            0F8 : 48AD;  -- 	in DIST5
            0F9 : 4191;  -- 	call GetDistToWall
            0FA : 0B84;  -- 	store t
-           0FB : 2AF8;  -- 	or wallDistances
-           0FC : 0AF8;  -- 	store wallDistances
+           0FB : 2AF9;  -- 	or wallDistances
+           0FC : 0AF9;  -- 	store wallDistances
            0FD : 0784;  -- 	load t
            0FE : 2B83;  -- 	or display
            0FF : 0B83;  -- 	store display
            100 : 0783;  -- 	load display
            101 : 4C06;  -- 	out LCD
-           102 : 06F8;  -- 	load wallDistances
+           102 : 06F9;  -- 	load wallDistances
            103 : 4114;  -- 	call FindCoords
-           104 : 06FF;  -- 	load hasFoundCoord
+           104 : 0700;  -- 	load hasFoundCoord
            105 : 210B;  -- 	jzero Relocalize		;if we havent found what cell we are in localize again
-           106 : 0700;  -- 	load coordFound
+           106 : 0701;  -- 	load coordFound
            107 : 4C05;  -- 	out SSEG2
-           108 : 0701;  -- 	load angleFound
+           108 : 0702;  -- 	load angleFound
            109 : 4C04;  -- 	out SSEG1
            10A : 150F;  -- 	jump EndLocalize
            10B : 06C1;  -- 	load Zero
@@ -286,99 +286,99 @@ CONTENT
            111 : 4C8B;  -- 	out    RVELCMD
            112 : 4CB2;  -- 	out    SONAREN
            113 : 4400;  -- 	return
-           114 : 0AF9;  -- 	store wallDists
+           114 : 0AFA;  -- 	store wallDists
            115 : 06C1;  -- 	load Zero
-           116 : 0B00;  -- 	store coordFound
-           117 : 0B01;  -- 	store angleFound
-           118 : 0AFF;  -- 	store hasFoundCoord
+           116 : 0B01;  -- 	store coordFound
+           117 : 0B02;  -- 	store angleFound
+           118 : 0B00;  -- 	store hasFoundCoord
            119 : 37FF;  -- 	addi -1
-           11A : 0AFA;  -- 	store numCoordsCount
+           11A : 0AFB;  -- 	store numCoordsCount
            11B : 06C1;  -- 	load Zero
            11C : 3412;  -- 	addi 18
-           11D : 0AFB;  -- 	store totalNumCoords
+           11D : 0AFC;  -- 	store totalNumCoords
            11E : 06C1;  -- 	load Zero
-           11F : 0AFC;  -- 	store numShifts
+           11F : 0AFD;  -- 	store numShifts
            120 : 3405;  -- 	addi 5
-           121 : 0AFD;  -- 	store totalNumShifts
+           121 : 0AFE;  -- 	store totalNumShifts
            122 : 06C1;  -- 	load Zero
            123 : 3400;  -- 	addi &B00
-           124 : 0AFE;  -- 	store angle
-           125 : 06FA;  -- 	load numCoordsCount
-           126 : 06FA;  -- 	load numCoordsCount
+           124 : 0AFF;  -- 	store angle
+           125 : 06FB;  -- 	load numCoordsCount
+           126 : 06FB;  -- 	load numCoordsCount
            127 : 3401;  -- 	addi 1
-           128 : 0AFA;  -- 	store numCoordsCount
+           128 : 0AFB;  -- 	store numCoordsCount
            129 : 4C04;  -- 	out SSEG1
-           12A : 12FB;  -- 	sub totalNumCoords
+           12A : 12FC;  -- 	sub totalNumCoords
            12B : 214C;  -- 	jzero loop1End
-           12C : 0703;  -- 	load wallDistArrayAddr
-           12D : 0EFA;  -- 	add numCoordsCount
+           12C : 0704;  -- 	load wallDistArrayAddr
+           12D : 0EFB;  -- 	add numCoordsCount
            12E : 6000;  -- 	loada
-           12F : 0B02;  -- 	store curWallDist
+           12F : 0B03;  -- 	store curWallDist
            130 : 4C06;  -- 	out LCD
            131 : 06C1;  -- 	load Zero
            132 : 3402;  -- 	addi 2
            133 : 4C01;  -- 	out LEDS
-           134 : 06FC;  -- 	load numShifts
+           134 : 06FD;  -- 	load numShifts
            135 : 3401;  -- 	addi 1
-           136 : 0AFC;  -- 	store numShifts
-           137 : 12FD;  -- 	sub totalNumShifts
+           136 : 0AFD;  -- 	store numShifts
+           137 : 12FE;  -- 	sub totalNumShifts
            138 : 2148;  -- 	jzero loop2End
-           139 : 0702;  -- 	load curWallDist
-           13A : 12F9;  -- 	sub wallDists
+           139 : 0703;  -- 	load curWallDist
+           13A : 12FA;  -- 	sub wallDists
            13B : 2154;  -- 	jzero foundWall
            13C : 06C1;  -- 	load Zero
            13D : 3410;  -- 	addi 16
            13E : 4C01;  -- 	out LEDS
-           13F : 0702;  -- 	load curWallDist
+           13F : 0703;  -- 	load curWallDist
            140 : 4177;  -- 	call RightRotate3
-           141 : 0B02;  -- 	store curWallDist
-           142 : 06FE;  -- 	load angle
+           141 : 0B03;  -- 	store curWallDist
+           142 : 06FF;  -- 	load angle
            143 : 3401;  -- 	addi 1
-           144 : 0AFE;  -- 	store angle
+           144 : 0AFF;  -- 	store angle
            145 : 37FD;  -- 	addi -3
            146 : 1D51;  -- 	jpos resetAng
            147 : 1534;  -- 	jump loop2
            148 : 06C1;  -- 	load Zero
-           149 : 0AFC;  -- 	store numShifts
-           14A : 0AFE;  -- 	store angle
+           149 : 0AFD;  -- 	store numShifts
+           14A : 0AFF;  -- 	store angle
            14B : 1526;  -- 	jump loop1
            14C : 06C1;  -- 	load Zero
-           14D : 0AFA;  -- 	store numCoordsCount
+           14D : 0AFB;  -- 	store numCoordsCount
            14E : 5C00;  -- 	loadi 0
-           14F : 0AFF;  -- 	store hasFoundCoord
+           14F : 0B00;  -- 	store hasFoundCoord
            150 : 4400;  -- 	return
            151 : 06C1;  -- 	load Zero
-           152 : 0AFE;  -- 	store angle
+           152 : 0AFF;  -- 	store angle
            153 : 1534;  -- 	jump loop2
            154 : 06C1;  -- 	load Zero
            155 : 3404;  -- 	addi 4
            156 : 4C01;  -- 	out LEDS
            157 : 0763;  -- 	load coordArrayAddr
-           158 : 0EFA;  -- 	add numCoordsCount
+           158 : 0EFB;  -- 	add numCoordsCount
            159 : 6000;  -- 	loada
            15A : 4C06;  -- 	out LCD
-           15B : 0B00;  -- 	store coordFound
-           15C : 06FE;  -- 	load angle
-           15D : 0B01;  -- 	store angleFound
+           15B : 0B01;  -- 	store coordFound
+           15C : 06FF;  -- 	load angle
+           15D : 0B02;  -- 	store angleFound
            15E : 06C1;  -- 	load Zero
            15F : 3401;  -- 	addi 1
-           160 : 0AFF;  -- 	store hasFoundCoord
+           160 : 0B00;  -- 	store hasFoundCoord
            161 : 06C1;  -- 	load Zero
            162 : 3408;  -- 	addi 8
            163 : 4C01;  -- 	out LEDS
-           164 : 0701;  -- 	load angleFound
+           164 : 0702;  -- 	load angleFound
            165 : 3402;  -- 	addi 2
-           166 : 0B01;  -- 	store angleFound
+           166 : 0B02;  -- 	store angleFound
            167 : 37FC;  -- 	addi -4
            168 : 216C;  -- 	jzero angle0
            169 : 37FF;  -- 	addi -1
            16A : 216F;  -- 	jzero angle1
            16B : 1572;  -- 	jump angleRet
            16C : 5C00;  -- 	loadi 0
-           16D : 0B01;  -- 	store angleFound
+           16D : 0B02;  -- 	store angleFound
            16E : 1572;  -- 	jump angleRet
            16F : 5C01;  -- 	loadi 1
-           170 : 0B01;  -- 	store angleFound
+           170 : 0B02;  -- 	store angleFound
            171 : 1572;  -- 	jump angleRet
            172 : 4400;  -- 	return
            173 : 0007;  -- rotateMask: dw &B0000000000000111
@@ -767,21 +767,22 @@ CONTENT
            2F2 : 0000;  -- Correction: DW 0 ;Amount to adjust by
            2F3 : 0000;  -- TurnSpeed: DW 0  ;The positive rate at which to turn.
            2F4 : 7FFF;  -- minDist: dw &H7fff
-           2F5 : 0000;  -- minDistAngle: dw 0
-           2F6 : 0000;  -- curDist0: dw 0
-           2F7 : 0000;  -- curDist5: dw 0
-           2F8 : 0000;  -- wallDistances: dw 0
-           2F9 : 0000;  -- wallDists: dw 0
-           2FA : FFFF;  -- numCoordsCount: dw -1
-           2FB : 0012;  -- totalNumCoords: dw 18
-           2FC : 0000;  -- numShifts: dw 0
-           2FD : 0005;  -- totalNumShifts: dw 5
-           2FE : 0000;  -- angle: dw &B00
-           2FF : 0000;  -- hasFoundCoord: dw 0
-           300 : 0000;  -- coordFound: dw 0
-           301 : 0000;  -- angleFound: dw 0
-           302 : 0000;  -- curWallDist: dw 0
-           303 : 0350;  -- wallDistArrayAddr: dw &H350
+           2F5 : 7FFF;  -- origMinDist: dw &H7fff
+           2F6 : 0000;  -- minDistAngle: dw 0
+           2F7 : 0000;  -- curDist0: dw 0
+           2F8 : 0000;  -- curDist5: dw 0
+           2F9 : 0000;  -- wallDistances: dw 0
+           2FA : 0000;  -- wallDists: dw 0
+           2FB : FFFF;  -- numCoordsCount: dw -1
+           2FC : 0012;  -- totalNumCoords: dw 18
+           2FD : 0000;  -- numShifts: dw 0
+           2FE : 0005;  -- totalNumShifts: dw 5
+           2FF : 0000;  -- angle: dw &B00
+           300 : 0000;  -- hasFoundCoord: dw 0
+           301 : 0000;  -- coordFound: dw 0
+           302 : 0000;  -- angleFound: dw 0
+           303 : 0000;  -- curWallDist: dw 0
+           304 : 0350;  -- wallDistArrayAddr: dw &H350
            350 : 0603;  -- c11: dw &H0603 ; --3300
            351 : 0681;  -- c21: dw &H0681 ; --3201
            352 : 0242;  -- c31: dw &h0242 ; --1102
