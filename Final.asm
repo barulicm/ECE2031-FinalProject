@@ -141,7 +141,9 @@ WaitToStart:
 
 ;Begin Localization
 	call Localize
-
+	call Wait1
+	call Wait1
+	call Wait1
 ;End Localization Start Pathing
 	load coordFound
 	shift -4
@@ -161,7 +163,7 @@ WaitToStart:
 	call PlanPath
 	load Four
 	out BEEP
-	loadi 2
+	loadi 6
 	call WaitAC
 	load Zero
 	out BEEP
@@ -180,7 +182,7 @@ WaitToStart:
 	call PlanPath
 	load Four
 	out BEEP
-	loadi 2
+	loadi 6
 	call WaitAC
 	load Zero
 	out BEEP
@@ -199,7 +201,7 @@ WaitToStart:
 	call PlanPath
 	load Four
 	out BEEP
-	loadi 2
+	loadi 6
 	call WaitAC
 	load Zero
 	out BEEP
@@ -339,8 +341,8 @@ EndTurn:
 	load wallDistances
 	call FindCoords
 	
-	load hasFoundCoord
-	jzero Relocalize		;if we havent found what cell we are in localize again
+;	load hasFoundCoord
+;	jzero Relocalize		;if we havent found what cell we are in localize again
 	
 	load coordFound
 	out SSEG2
@@ -590,13 +592,13 @@ PlanPath:	LOAD	S_Y
   			ADDI	-2
   			MUL		TwoFeet
   			CALL	Forw		; move
-			LOADI	-90				; Turn ; move to E_Y
+			LOADI	90				; Turn ; move to E_Y
 			CALL	Turn
 			LOAD	S_Y				; move
 			SUB		E_Y
 			MUL		TwoFeet
 			CALL	Forw
-			LOADI	90
+			LOADI	-90
 			CALL	Turn			; Turn ; move to E_X
 			LOAD	E_X
 			SUB		S_X
@@ -779,10 +781,10 @@ Forw:
 	JNEG Backward
 Onward:
 	Call UpdateAngle
-	LOADI 350   	;200 is the speed. Can be changed.
+	LOADI 275   	;200 is the speed. Can be changed.
 	Add Correction
 	Out LVELCMD
-	Loadi 350
+	Loadi 275
 	Sub Correction
 	Out RVELCMD
 	In LPOS
@@ -793,10 +795,10 @@ Onward:
 	return
 Backward:
 	Call UpdateAngle
-	LOADI -350   	;200 is the speed. Can be changed.
+	LOADI -275   	;200 is the speed. Can be changed.
 	Add Correction
 	Out LVELCMD
-	Loadi -350
+	Loadi -275
 	Sub Correction
 	Out RVELCMD
 	In LPOS
@@ -965,14 +967,14 @@ Ten:      DW 10
 ; some useful movement values
 OneMeter: DW 961       ; ~1m in 1.05mm units
 HalfMeter: DW 481      ; ~0.5m in 1.05mm units
-TwoFeet:  DW 450       ; ~2ft in 1.05mm units
+TwoFeet:  DW 586       ; ~2ft in 1.05mm units
 SixFeet: DW 1758
 Deg90:    DW 90        ; 90 degrees in odometry units
 Deg180:   DW 180       ; 180
 Deg270:   DW 270       ; 270
 Deg360:   DW 360       ; can never actually happen; for math only
-FSlow:    DW 100       ; 100 is about the lowest velocity value that will move
-RSlow:    DW -100
+FSlow:    DW 150       ; 100 is about the lowest velocity value that will move
+RSlow:    DW -150
 FMid:     DW 350       ; 350 is a medium speed
 RMid:     DW -350
 FFast:    DW 500       ; 500 is almost max speed (511 is max)
