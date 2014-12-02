@@ -128,7 +128,7 @@ CONTENT
            073 : 41A0;  -- 	call PlanPath
            074 : 06C5;  -- 	load Four
            075 : 4C0A;  -- 	out BEEP
-           076 : 5C02;  -- 	loadi 2
+           076 : 5C06;  -- 	loadi 6
            077 : 4270;  -- 	call WaitAC
            078 : 06C1;  -- 	load Zero
            079 : 4C0A;  -- 	out BEEP
@@ -148,7 +148,7 @@ CONTENT
            087 : 41A0;  -- 	call PlanPath
            088 : 06C5;  -- 	load Four
            089 : 4C0A;  -- 	out BEEP
-           08A : 5C02;  -- 	loadi 2
+           08A : 5C06;  -- 	loadi 6
            08B : 4270;  -- 	call WaitAC
            08C : 06C1;  -- 	load Zero
            08D : 4C0A;  -- 	out BEEP
@@ -168,7 +168,7 @@ CONTENT
            09B : 41A0;  -- 	call PlanPath
            09C : 06C5;  -- 	load Four
            09D : 4C0A;  -- 	out BEEP
-           09E : 5C02;  -- 	loadi 2
+           09E : 5C06;  -- 	loadi 6
            09F : 4270;  -- 	call WaitAC
            0A0 : 06C1;  -- 	load Zero
            0A1 : 4C0A;  -- 	out BEEP

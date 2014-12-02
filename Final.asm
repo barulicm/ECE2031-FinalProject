@@ -346,8 +346,8 @@ EndTurn:
 	load wallDistances
 	call FindCoords
 	
-;	load hasFoundCoord
-;	jzero Relocalize		;if we havent found what cell we are in localize again
+	load hasFoundCoord
+	jzero Relocalize		;if we havent found what cell we are in localize again
 	
 	load coordFound
 	out SSEG2

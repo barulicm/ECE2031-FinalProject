@@ -161,7 +161,7 @@ WaitToStart:
 	call PlanPath
 	load Four
 	out BEEP
-	loadi 2
+	loadi 6
 	call WaitAC
 	load Zero
 	out BEEP
@@ -185,7 +185,7 @@ WaitToStart:
 	call PlanPath
 	load Four
 	out BEEP
-	loadi 2
+	loadi 6
 	call WaitAC
 	load Zero
 	out BEEP
@@ -209,7 +209,7 @@ WaitToStart:
 	call PlanPath
 	load Four
 	out BEEP
-	loadi 2
+	loadi 6
 	call WaitAC
 	load Zero
 	out BEEP
