@@ -161,7 +161,7 @@ WaitToStart:
 	call PlanPath
 	load Four
 	out BEEP
-	loadi 2
+	loadi 6
 	call WaitAC
 	load Zero
 	out BEEP
@@ -180,7 +180,7 @@ WaitToStart:
 	call PlanPath
 	load Four
 	out BEEP
-	loadi 2
+	loadi 6
 	call WaitAC
 	load Zero
 	out BEEP
@@ -199,7 +199,7 @@ WaitToStart:
 	call PlanPath
 	load Four
 	out BEEP
-	loadi 2
+	loadi 6
 	call WaitAC
 	load Zero
 	out BEEP
@@ -221,7 +221,12 @@ forever:
 ;Localize Start=============================
 Localize:
 ;Get perpendicular to a wall and measure all 4 wall distances by cells
+	loadi &H7fff
+	store minDist
 	load Zero
+	store minDistAngle
+	store curDist0
+	store curDist5
 	out RESETPOS
 	addi &B00100001 ; enable sonar 0,5
 	out SONAREN
