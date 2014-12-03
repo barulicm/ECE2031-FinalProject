@@ -143,7 +143,6 @@ WaitToStart:
 	call Localize
 	call Wait1
 	call Wait1
-	call Wait1
 ;End Localization Start Pathing
 	load coordFound
 	shift -4
